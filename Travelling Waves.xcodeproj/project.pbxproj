@@ -1,0 +1,886 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		FC356C4C2223D0F500B93F5C /* TWBinauralBiquad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C402223D0F500B93F5C /* TWBinauralBiquad.cpp */; };
+		FC356C4D2223D0F500B93F5C /* TWBiquad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C412223D0F500B93F5C /* TWBiquad.cpp */; };
+		FC356C4E2223D0F500B93F5C /* TWOscillator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C422223D0F500B93F5C /* TWOscillator.cpp */; };
+		FC356C4F2223D0F500B93F5C /* TWDelay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C452223D0F500B93F5C /* TWDelay.cpp */; };
+		FC356C502223D0F500B93F5C /* TWBinauralSynth.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C492223D0F500B93F5C /* TWBinauralSynth.cpp */; };
+		FC356C512223D0F500B93F5C /* TWTremolo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C4B2223D0F500B93F5C /* TWTremolo.cpp */; };
+		FC356C632223D10400B93F5C /* TWMasterController.mm in Sources */ = {isa = PBXBuildFile; fileRef = FC356C522223D10300B93F5C /* TWMasterController.mm */; };
+		FC356C642223D10400B93F5C /* TWSequencer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C532223D10300B93F5C /* TWSequencer.cpp */; };
+		FC356C652223D10400B93F5C /* TWMixer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C582223D10300B93F5C /* TWMixer.cpp */; };
+		FC356C662223D10400B93F5C /* TWAudioEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C5A2223D10400B93F5C /* TWAudioEngine.cpp */; };
+		FC356C672223D10400B93F5C /* TWLevelMeter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C5B2223D10400B93F5C /* TWLevelMeter.cpp */; };
+		FC356C682223D10400B93F5C /* TWRingBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C5E2223D10400B93F5C /* TWRingBuffer.cpp */; };
+		FC356C692223D10400B93F5C /* TWEnvelope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C5F2223D10400B93F5C /* TWEnvelope.cpp */; };
+		FC356C6A2223D10400B93F5C /* TWParameter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C602223D10400B93F5C /* TWParameter.cpp */; };
+		FC356C6C2223D7BE00B93F5C /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC356C6B2223D7BE00B93F5C /* MediaPlayer.framework */; };
+		FC356C6E2223D7C500B93F5C /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC356C6D2223D7C500B93F5C /* AVFoundation.framework */; };
+		FC356C722223D80200B93F5C /* TWUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C712223D80200B93F5C /* TWUtils.m */; };
+		FC356C902223D8C400B93F5C /* TWLoadProjectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C772223D8C400B93F5C /* TWLoadProjectViewController.m */; };
+		FC356C912223D8C400B93F5C /* TWFrequencyChartViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C792223D8C400B93F5C /* TWFrequencyChartViewController.m */; };
+		FC356C922223D8C400B93F5C /* TWSequencerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C7A2223D8C400B93F5C /* TWSequencerViewController.m */; };
+		FC356C932223D8C400B93F5C /* TWHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C7C2223D8C400B93F5C /* TWHomeViewController.m */; };
+		FC356C942223D8C400B93F5C /* TWSeqNoteButton.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C812223D8C400B93F5C /* TWSeqNoteButton.m */; };
+		FC356C952223D8C400B93F5C /* TWPitchRatioControlView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C822223D8C400B93F5C /* TWPitchRatioControlView.m */; };
+		FC356C962223D8C400B93F5C /* TWOscView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C862223D8C400B93F5C /* TWOscView.m */; };
+		FC356C972223D8C400B93F5C /* TWKeyboardAccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C892223D8C400B93F5C /* TWKeyboardAccessoryView.m */; };
+		FC356C982223D8C400B93F5C /* TWEnvelopeView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C8A2223D8C400B93F5C /* TWEnvelopeView.m */; };
+		FC356C992223D8C400B93F5C /* TWLevelMeterView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C8D2223D8C400B93F5C /* TWLevelMeterView.m */; };
+		FC356C9A2223D8C400B93F5C /* TWMixerView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C8E2223D8C400B93F5C /* TWMixerView.m */; };
+		FC356C9B2223D8C400B93F5C /* TWForceButton.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C8F2223D8C400B93F5C /* TWForceButton.m */; };
+		FCBDC336218462CA00E7695C /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCBDC335218462CA00E7695C /* AudioToolbox.framework */; };
+		FCBDC344218463A700E7695C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FCBDC33D218463A700E7695C /* main.m */; };
+		FCBDC345218463A700E7695C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FCBDC33E218463A700E7695C /* AppDelegate.m */; };
+		FCBDC35421846D4E00E7695C /* Travelling_WavesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FCBDC34C21846C5000E7695C /* Travelling_WavesTests.m */; };
+		FCBDC35521846D5500E7695C /* Travelling_WavesUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = FCBDC35021846D3100E7695C /* Travelling_WavesUITests.m */; };
+		FCBDC3602184720A00E7695C /* TWViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FCBDC35E2184720A00E7695C /* TWViewController.m */; };
+		FCBDC364218532D400E7695C /* TWAudioController.mm in Sources */ = {isa = PBXBuildFile; fileRef = FCBDC363218532D400E7695C /* TWAudioController.mm */; };
+		FCD6045D2223E0D5004164AC /* EqualTemperament.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604542223E0D5004164AC /* EqualTemperament.json */; };
+		FCD6045E2223E0D5004164AC /* OsterCurve.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604552223E0D5004164AC /* OsterCurve.json */; };
+		FCD604672223E4F2004164AC /* Organ-like.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604612223E4F2004164AC /* Organ-like.json */; };
+		FCD604682223E4F2004164AC /* Dorianish.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604622223E4F2004164AC /* Dorianish.json */; };
+		FCD604692223E4F2004164AC /* Dorianish Movement.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604632223E4F2004164AC /* Dorianish Movement.json */; };
+		FCD6046A2223E4F2004164AC /* Some Moving Fifths.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604642223E4F2004164AC /* Some Moving Fifths.json */; };
+		FCD6046B2223E4F2004164AC /* Triplet Fifths.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604652223E4F2004164AC /* Triplet Fifths.json */; };
+		FCD6046C2223E4F2004164AC /* Test Movement.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604662223E4F2004164AC /* Test Movement.json */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		FCBDC3172184627000E7695C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FCBDC2F62184626F00E7695C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FCBDC2FD2184626F00E7695C;
+			remoteInfo = "Travelling Waves";
+		};
+		FCBDC3222184627000E7695C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FCBDC2F62184626F00E7695C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FCBDC2FD2184626F00E7695C;
+			remoteInfo = "Travelling Waves";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		FC356C402223D0F500B93F5C /* TWBinauralBiquad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TWBinauralBiquad.cpp; sourceTree = "<group>"; };
+		FC356C412223D0F500B93F5C /* TWBiquad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TWBiquad.cpp; sourceTree = "<group>"; };
+		FC356C422223D0F500B93F5C /* TWOscillator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TWOscillator.cpp; sourceTree = "<group>"; };
+		FC356C432223D0F500B93F5C /* TWBinauralSynth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWBinauralSynth.h; sourceTree = "<group>"; };
+		FC356C442223D0F500B93F5C /* TWBiquad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWBiquad.h; sourceTree = "<group>"; };
+		FC356C452223D0F500B93F5C /* TWDelay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TWDelay.cpp; sourceTree = "<group>"; };
+		FC356C462223D0F500B93F5C /* TWOscillator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWOscillator.h; sourceTree = "<group>"; };
+		FC356C472223D0F500B93F5C /* TWTremolo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWTremolo.h; sourceTree = "<group>"; };
+		FC356C482223D0F500B93F5C /* TWBinauralBiquad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWBinauralBiquad.h; sourceTree = "<group>"; };
+		FC356C492223D0F500B93F5C /* TWBinauralSynth.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TWBinauralSynth.cpp; sourceTree = "<group>"; };
+		FC356C4A2223D0F500B93F5C /* TWDelay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWDelay.h; sourceTree = "<group>"; };
+		FC356C4B2223D0F500B93F5C /* TWTremolo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TWTremolo.cpp; sourceTree = "<group>"; };
+		FC356C522223D10300B93F5C /* TWMasterController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TWMasterController.mm; sourceTree = "<group>"; };
+		FC356C532223D10300B93F5C /* TWSequencer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TWSequencer.cpp; sourceTree = "<group>"; };
+		FC356C542223D10300B93F5C /* TWRingBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWRingBuffer.h; sourceTree = "<group>"; };
+		FC356C552223D10300B93F5C /* TWParameter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWParameter.h; sourceTree = "<group>"; };
+		FC356C562223D10300B93F5C /* TWSequencer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWSequencer.h; sourceTree = "<group>"; };
+		FC356C572223D10300B93F5C /* TWAudioEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWAudioEngine.h; sourceTree = "<group>"; };
+		FC356C582223D10300B93F5C /* TWMixer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TWMixer.cpp; sourceTree = "<group>"; };
+		FC356C592223D10300B93F5C /* TWMixer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWMixer.h; sourceTree = "<group>"; };
+		FC356C5A2223D10400B93F5C /* TWAudioEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TWAudioEngine.cpp; sourceTree = "<group>"; };
+		FC356C5B2223D10400B93F5C /* TWLevelMeter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TWLevelMeter.cpp; sourceTree = "<group>"; };
+		FC356C5C2223D10400B93F5C /* TWMasterController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWMasterController.h; sourceTree = "<group>"; };
+		FC356C5D2223D10400B93F5C /* TWLevelMeter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWLevelMeter.h; sourceTree = "<group>"; };
+		FC356C5E2223D10400B93F5C /* TWRingBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TWRingBuffer.cpp; sourceTree = "<group>"; };
+		FC356C5F2223D10400B93F5C /* TWEnvelope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TWEnvelope.cpp; sourceTree = "<group>"; };
+		FC356C602223D10400B93F5C /* TWParameter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TWParameter.cpp; sourceTree = "<group>"; };
+		FC356C612223D10400B93F5C /* TWEnvelope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWEnvelope.h; sourceTree = "<group>"; };
+		FC356C622223D10400B93F5C /* TWHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWHeader.h; sourceTree = "<group>"; };
+		FC356C6B2223D7BE00B93F5C /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
+		FC356C6D2223D7C500B93F5C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		FC356C702223D80200B93F5C /* TWUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWUtils.h; sourceTree = "<group>"; };
+		FC356C712223D80200B93F5C /* TWUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWUtils.m; sourceTree = "<group>"; };
+		FC356C772223D8C400B93F5C /* TWLoadProjectViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWLoadProjectViewController.m; sourceTree = "<group>"; };
+		FC356C782223D8C400B93F5C /* TWHomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWHomeViewController.h; sourceTree = "<group>"; };
+		FC356C792223D8C400B93F5C /* TWFrequencyChartViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWFrequencyChartViewController.m; sourceTree = "<group>"; };
+		FC356C7A2223D8C400B93F5C /* TWSequencerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWSequencerViewController.m; sourceTree = "<group>"; };
+		FC356C7B2223D8C400B93F5C /* TWLoadProjectViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWLoadProjectViewController.h; sourceTree = "<group>"; };
+		FC356C7C2223D8C400B93F5C /* TWHomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWHomeViewController.m; sourceTree = "<group>"; };
+		FC356C7D2223D8C400B93F5C /* TWFrequencyChartViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWFrequencyChartViewController.h; sourceTree = "<group>"; };
+		FC356C7E2223D8C400B93F5C /* TWSequencerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWSequencerViewController.h; sourceTree = "<group>"; };
+		FC356C802223D8C400B93F5C /* TWEnvelopeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWEnvelopeView.h; sourceTree = "<group>"; };
+		FC356C812223D8C400B93F5C /* TWSeqNoteButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWSeqNoteButton.m; sourceTree = "<group>"; };
+		FC356C822223D8C400B93F5C /* TWPitchRatioControlView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWPitchRatioControlView.m; sourceTree = "<group>"; };
+		FC356C832223D8C400B93F5C /* TWKeyboardAccessoryView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWKeyboardAccessoryView.h; sourceTree = "<group>"; };
+		FC356C842223D8C400B93F5C /* TWMixerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWMixerView.h; sourceTree = "<group>"; };
+		FC356C852223D8C400B93F5C /* TWLevelMeterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWLevelMeterView.h; sourceTree = "<group>"; };
+		FC356C862223D8C400B93F5C /* TWOscView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWOscView.m; sourceTree = "<group>"; };
+		FC356C872223D8C400B93F5C /* TWForceButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWForceButton.h; sourceTree = "<group>"; };
+		FC356C882223D8C400B93F5C /* TWPitchRatioControlView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWPitchRatioControlView.h; sourceTree = "<group>"; };
+		FC356C892223D8C400B93F5C /* TWKeyboardAccessoryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWKeyboardAccessoryView.m; sourceTree = "<group>"; };
+		FC356C8A2223D8C400B93F5C /* TWEnvelopeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWEnvelopeView.m; sourceTree = "<group>"; };
+		FC356C8B2223D8C400B93F5C /* TWSeqNoteButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWSeqNoteButton.h; sourceTree = "<group>"; };
+		FC356C8C2223D8C400B93F5C /* TWOscView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWOscView.h; sourceTree = "<group>"; };
+		FC356C8D2223D8C400B93F5C /* TWLevelMeterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWLevelMeterView.m; sourceTree = "<group>"; };
+		FC356C8E2223D8C400B93F5C /* TWMixerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWMixerView.m; sourceTree = "<group>"; };
+		FC356C8F2223D8C400B93F5C /* TWForceButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWForceButton.m; sourceTree = "<group>"; };
+		FCBDC2FE2184626F00E7695C /* Travelling Waves.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Travelling Waves.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		FCBDC3162184627000E7695C /* Travelling Waves Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Travelling Waves Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		FCBDC3212184627000E7695C /* Travelling Waves UI Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Travelling Waves UI Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		FCBDC335218462CA00E7695C /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		FCBDC33C218463A700E7695C /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		FCBDC33D218463A700E7695C /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		FCBDC33E218463A700E7695C /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		FCBDC340218463A700E7695C /* Travelling Waves.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = "Travelling Waves.entitlements"; sourceTree = "<group>"; };
+		FCBDC342218463A700E7695C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FCBDC3492184666C00E7695C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		FCBDC34C21846C5000E7695C /* Travelling_WavesTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Travelling_WavesTests.m; sourceTree = "<group>"; };
+		FCBDC34D21846C5000E7695C /* Tests-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Tests-Info.plist"; sourceTree = "<group>"; };
+		FCBDC35021846D3100E7695C /* Travelling_WavesUITests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Travelling_WavesUITests.m; sourceTree = "<group>"; };
+		FCBDC35121846D3100E7695C /* UITests-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "UITests-Info.plist"; sourceTree = "<group>"; };
+		FCBDC358218471D200E7695C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		FCBDC35A218471D200E7695C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Main.storyboard; sourceTree = "<group>"; };
+		FCBDC35E2184720A00E7695C /* TWViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWViewController.m; sourceTree = "<group>"; };
+		FCBDC35F2184720A00E7695C /* TWViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWViewController.h; sourceTree = "<group>"; };
+		FCBDC362218532D400E7695C /* TWAudioController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TWAudioController.h; sourceTree = "<group>"; };
+		FCBDC363218532D400E7695C /* TWAudioController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TWAudioController.mm; sourceTree = "<group>"; };
+		FCD604542223E0D5004164AC /* EqualTemperament.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = EqualTemperament.json; sourceTree = "<group>"; };
+		FCD604552223E0D5004164AC /* OsterCurve.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = OsterCurve.json; sourceTree = "<group>"; };
+		FCD604612223E4F2004164AC /* Organ-like.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "Organ-like.json"; sourceTree = "<group>"; };
+		FCD604622223E4F2004164AC /* Dorianish.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Dorianish.json; sourceTree = "<group>"; };
+		FCD604632223E4F2004164AC /* Dorianish Movement.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "Dorianish Movement.json"; sourceTree = "<group>"; };
+		FCD604642223E4F2004164AC /* Some Moving Fifths.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "Some Moving Fifths.json"; sourceTree = "<group>"; };
+		FCD604652223E4F2004164AC /* Triplet Fifths.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "Triplet Fifths.json"; sourceTree = "<group>"; };
+		FCD604662223E4F2004164AC /* Test Movement.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "Test Movement.json"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		FCBDC2FB2184626F00E7695C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FC356C6E2223D7C500B93F5C /* AVFoundation.framework in Frameworks */,
+				FC356C6C2223D7BE00B93F5C /* MediaPlayer.framework in Frameworks */,
+				FCBDC336218462CA00E7695C /* AudioToolbox.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FCBDC3132184627000E7695C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FCBDC31E2184627000E7695C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		FC356C3F2223D0F500B93F5C /* Oscillator */ = {
+			isa = PBXGroup;
+			children = (
+				FC356C482223D0F500B93F5C /* TWBinauralBiquad.h */,
+				FC356C402223D0F500B93F5C /* TWBinauralBiquad.cpp */,
+				FC356C442223D0F500B93F5C /* TWBiquad.h */,
+				FC356C412223D0F500B93F5C /* TWBiquad.cpp */,
+				FC356C462223D0F500B93F5C /* TWOscillator.h */,
+				FC356C422223D0F500B93F5C /* TWOscillator.cpp */,
+				FC356C432223D0F500B93F5C /* TWBinauralSynth.h */,
+				FC356C492223D0F500B93F5C /* TWBinauralSynth.cpp */,
+				FC356C4A2223D0F500B93F5C /* TWDelay.h */,
+				FC356C452223D0F500B93F5C /* TWDelay.cpp */,
+				FC356C472223D0F500B93F5C /* TWTremolo.h */,
+				FC356C4B2223D0F500B93F5C /* TWTremolo.cpp */,
+			);
+			path = Oscillator;
+			sourceTree = "<group>";
+		};
+		FC356C6F2223D80200B93F5C /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				FC356C702223D80200B93F5C /* TWUtils.h */,
+				FC356C712223D80200B93F5C /* TWUtils.m */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		FC356C762223D8C400B93F5C /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				FC356C7B2223D8C400B93F5C /* TWLoadProjectViewController.h */,
+				FC356C772223D8C400B93F5C /* TWLoadProjectViewController.m */,
+				FC356C782223D8C400B93F5C /* TWHomeViewController.h */,
+				FC356C7C2223D8C400B93F5C /* TWHomeViewController.m */,
+				FC356C7D2223D8C400B93F5C /* TWFrequencyChartViewController.h */,
+				FC356C792223D8C400B93F5C /* TWFrequencyChartViewController.m */,
+				FC356C7E2223D8C400B93F5C /* TWSequencerViewController.h */,
+				FC356C7A2223D8C400B93F5C /* TWSequencerViewController.m */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		FC356C7F2223D8C400B93F5C /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				FC356C802223D8C400B93F5C /* TWEnvelopeView.h */,
+				FC356C8A2223D8C400B93F5C /* TWEnvelopeView.m */,
+				FC356C8B2223D8C400B93F5C /* TWSeqNoteButton.h */,
+				FC356C812223D8C400B93F5C /* TWSeqNoteButton.m */,
+				FC356C882223D8C400B93F5C /* TWPitchRatioControlView.h */,
+				FC356C822223D8C400B93F5C /* TWPitchRatioControlView.m */,
+				FC356C832223D8C400B93F5C /* TWKeyboardAccessoryView.h */,
+				FC356C892223D8C400B93F5C /* TWKeyboardAccessoryView.m */,
+				FC356C842223D8C400B93F5C /* TWMixerView.h */,
+				FC356C8E2223D8C400B93F5C /* TWMixerView.m */,
+				FC356C852223D8C400B93F5C /* TWLevelMeterView.h */,
+				FC356C8D2223D8C400B93F5C /* TWLevelMeterView.m */,
+				FC356C8C2223D8C400B93F5C /* TWOscView.h */,
+				FC356C862223D8C400B93F5C /* TWOscView.m */,
+				FC356C872223D8C400B93F5C /* TWForceButton.h */,
+				FC356C8F2223D8C400B93F5C /* TWForceButton.m */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		FCBDC2F52184626F00E7695C = {
+			isa = PBXGroup;
+			children = (
+				FCBDC33B218463A700E7695C /* Source */,
+				FCBDC3482184666C00E7695C /* Resources */,
+				FCBDC33F218463A700E7695C /* Supporting Files */,
+				FCBDC34B21846C5000E7695C /* Tests */,
+				FCBDC2FF2184626F00E7695C /* Products */,
+				FCBDC334218462CA00E7695C /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		FCBDC2FF2184626F00E7695C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FCBDC2FE2184626F00E7695C /* Travelling Waves.app */,
+				FCBDC3162184627000E7695C /* Travelling Waves Tests.xctest */,
+				FCBDC3212184627000E7695C /* Travelling Waves UI Tests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		FCBDC334218462CA00E7695C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				FC356C6D2223D7C500B93F5C /* AVFoundation.framework */,
+				FC356C6B2223D7BE00B93F5C /* MediaPlayer.framework */,
+				FCBDC335218462CA00E7695C /* AudioToolbox.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		FCBDC33B218463A700E7695C /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				FCBDC361218532B900E7695C /* Audio */,
+				FCBDC35D2184720A00E7695C /* User Interface */,
+				FC356C6F2223D80200B93F5C /* Utilities */,
+				FCBDC33C218463A700E7695C /* AppDelegate.h */,
+				FCBDC33E218463A700E7695C /* AppDelegate.m */,
+				FCBDC33D218463A700E7695C /* main.m */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
+		FCBDC33F218463A700E7695C /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				FCBDC356218471D200E7695C /* Base.lproj */,
+				FCBDC340218463A700E7695C /* Travelling Waves.entitlements */,
+				FCBDC342218463A700E7695C /* Info.plist */,
+			);
+			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		FCBDC3482184666C00E7695C /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				FCD604602223E4F2004164AC /* Projects */,
+				FCD604542223E0D5004164AC /* EqualTemperament.json */,
+				FCD604552223E0D5004164AC /* OsterCurve.json */,
+				FCBDC3492184666C00E7695C /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		FCBDC34B21846C5000E7695C /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				FCBDC35121846D3100E7695C /* UITests-Info.plist */,
+				FCBDC35021846D3100E7695C /* Travelling_WavesUITests.m */,
+				FCBDC34D21846C5000E7695C /* Tests-Info.plist */,
+				FCBDC34C21846C5000E7695C /* Travelling_WavesTests.m */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		FCBDC356218471D200E7695C /* Base.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				FCBDC357218471D200E7695C /* LaunchScreen.storyboard */,
+				FCBDC359218471D200E7695C /* Main.storyboard */,
+			);
+			path = Base.lproj;
+			sourceTree = "<group>";
+		};
+		FCBDC35D2184720A00E7695C /* User Interface */ = {
+			isa = PBXGroup;
+			children = (
+				FC356C762223D8C400B93F5C /* ViewControllers */,
+				FC356C7F2223D8C400B93F5C /* Views */,
+				FCBDC35F2184720A00E7695C /* TWViewController.h */,
+				FCBDC35E2184720A00E7695C /* TWViewController.m */,
+			);
+			path = "User Interface";
+			sourceTree = "<group>";
+		};
+		FCBDC361218532B900E7695C /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				FC356C622223D10400B93F5C /* TWHeader.h */,
+				FC356C5C2223D10400B93F5C /* TWMasterController.h */,
+				FC356C522223D10300B93F5C /* TWMasterController.mm */,
+				FCBDC362218532D400E7695C /* TWAudioController.h */,
+				FCBDC363218532D400E7695C /* TWAudioController.mm */,
+				FC356C572223D10300B93F5C /* TWAudioEngine.h */,
+				FC356C5A2223D10400B93F5C /* TWAudioEngine.cpp */,
+				FC356C612223D10400B93F5C /* TWEnvelope.h */,
+				FC356C5F2223D10400B93F5C /* TWEnvelope.cpp */,
+				FC356C5D2223D10400B93F5C /* TWLevelMeter.h */,
+				FC356C5B2223D10400B93F5C /* TWLevelMeter.cpp */,
+				FC356C592223D10300B93F5C /* TWMixer.h */,
+				FC356C582223D10300B93F5C /* TWMixer.cpp */,
+				FC356C552223D10300B93F5C /* TWParameter.h */,
+				FC356C602223D10400B93F5C /* TWParameter.cpp */,
+				FC356C542223D10300B93F5C /* TWRingBuffer.h */,
+				FC356C5E2223D10400B93F5C /* TWRingBuffer.cpp */,
+				FC356C562223D10300B93F5C /* TWSequencer.h */,
+				FC356C532223D10300B93F5C /* TWSequencer.cpp */,
+				FC356C3F2223D0F500B93F5C /* Oscillator */,
+			);
+			path = Audio;
+			sourceTree = "<group>";
+		};
+		FCD604602223E4F2004164AC /* Projects */ = {
+			isa = PBXGroup;
+			children = (
+				FCD604612223E4F2004164AC /* Organ-like.json */,
+				FCD604622223E4F2004164AC /* Dorianish.json */,
+				FCD604632223E4F2004164AC /* Dorianish Movement.json */,
+				FCD604642223E4F2004164AC /* Some Moving Fifths.json */,
+				FCD604652223E4F2004164AC /* Triplet Fifths.json */,
+				FCD604662223E4F2004164AC /* Test Movement.json */,
+			);
+			path = Projects;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		FCBDC2FD2184626F00E7695C /* Travelling Waves */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FCBDC32A2184627000E7695C /* Build configuration list for PBXNativeTarget "Travelling Waves" */;
+			buildPhases = (
+				FCBDC2FA2184626F00E7695C /* Sources */,
+				FCBDC2FB2184626F00E7695C /* Frameworks */,
+				FCBDC2FC2184626F00E7695C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Travelling Waves";
+			productName = "Travelling Waves";
+			productReference = FCBDC2FE2184626F00E7695C /* Travelling Waves.app */;
+			productType = "com.apple.product-type.application";
+		};
+		FCBDC3152184627000E7695C /* Travelling Waves Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FCBDC32D2184627000E7695C /* Build configuration list for PBXNativeTarget "Travelling Waves Tests" */;
+			buildPhases = (
+				FCBDC3122184627000E7695C /* Sources */,
+				FCBDC3132184627000E7695C /* Frameworks */,
+				FCBDC3142184627000E7695C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				FCBDC3182184627000E7695C /* PBXTargetDependency */,
+			);
+			name = "Travelling Waves Tests";
+			productName = "Travelling WavesTests";
+			productReference = FCBDC3162184627000E7695C /* Travelling Waves Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		FCBDC3202184627000E7695C /* Travelling Waves UI Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FCBDC3302184627000E7695C /* Build configuration list for PBXNativeTarget "Travelling Waves UI Tests" */;
+			buildPhases = (
+				FCBDC31D2184627000E7695C /* Sources */,
+				FCBDC31E2184627000E7695C /* Frameworks */,
+				FCBDC31F2184627000E7695C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				FCBDC3232184627000E7695C /* PBXTargetDependency */,
+			);
+			name = "Travelling Waves UI Tests";
+			productName = "Travelling WavesUITests";
+			productReference = FCBDC3212184627000E7695C /* Travelling Waves UI Tests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		FCBDC2F62184626F00E7695C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1000;
+				ORGANIZATIONNAME = "Govinda Ram Pingali";
+				TargetAttributes = {
+					FCBDC2FD2184626F00E7695C = {
+						CreatedOnToolsVersion = 10.0;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.InterAppAudio = {
+								enabled = 1;
+							};
+						};
+					};
+					FCBDC3152184627000E7695C = {
+						CreatedOnToolsVersion = 10.0;
+						TestTargetID = FCBDC2FD2184626F00E7695C;
+					};
+					FCBDC3202184627000E7695C = {
+						CreatedOnToolsVersion = 10.0;
+						TestTargetID = FCBDC2FD2184626F00E7695C;
+					};
+				};
+			};
+			buildConfigurationList = FCBDC2F92184626F00E7695C /* Build configuration list for PBXProject "Travelling Waves" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = FCBDC2F52184626F00E7695C;
+			productRefGroup = FCBDC2FF2184626F00E7695C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				FCBDC2FD2184626F00E7695C /* Travelling Waves */,
+				FCBDC3152184627000E7695C /* Travelling Waves Tests */,
+				FCBDC3202184627000E7695C /* Travelling Waves UI Tests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		FCBDC2FC2184626F00E7695C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FCD6046B2223E4F2004164AC /* Triplet Fifths.json in Resources */,
+				FCD604692223E4F2004164AC /* Dorianish Movement.json in Resources */,
+				FCD6045E2223E0D5004164AC /* OsterCurve.json in Resources */,
+				FCD6045D2223E0D5004164AC /* EqualTemperament.json in Resources */,
+				FCD6046A2223E4F2004164AC /* Some Moving Fifths.json in Resources */,
+				FCD6046C2223E4F2004164AC /* Test Movement.json in Resources */,
+				FCD604672223E4F2004164AC /* Organ-like.json in Resources */,
+				FCD604682223E4F2004164AC /* Dorianish.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FCBDC3142184627000E7695C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FCBDC31F2184627000E7695C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		FCBDC2FA2184626F00E7695C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FC356C4D2223D0F500B93F5C /* TWBiquad.cpp in Sources */,
+				FC356C902223D8C400B93F5C /* TWLoadProjectViewController.m in Sources */,
+				FC356C942223D8C400B93F5C /* TWSeqNoteButton.m in Sources */,
+				FCBDC3602184720A00E7695C /* TWViewController.m in Sources */,
+				FC356C642223D10400B93F5C /* TWSequencer.cpp in Sources */,
+				FC356C4C2223D0F500B93F5C /* TWBinauralBiquad.cpp in Sources */,
+				FC356C932223D8C400B93F5C /* TWHomeViewController.m in Sources */,
+				FC356C9A2223D8C400B93F5C /* TWMixerView.m in Sources */,
+				FC356C912223D8C400B93F5C /* TWFrequencyChartViewController.m in Sources */,
+				FC356C512223D0F500B93F5C /* TWTremolo.cpp in Sources */,
+				FC356C502223D0F500B93F5C /* TWBinauralSynth.cpp in Sources */,
+				FC356C992223D8C400B93F5C /* TWLevelMeterView.m in Sources */,
+				FC356C682223D10400B93F5C /* TWRingBuffer.cpp in Sources */,
+				FC356C982223D8C400B93F5C /* TWEnvelopeView.m in Sources */,
+				FC356C962223D8C400B93F5C /* TWOscView.m in Sources */,
+				FC356C9B2223D8C400B93F5C /* TWForceButton.m in Sources */,
+				FC356C952223D8C400B93F5C /* TWPitchRatioControlView.m in Sources */,
+				FC356C922223D8C400B93F5C /* TWSequencerViewController.m in Sources */,
+				FC356C972223D8C400B93F5C /* TWKeyboardAccessoryView.m in Sources */,
+				FCBDC345218463A700E7695C /* AppDelegate.m in Sources */,
+				FCBDC344218463A700E7695C /* main.m in Sources */,
+				FC356C722223D80200B93F5C /* TWUtils.m in Sources */,
+				FC356C4E2223D0F500B93F5C /* TWOscillator.cpp in Sources */,
+				FC356C672223D10400B93F5C /* TWLevelMeter.cpp in Sources */,
+				FC356C662223D10400B93F5C /* TWAudioEngine.cpp in Sources */,
+				FC356C4F2223D0F500B93F5C /* TWDelay.cpp in Sources */,
+				FC356C632223D10400B93F5C /* TWMasterController.mm in Sources */,
+				FC356C652223D10400B93F5C /* TWMixer.cpp in Sources */,
+				FC356C692223D10400B93F5C /* TWEnvelope.cpp in Sources */,
+				FC356C6A2223D10400B93F5C /* TWParameter.cpp in Sources */,
+				FCBDC364218532D400E7695C /* TWAudioController.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FCBDC3122184627000E7695C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FCBDC35421846D4E00E7695C /* Travelling_WavesTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FCBDC31D2184627000E7695C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FCBDC35521846D5500E7695C /* Travelling_WavesUITests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		FCBDC3182184627000E7695C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FCBDC2FD2184626F00E7695C /* Travelling Waves */;
+			targetProxy = FCBDC3172184627000E7695C /* PBXContainerItemProxy */;
+		};
+		FCBDC3232184627000E7695C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FCBDC2FD2184626F00E7695C /* Travelling Waves */;
+			targetProxy = FCBDC3222184627000E7695C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		FCBDC357218471D200E7695C /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FCBDC358218471D200E7695C /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		FCBDC359218471D200E7695C /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FCBDC35A218471D200E7695C /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		FCBDC3282184627000E7695C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		FCBDC3292184627000E7695C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		FCBDC32B2184627000E7695C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Supporting Files/Travelling Waves.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 47DTSY372W;
+				INFOPLIST_FILE = "Supporting Files/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.banana.travelling-waves";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		FCBDC32C2184627000E7695C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Supporting Files/Travelling Waves.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 47DTSY372W;
+				INFOPLIST_FILE = "Supporting Files/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.banana.travelling-waves";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		FCBDC32E2184627000E7695C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 47DTSY372W;
+				INFOPLIST_FILE = "Tests/Tests-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.banana.travelling-waves-tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Travelling Waves.app/Travelling Waves";
+			};
+			name = Debug;
+		};
+		FCBDC32F2184627000E7695C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 47DTSY372W;
+				INFOPLIST_FILE = "Tests/Tests-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.banana.travelling-waves-tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Travelling Waves.app/Travelling Waves";
+			};
+			name = Release;
+		};
+		FCBDC3312184627000E7695C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 47DTSY372W;
+				INFOPLIST_FILE = "Tests/UITests-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.banana.travelling-waves-uitests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Travelling Waves";
+			};
+			name = Debug;
+		};
+		FCBDC3322184627000E7695C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 47DTSY372W;
+				INFOPLIST_FILE = "Tests/UITests-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.banana.travelling-waves-uitests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Travelling Waves";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		FCBDC2F92184626F00E7695C /* Build configuration list for PBXProject "Travelling Waves" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FCBDC3282184627000E7695C /* Debug */,
+				FCBDC3292184627000E7695C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FCBDC32A2184627000E7695C /* Build configuration list for PBXNativeTarget "Travelling Waves" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FCBDC32B2184627000E7695C /* Debug */,
+				FCBDC32C2184627000E7695C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FCBDC32D2184627000E7695C /* Build configuration list for PBXNativeTarget "Travelling Waves Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FCBDC32E2184627000E7695C /* Debug */,
+				FCBDC32F2184627000E7695C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FCBDC3302184627000E7695C /* Build configuration list for PBXNativeTarget "Travelling Waves UI Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FCBDC3312184627000E7695C /* Debug */,
+				FCBDC3322184627000E7695C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = FCBDC2F62184626F00E7695C /* Project object */;
+}

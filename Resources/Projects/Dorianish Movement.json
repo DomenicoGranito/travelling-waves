@@ -1,0 +1,230 @@
+{
+  "Name" : "Dorianish Movement",
+  "Parameters" : {
+    "Root Frequency" : 256,
+    "Sources" : [
+      {
+        "Filter G" : 1,
+        "Filter Enable" : false,
+        "Tunings" : [
+          1,
+          1
+        ],
+        "Filter Type" : 0,
+        "RampTime_ms" : 100,
+        "Filter LFO Range" : 100,
+        "Osc Mononess" : 1,
+        "Filter LFO Enable" : false,
+        "Filter LFO Offset" : 0,
+        "Idx" : 0,
+        "Filter Q" : 0.70710676908493042,
+        "Osc Wave" : 0,
+        "Filter Cutoff" : 240,
+        "Osc Beat Frequency" : 0.80000001192092896,
+        "Osc Base Frequency" : 256,
+        "Filter LFO Rate" : 4,
+        "Osc Amplitude" : 0.53379946947097778
+      },
+      {
+        "Filter G" : 1,
+        "Filter Enable" : false,
+        "Tunings" : [
+          1,
+          2
+        ],
+        "Filter Type" : 0,
+        "RampTime_ms" : 100,
+        "Filter LFO Range" : 100,
+        "Osc Mononess" : 0.34146341681480408,
+        "Filter LFO Enable" : false,
+        "Filter LFO Offset" : 0,
+        "Idx" : 1,
+        "Filter Q" : 0.70710676908493042,
+        "Osc Wave" : 0,
+        "Filter Cutoff" : 240,
+        "Osc Beat Frequency" : 0.40000000596046448,
+        "Osc Base Frequency" : 128,
+        "Filter LFO Rate" : 4,
+        "Osc Amplitude" : 0.43356642127037048
+      },
+      {
+        "Filter G" : 1,
+        "Filter Enable" : false,
+        "Tunings" : [
+          5,
+          4
+        ],
+        "Filter Type" : 0,
+        "RampTime_ms" : 100,
+        "Filter LFO Range" : 100,
+        "Osc Mononess" : 0,
+        "Filter LFO Enable" : false,
+        "Filter LFO Offset" : 0,
+        "Idx" : 2,
+        "Filter Q" : 0.70710676908493042,
+        "Osc Wave" : 0,
+        "Filter Cutoff" : 240,
+        "Osc Beat Frequency" : 1.2000000476837158,
+        "Osc Base Frequency" : 320,
+        "Filter LFO Rate" : 4,
+        "Osc Amplitude" : 0.51048952341079712
+      },
+      {
+        "Filter G" : 1,
+        "Filter Enable" : false,
+        "Tunings" : [
+          4,
+          3
+        ],
+        "Filter Type" : 0,
+        "RampTime_ms" : 100,
+        "Filter LFO Range" : 100,
+        "Osc Mononess" : 0,
+        "Filter LFO Enable" : false,
+        "Filter LFO Offset" : 0,
+        "Idx" : 3,
+        "Filter Q" : 0.70710676908493042,
+        "Osc Wave" : 0,
+        "Filter Cutoff" : 240,
+        "Osc Beat Frequency" : 0,
+        "Osc Base Frequency" : 341.33334350585938,
+        "Filter LFO Rate" : 4,
+        "Osc Amplitude" : 0.26806524395942688
+      },
+      {
+        "Filter G" : 1,
+        "Filter Enable" : false,
+        "Tunings" : [
+          3,
+          2
+        ],
+        "Filter Type" : 0,
+        "RampTime_ms" : 100,
+        "Filter LFO Range" : 100,
+        "Osc Mononess" : 0,
+        "Filter LFO Enable" : false,
+        "Filter LFO Offset" : 0,
+        "Idx" : 4,
+        "Filter Q" : 0.70710676908493042,
+        "Osc Wave" : 0,
+        "Filter Cutoff" : 240,
+        "Osc Beat Frequency" : 0,
+        "Osc Base Frequency" : 384,
+        "Filter LFO Rate" : 4,
+        "Osc Amplitude" : 0.52680647373199463
+      },
+      {
+        "Filter G" : 1,
+        "Filter Enable" : false,
+        "Tunings" : [
+          5,
+          3
+        ],
+        "Filter Type" : 0,
+        "RampTime_ms" : 100,
+        "Filter LFO Range" : 100,
+        "Osc Mononess" : 0,
+        "Filter LFO Enable" : false,
+        "Filter LFO Offset" : 0,
+        "Idx" : 5,
+        "Filter Q" : 0.70710676908493042,
+        "Osc Wave" : 0,
+        "Filter Cutoff" : 240,
+        "Osc Beat Frequency" : 0,
+        "Osc Base Frequency" : 426.66665649414062,
+        "Filter LFO Rate" : 4,
+        "Osc Amplitude" : 0.26340320706367493
+      },
+      {
+        "Filter G" : 1,
+        "Filter Enable" : false,
+        "Tunings" : [
+          7,
+          4
+        ],
+        "Filter Type" : 0,
+        "RampTime_ms" : 100,
+        "Filter LFO Range" : 100,
+        "Osc Mononess" : 0,
+        "Filter LFO Enable" : false,
+        "Filter LFO Offset" : 0,
+        "Idx" : 6,
+        "Filter Q" : 0.70710676908493042,
+        "Osc Wave" : 0,
+        "Filter Cutoff" : 240,
+        "Osc Beat Frequency" : 0,
+        "Osc Base Frequency" : 448,
+        "Filter LFO Rate" : 4,
+        "Osc Amplitude" : 0.55011647939682007
+      },
+      {
+        "Filter G" : 1.5977009534835815,
+        "Filter Enable" : true,
+        "Tunings" : [
+          2,
+          1
+        ],
+        "Filter Type" : 0,
+        "RampTime_ms" : 100,
+        "Filter LFO Range" : 216.27293395996094,
+        "Osc Mononess" : 0.070460624992847443,
+        "Filter LFO Enable" : true,
+        "Filter LFO Offset" : 3.9744031429290771,
+        "Idx" : 7,
+        "Filter Q" : 1.2413792610168457,
+        "Osc Wave" : 0,
+        "Filter Cutoff" : 240,
+        "Osc Beat Frequency" : 3.5999999046325684,
+        "Osc Base Frequency" : 512,
+        "Filter LFO Rate" : 0.20000000298023224,
+        "Osc Amplitude" : 0.60139858722686768
+      },
+      {
+        "Filter G" : 1,
+        "Filter Enable" : true,
+        "Tunings" : [
+          9,
+          4
+        ],
+        "Filter Type" : 0,
+        "RampTime_ms" : 100,
+        "Filter LFO Range" : 100,
+        "Osc Mononess" : 0,
+        "Filter LFO Enable" : true,
+        "Filter LFO Offset" : 0,
+        "Idx" : 8,
+        "Filter Q" : 1,
+        "Osc Wave" : 3,
+        "Filter Cutoff" : 240,
+        "Osc Beat Frequency" : 0,
+        "Osc Base Frequency" : 576,
+        "Filter LFO Rate" : 4,
+        "Osc Amplitude" : 0
+      },
+      {
+        "Filter G" : 2.1666665077209473,
+        "Filter Enable" : true,
+        "Tunings" : [
+          8,
+          3
+        ],
+        "Filter Type" : 0,
+        "RampTime_ms" : 100,
+        "Filter LFO Range" : 168,
+        "Osc Mononess" : 0,
+        "Filter LFO Enable" : true,
+        "Filter LFO Offset" : 5.2112507820129395,
+        "Idx" : 9,
+        "Filter Q" : 2.3275861740112305,
+        "Osc Wave" : 3,
+        "Filter Cutoff" : 300,
+        "Osc Beat Frequency" : 0,
+        "Osc Base Frequency" : 682.66668701171875,
+        "Filter LFO Rate" : 0.20000000298023224,
+        "Osc Amplitude" : 0
+      }
+    ],
+    "Num Sources" : 10,
+    "Base RampTime_ms" : 200
+  }
+}
