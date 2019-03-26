@@ -7,15 +7,11 @@
 //
 
 #import "TWForceButton.h"
+#import "TWHeader.h"
 
 static const CGFloat kTextLabelMargin       = 2.0f;
 static const CGFloat kLongPressTime_s       = 1.0f;
 static const CGFloat kLongPressInterval_s   = 0.05f;
-
-typedef enum {
-    TouchState_Up,
-    TouchState_Down
-} TWTouchState;
 
 @interface TWForceButton()
 {
@@ -44,7 +40,7 @@ typedef enum {
 
 - (void)initialize {
     _selected = NO;
-    _touchState = TouchState_Up;
+    _touchState = TWTouchState_Up;
     _ignoreEvents = NO;
     
     _defaultBackgroundColor = [[UIColor alloc] initWithWhite:0.0f alpha:1.0f];
@@ -100,7 +96,7 @@ typedef enum {
 #pragma mark - Touch Events
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    _touchState = TouchState_Down;
+    _touchState = TWTouchState_Down;
     [_feedbackGenerator prepare];
     [_forceView setFrame:_forceViewCenterRect];
     
@@ -143,6 +139,13 @@ typedef enum {
     }
     _ignoreEvents = NO;
     [_forceView setFrame:CGRectZero];
+}
+
+
+- (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    _longPressElapsedTime = 0.0f;
+    [_longPressTimer invalidate];
+    _ignoreEvents = NO;
 }
 
 

@@ -16,6 +16,7 @@
 #import "TWLoadProjectViewController.h"
 #import "TWFrequencyChartViewController.h"
 #import "TWSequencerViewController.h"
+#import "TWDrumPadViewController.h"
 #import "TWKeyboardAccessoryView.h"
 #import "TWLevelMeterView.h"
 
@@ -24,6 +25,7 @@
 {
     UIButton*                   _ioButton;
     UIButton*                   _viewSequencerButton;
+    UIButton*                   _viewDrumPadButton;
     UIButton*                   _resetPhaseButton;
     
     TWMixerView*                _mixerView;
@@ -66,11 +68,19 @@
     
     _viewSequencerButton = [[UIButton alloc] init];
     [_viewSequencerButton setTitle:@"Sequencer >" forState:UIControlStateNormal];
-    [_viewSequencerButton setBackgroundColor:[UIColor colorWithWhite:0.11 alpha:1.0]];
+    [_viewSequencerButton setBackgroundColor:[UIColor colorWithWhite:0.1 alpha:1.0]];
     [_viewSequencerButton setTitleColor:[UIColor colorWithWhite:0.6f alpha:1.0f] forState:UIControlStateNormal];
     [[_viewSequencerButton titleLabel] setFont:[UIFont systemFontOfSize:13.0f]];
     [_viewSequencerButton addTarget:self action:@selector(viewSequencerButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_viewSequencerButton];
+    
+    _viewDrumPadButton = [[UIButton alloc] init];
+    [_viewDrumPadButton setTitle:@"Drum Pad >" forState:UIControlStateNormal];
+    [_viewDrumPadButton setBackgroundColor:[UIColor colorWithWhite:0.13 alpha:1.0]];
+    [_viewDrumPadButton setTitleColor:[UIColor colorWithWhite:0.6f alpha:1.0f] forState:UIControlStateNormal];
+    [[_viewDrumPadButton titleLabel] setFont:[UIFont systemFontOfSize:13.0f]];
+    [_viewDrumPadButton addTarget:self action:@selector(viewDrumPadButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:_viewDrumPadButton];
     
     _resetPhaseButton = [[UIButton alloc] init];
     [_resetPhaseButton setTitle:@"Reset Phase" forState:UIControlStateNormal];
@@ -212,7 +222,7 @@
     CGFloat screenWidth  = self.view.frame.size.width - (2.0f * xMargin);
     CGFloat screenHeight  = self.view.frame.size.height - self.view.safeAreaInsets.bottom;
     
-    CGFloat titleButtonWidth = screenWidth / 3.0f;
+    CGFloat titleButtonWidth = screenWidth / 4.0f;
     
     
     UIInterfaceOrientation orienation = [[UIApplication sharedApplication] statusBarOrientation];
@@ -226,6 +236,9 @@
     
     xPos += titleButtonWidth;
     [_viewSequencerButton setFrame:CGRectMake(xPos, yPos, titleButtonWidth, componentHeight)];
+    
+    xPos += titleButtonWidth;
+    [_viewDrumPadButton setFrame:CGRectMake(xPos, yPos, titleButtonWidth, componentHeight)];
     
     xPos += titleButtonWidth;
     [_resetPhaseButton setFrame:CGRectMake(xPos, yPos, titleButtonWidth, componentHeight)];
@@ -337,7 +350,7 @@
 }
 
 - (void)resetButtonTouchUp:(UIButton*)sender {
-    [[TWAudioController sharedController] resetPhaseInSamples:10000];
+    [[TWAudioController sharedController] resetPhaseInSamples:100];
     [sender setBackgroundColor:[UIColor colorWithWhite:0.14 alpha:1.0]];
 }
 
@@ -377,6 +390,11 @@
 - (void)viewSequencerButtonTapped:(UIButton*)sender {
     TWSequencerViewController* vc = [[TWSequencerViewController alloc] init];
     [vc setOscView:_oscView];
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (void)viewDrumPadButtonTapped:(UIButton*)sender {
+    TWDrumPadViewController* vc = [[TWDrumPadViewController alloc] init];
     [self.navigationController pushViewController:vc animated:YES];
 }
 

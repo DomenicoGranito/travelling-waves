@@ -36,6 +36,9 @@
 		FC356C992223D8C400B93F5C /* TWLevelMeterView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C8D2223D8C400B93F5C /* TWLevelMeterView.m */; };
 		FC356C9A2223D8C400B93F5C /* TWMixerView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C8E2223D8C400B93F5C /* TWMixerView.m */; };
 		FC356C9B2223D8C400B93F5C /* TWForceButton.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C8F2223D8C400B93F5C /* TWForceButton.m */; };
+		FC42C729224A187F003253EF /* TestKick.wav in Resources */ = {isa = PBXBuildFile; fileRef = FC42C728224A187F003253EF /* TestKick.wav */; };
+		FC42C72B224A34AB003253EF /* Embryo Synth.wav in Resources */ = {isa = PBXBuildFile; fileRef = FC42C72A224A34AB003253EF /* Embryo Synth.wav */; };
+		FC42C72D224A39FF003253EF /* LRTest.wav in Resources */ = {isa = PBXBuildFile; fileRef = FC42C72C224A39FF003253EF /* LRTest.wav */; };
 		FCBDC336218462CA00E7695C /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCBDC335218462CA00E7695C /* AudioToolbox.framework */; };
 		FCBDC344218463A700E7695C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FCBDC33D218463A700E7695C /* main.m */; };
 		FCBDC345218463A700E7695C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FCBDC33E218463A700E7695C /* AppDelegate.m */; };
@@ -51,6 +54,9 @@
 		FCD6046A2223E4F2004164AC /* Some Moving Fifths.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604642223E4F2004164AC /* Some Moving Fifths.json */; };
 		FCD6046B2223E4F2004164AC /* Triplet Fifths.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604652223E4F2004164AC /* Triplet Fifths.json */; };
 		FCD6046C2223E4F2004164AC /* Test Movement.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604662223E4F2004164AC /* Test Movement.json */; };
+		FCDE36E92244D0790066DA95 /* TWDrumPadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FCDE36E82244D0790066DA95 /* TWDrumPadViewController.m */; };
+		FCDE36EC2244D2650066DA95 /* TWDrumPad.m in Sources */ = {isa = PBXBuildFile; fileRef = FCDE36EB2244D2650066DA95 /* TWDrumPad.m */; };
+		FCE3BA9422498F4300D28B60 /* TWFileStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCE3BA9222498F4300D28B60 /* TWFileStream.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -128,6 +134,9 @@
 		FC356C8D2223D8C400B93F5C /* TWLevelMeterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWLevelMeterView.m; sourceTree = "<group>"; };
 		FC356C8E2223D8C400B93F5C /* TWMixerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWMixerView.m; sourceTree = "<group>"; };
 		FC356C8F2223D8C400B93F5C /* TWForceButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWForceButton.m; sourceTree = "<group>"; };
+		FC42C728224A187F003253EF /* TestKick.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = TestKick.wav; sourceTree = "<group>"; };
+		FC42C72A224A34AB003253EF /* Embryo Synth.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "Embryo Synth.wav"; sourceTree = "<group>"; };
+		FC42C72C224A39FF003253EF /* LRTest.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = LRTest.wav; sourceTree = "<group>"; };
 		FCBDC2FE2184626F00E7695C /* Travelling Waves.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Travelling Waves.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FCBDC3162184627000E7695C /* Travelling Waves Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Travelling Waves Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FCBDC3212184627000E7695C /* Travelling Waves UI Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Travelling Waves UI Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -156,6 +165,12 @@
 		FCD604642223E4F2004164AC /* Some Moving Fifths.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "Some Moving Fifths.json"; sourceTree = "<group>"; };
 		FCD604652223E4F2004164AC /* Triplet Fifths.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "Triplet Fifths.json"; sourceTree = "<group>"; };
 		FCD604662223E4F2004164AC /* Test Movement.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "Test Movement.json"; sourceTree = "<group>"; };
+		FCDE36E72244D0790066DA95 /* TWDrumPadViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TWDrumPadViewController.h; sourceTree = "<group>"; };
+		FCDE36E82244D0790066DA95 /* TWDrumPadViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TWDrumPadViewController.m; sourceTree = "<group>"; };
+		FCDE36EA2244D2650066DA95 /* TWDrumPad.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TWDrumPad.h; sourceTree = "<group>"; };
+		FCDE36EB2244D2650066DA95 /* TWDrumPad.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TWDrumPad.m; sourceTree = "<group>"; };
+		FCE3BA9222498F4300D28B60 /* TWFileStream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TWFileStream.cpp; sourceTree = "<group>"; };
+		FCE3BA9322498F4300D28B60 /* TWFileStream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TWFileStream.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -225,6 +240,8 @@
 				FC356C792223D8C400B93F5C /* TWFrequencyChartViewController.m */,
 				FC356C7E2223D8C400B93F5C /* TWSequencerViewController.h */,
 				FC356C7A2223D8C400B93F5C /* TWSequencerViewController.m */,
+				FCDE36E72244D0790066DA95 /* TWDrumPadViewController.h */,
+				FCDE36E82244D0790066DA95 /* TWDrumPadViewController.m */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -248,8 +265,28 @@
 				FC356C862223D8C400B93F5C /* TWOscView.m */,
 				FC356C872223D8C400B93F5C /* TWForceButton.h */,
 				FC356C8F2223D8C400B93F5C /* TWForceButton.m */,
+				FCDE36EA2244D2650066DA95 /* TWDrumPad.h */,
+				FCDE36EB2244D2650066DA95 /* TWDrumPad.m */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		FC42C726224A187F003253EF /* Samples */ = {
+			isa = PBXGroup;
+			children = (
+				FC42C727224A187F003253EF /* E-Drums */,
+			);
+			path = Samples;
+			sourceTree = "<group>";
+		};
+		FC42C727224A187F003253EF /* E-Drums */ = {
+			isa = PBXGroup;
+			children = (
+				FC42C72C224A39FF003253EF /* LRTest.wav */,
+				FC42C72A224A34AB003253EF /* Embryo Synth.wav */,
+				FC42C728224A187F003253EF /* TestKick.wav */,
+			);
+			path = "E-Drums";
 			sourceTree = "<group>";
 		};
 		FCBDC2F52184626F00E7695C = {
@@ -310,6 +347,7 @@
 		FCBDC3482184666C00E7695C /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				FC42C726224A187F003253EF /* Samples */,
 				FCD604602223E4F2004164AC /* Projects */,
 				FCD604542223E0D5004164AC /* EqualTemperament.json */,
 				FCD604552223E0D5004164AC /* OsterCurve.json */,
@@ -352,6 +390,8 @@
 		FCBDC361218532B900E7695C /* Audio */ = {
 			isa = PBXGroup;
 			children = (
+				FC356C3F2223D0F500B93F5C /* Oscillator */,
+				FCE3BA9122498F1300D28B60 /* Filestream */,
 				FC356C622223D10400B93F5C /* TWHeader.h */,
 				FC356C5C2223D10400B93F5C /* TWMasterController.h */,
 				FC356C522223D10300B93F5C /* TWMasterController.mm */,
@@ -371,7 +411,6 @@
 				FC356C5E2223D10400B93F5C /* TWRingBuffer.cpp */,
 				FC356C562223D10300B93F5C /* TWSequencer.h */,
 				FC356C532223D10300B93F5C /* TWSequencer.cpp */,
-				FC356C3F2223D0F500B93F5C /* Oscillator */,
 			);
 			path = Audio;
 			sourceTree = "<group>";
@@ -387,6 +426,15 @@
 				FCD604662223E4F2004164AC /* Test Movement.json */,
 			);
 			path = Projects;
+			sourceTree = "<group>";
+		};
+		FCE3BA9122498F1300D28B60 /* Filestream */ = {
+			isa = PBXGroup;
+			children = (
+				FCE3BA9222498F4300D28B60 /* TWFileStream.cpp */,
+				FCE3BA9322498F4300D28B60 /* TWFileStream.h */,
+			);
+			path = Filestream;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -500,13 +548,16 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC42C729224A187F003253EF /* TestKick.wav in Resources */,
 				FCD6046B2223E4F2004164AC /* Triplet Fifths.json in Resources */,
+				FC42C72B224A34AB003253EF /* Embryo Synth.wav in Resources */,
 				FCD604692223E4F2004164AC /* Dorianish Movement.json in Resources */,
 				FCD6045E2223E0D5004164AC /* OsterCurve.json in Resources */,
 				FCD6045D2223E0D5004164AC /* EqualTemperament.json in Resources */,
 				FCD6046A2223E4F2004164AC /* Some Moving Fifths.json in Resources */,
 				FCD6046C2223E4F2004164AC /* Test Movement.json in Resources */,
 				FCD604672223E4F2004164AC /* Organ-like.json in Resources */,
+				FC42C72D224A39FF003253EF /* LRTest.wav in Resources */,
 				FCD604682223E4F2004164AC /* Dorianish.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -532,7 +583,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FCDE36EC2244D2650066DA95 /* TWDrumPad.m in Sources */,
 				FC356C4D2223D0F500B93F5C /* TWBiquad.cpp in Sources */,
+				FCE3BA9422498F4300D28B60 /* TWFileStream.cpp in Sources */,
 				FC356C902223D8C400B93F5C /* TWLoadProjectViewController.m in Sources */,
 				FC356C942223D8C400B93F5C /* TWSeqNoteButton.m in Sources */,
 				FCBDC3602184720A00E7695C /* TWViewController.m in Sources */,
@@ -543,6 +596,7 @@
 				FC356C912223D8C400B93F5C /* TWFrequencyChartViewController.m in Sources */,
 				FC356C512223D0F500B93F5C /* TWTremolo.cpp in Sources */,
 				FC356C502223D0F500B93F5C /* TWBinauralSynth.cpp in Sources */,
+				FCDE36E92244D0790066DA95 /* TWDrumPadViewController.m in Sources */,
 				FC356C992223D8C400B93F5C /* TWLevelMeterView.m in Sources */,
 				FC356C682223D10400B93F5C /* TWRingBuffer.cpp in Sources */,
 				FC356C982223D8C400B93F5C /* TWEnvelopeView.m in Sources */,

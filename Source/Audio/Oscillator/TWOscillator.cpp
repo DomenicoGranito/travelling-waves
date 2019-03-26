@@ -9,6 +9,7 @@
 #include "TWOscillator.h"
 #include <math.h>
 #include <stdlib.h>
+#include <cstdarg>
 
 #define DEBUG_PRINT     0
 
@@ -38,6 +39,7 @@ TWOscillator::TWOscillator()
     _setIsRunning(false);
     
     _debug  = 0;
+    _debugID = 0;
 }
 
 TWOscillator::~TWOscillator()
@@ -131,10 +133,10 @@ void TWOscillator::setPhaseOfst(float newPhaseOfst, float rampTime_ms)
 
 void TWOscillator::resetPhase(float rampTimeInSamples)
 {
-    _isResettingPhase = true;
     if (rampTimeInSamples == 0.0) {
         _phase = 0.0f;
     } else {
+        _isResettingPhase = true;
         _phaseResetIncrement = (M_2PI - _phase) / rampTimeInSamples;
     }
 }
@@ -167,9 +169,9 @@ float TWOscillator::getPhaseOfst()
 
 float TWOscillator::_getPhase()
 {
-    if (_phase == 0.0f) {
+    if ((_phase + _phaseIncrement) >= M_2PI) {
         if (_isResettingPhase) {
-            printf("Bingo! Reset Inc: %f\n", _phaseResetIncrement);
+//            _log("Bingo! Reset Inc: %f. Act Inc: %f\n", _phaseResetIncrement, _phaseIncrement);
         }
         _isResettingPhase = false;
     }
@@ -179,6 +181,7 @@ float TWOscillator::_getPhase()
         _phaseIncrement = (M_2PI * _frequency.getCurrentValue() / _sampleRate);
     }
     _phase = fmodf(_phase + _phaseIncrement, M_2PI);
+//    _log("Phase: %f. Inc: %f\n", _phase, _phaseIncrement);
     return fmodf(_phase + _phaseOffset.getCurrentValue(), M_2PI);
 }
 
@@ -188,4 +191,20 @@ void TWOscillator::_setIsRunning(bool isRunning)
     _amplitude.setIsRunning(isRunning);
     _dutyCycle.setIsRunning(isRunning);
     _phaseOffset.setIsRunning(isRunning);
+}
+
+
+void TWOscillator::setDebugID(int debugID)
+{
+    _debugID = debugID;
+}
+
+void TWOscillator::_log(const char * format, ...)
+{
+    if (_debugID == 1) {
+        va_list argptr;
+        va_start(argptr, format);
+        vfprintf(stderr, format, argptr);
+        va_end(argptr);
+    }
 }

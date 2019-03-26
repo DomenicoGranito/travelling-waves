@@ -62,6 +62,8 @@ float TWRingBuffer::readAndIncIdx()
 void TWRingBuffer::reset()
 {
     std::memset(_buffer, 0, sizeof(float) * _size);
+    _readIdx = 0;
+    _writeIdx = 0;
 }
 
 void TWRingBuffer::offsetReadIdx(int offset)
@@ -82,6 +84,16 @@ int TWRingBuffer::getReadIdx()
 int TWRingBuffer::getWriteIdx()
 {
     return _writeIdx;
+}
+
+void TWRingBuffer::setReadIdx(int newReadIdx)
+{
+    _readIdx = newReadIdx % _size;
+}
+
+void TWRingBuffer::setWriteIdx(int newWriteIdx)
+{
+    _writeIdx = newWriteIdx % _size;
 }
 
 

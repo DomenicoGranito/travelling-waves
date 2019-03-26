@@ -1,5 +1,5 @@
 //
-//  SequencerViewController.h
+//  TWSequencerViewController.h
 //  Travelling Waves
 //
 //  Created by Govinda Ram Pingali on 10/5/18.

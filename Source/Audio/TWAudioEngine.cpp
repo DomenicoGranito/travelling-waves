@@ -24,6 +24,7 @@
 TWAudioEngine::TWAudioEngine()
 {
     _sampleRate = kDefaultSampleRate;
+    _readQueue = dispatch_queue_create("File Read Queue", NULL);
     
     for (int sourceIdx=0; sourceIdx < kNumSources; sourceIdx++) {
         
@@ -36,6 +37,8 @@ TWAudioEngine::TWAudioEngine()
         
         _solos[sourceIdx] = false;
         _soloGains[sourceIdx].setTargetValue(1.0f, 0.0f);
+        
+        _fileStreams[sourceIdx].setReadQueue(_readQueue);
     }
     
     
@@ -52,6 +55,8 @@ TWAudioEngine::TWAudioEngine()
     
     _setupGain.setTargetValue(1.0f, 0.0f);
     _setupGain.setIsRunning(true);
+    
+    _synths[0].setDebugID(1);
 }
 
 TWAudioEngine::~TWAudioEngine()
@@ -60,6 +65,9 @@ TWAudioEngine::~TWAudioEngine()
     for (int sourceIdx=0; sourceIdx < kNumSources; sourceIdx++) {
         _seqNotes[sourceIdx].clear();
     }
+    
+    dispatch_release(_readQueue);
+    _readQueue = nullptr;
 }
 
 
@@ -86,6 +94,8 @@ void TWAudioEngine::prepare(float sampleRate)
         _synths[sourceIdx].prepare(sampleRate);
         _biquads[sourceIdx].prepare(sampleRate);
         _tremolos[sourceIdx].prepare(sampleRate);
+        
+        _fileStreams[sourceIdx].prepare(sampleRate);
         
         _soloGains[sourceIdx].setIsRunning(true);
     }
@@ -122,6 +132,8 @@ void TWAudioEngine::process(float *leftBuffer, float *rightBuffer, int frameCoun
             _biquads[sourceIdx].process(_sourceBuffers[sourceIdx].leftSample, _sourceBuffers[sourceIdx].rightSample);
             _seqEnvelopes[sourceIdx].process(_sourceBuffers[sourceIdx].leftSample, _sourceBuffers[sourceIdx].rightSample);
             
+            _fileStreams[sourceIdx].getSample(_sourceBuffers[sourceIdx].leftSample, _sourceBuffers[sourceIdx].rightSample);
+            
             float soloGain = _soloGains[sourceIdx].getCurrentValue();
             leftBuffer[frame]  += _sourceBuffers[sourceIdx].leftSample  * soloGain / kNumSources;
             rightBuffer[frame] += _sourceBuffers[sourceIdx].rightSample * soloGain / kNumSources;
@@ -155,6 +167,7 @@ void TWAudioEngine::release()
         _biquads[sourceIdx].release();
         _tremolos[sourceIdx].release();
         _soloGains[sourceIdx].setIsRunning(false);
+        _fileStreams[sourceIdx].release();
     }
     
     for (int channel=0; channel < kNumChannels; channel++) {
@@ -624,6 +637,38 @@ float TWAudioEngine::getOscParameterAtSourceIdx(int sourceIdx, int paramID)
     
     return value;
 }
+
+
+
+//============================================================
+// Drum Pad
+//============================================================
+int TWAudioEngine::loadAudioFileAtSourceIdx(int sourceIdx, std::string filepath)
+{
+    return _fileStreams[sourceIdx].loadAudioFile(filepath);
+}
+
+void TWAudioEngine::startPlaybackAtSourceIdx(int sourceIdx, uint64_t sampleTime)
+{
+    _fileStreams[sourceIdx].start(sampleTime);
+}
+
+void TWAudioEngine::stopPlaybackAtSourceIdx(int sourceIdx)
+{
+    _fileStreams[sourceIdx].stop();
+}
+
+void TWAudioEngine::setPlaybackParameterAtSourceIdx(int sourceIdx, int paramID, float value, float rampTime_ms = 0.0f)
+{
+//    _fileStreams[sourceIdx].set
+}
+
+bool TWAudioEngine::getPlaybackParameterAtSourceIdx(int sourceIdx, int paramID)
+{
+    return 0.0f;
+}
+
+
 
 
 

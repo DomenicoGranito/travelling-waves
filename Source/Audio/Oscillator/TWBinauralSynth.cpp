@@ -244,3 +244,9 @@ void TWBinauralSynth::_calculateFrequencies(float rampTime_ms)
     _oscillators[0].setFrequency(leftFrequency, rampTime_ms);
     _oscillators[1].setFrequency(rightFrequency, rampTime_ms);
 }
+
+
+void TWBinauralSynth::setDebugID(int debugID)
+{
+    _oscillators[0].setDebugID(debugID);
+}

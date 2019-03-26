@@ -53,6 +53,8 @@ public:
     float getFMAmount();
     float getFMFrequency();
     
+    void setDebugID(int debugID);
+    
     
 private:
     

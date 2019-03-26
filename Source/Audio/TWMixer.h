@@ -13,6 +13,8 @@
 #include <vector>
 #include <array>
 
+#include <dispatch/dispatch.h>
+
 #include "TWBinauralSynth.h"
 #include "TWOscillator.h"
 #include "TWBinauralBiquad.h"
@@ -21,6 +23,7 @@
 #include "TWParameter.h"
 #include "TWHeader.h"
 #include "TWSequencer.h"
+#include "TWFileStream.h"
 
 
 class TWMixer {
@@ -155,6 +158,17 @@ public:
     float getSeqFltResonanceAtSourceIdx(int sourceIdx);
     
     
+    
+    //--- Audio File Playback Stream ---//
+    int loadAudioFileAtSourceIdx(int sourceIdx, std::string filepath);
+    void startPlaybackAtSourceIdx(int sourceIdx, uint64_t sampleTime);
+    void stopPlaybackAtSourceIdx(int sourceIdx);
+    void setPlaybackLoopingAtSourceIdx(int sourceIdx, bool isLooping);
+    bool getPlaybackLoopingAtSourceIdx(int sourceIdx);
+    float getNormalizedPlaybackProgressAtSourceIdx(int sourceIdx);
+    bool getPlaybackStatusAtSourceIdx(int sourceIdx);
+    
+    
 private:
     
     float                                       _sampleRate;
@@ -178,6 +192,9 @@ private:
     
     
     TWSequencer*                                _sequencer;
+    
+    TWFileStream*                               _fileStream;
+    dispatch_queue_t                            _readQueue;
     
     
     void log(const char * format, ...);

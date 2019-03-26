@@ -97,11 +97,38 @@
 #define kSeqParam_FltQ                      11
 #define kSeqNumParams                       11
 
+//#define kPadParam_Start                     1
+//#define kSeqParam_AmpSustainTime            2
+
+/* Audio File Playback Stream */
+#define kAudioFileReadBufferSize            32768
+
+
 
 struct TWFrame {
     float leftSample;
     float rightSample;
 };
+
+
+typedef enum : int {
+    TWDrumPadMode_OneShot       = 0,
+    TWDrumPadMode_Momentary     = 1,
+    TWDrumPadMode_Toggle        = 2
+} TWDrumPadMode;
+
+
+typedef enum {
+    TWTouchState_Up,
+    TWTouchState_Down
+} TWTouchState;
+
+
+typedef enum {
+    TWPlaybackStatus_Stopped    = 0,
+    TWPlaybackStatus_Playing    = 1,
+    TWPlaybackStatus_Recording  = 2,
+} TWPlaybackStatus;
 
 
 #endif /* TWHeader_h */

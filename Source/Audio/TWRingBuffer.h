@@ -25,6 +25,9 @@ public:
     void offsetReadIdx(int offset);
     void offsetWriteIdx(int offset);
     
+    void setReadIdx(int newReadIdx);
+    void setWriteIdx(int newWriteIdx);
+    
     int getReadIdx();
     int getWriteIdx();
     

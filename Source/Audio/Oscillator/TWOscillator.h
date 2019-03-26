@@ -43,6 +43,8 @@ public:
     float getDutyCycle();
     float getPhaseOfst();
     
+    void setDebugID(int debugID);
+    
 private:
     
     float           _sampleRate;
@@ -61,8 +63,10 @@ private:
     float           _phaseResetIncrement;
     
     void            _setIsRunning(bool isRunning);
+    void            _log(const char * format, ...);
     
     int             _debug;
+    int             _debugID;
 };
 
 #endif /* TWOscillator_h */

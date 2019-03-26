@@ -54,6 +54,7 @@ static const CGFloat kProgressBarUpdateInterval    = 0.1f;  // 50ms
     NSTimer*                    _progressBarTimer;
     
     UIButton*                   _backButton;
+    UIButton*                   _ioButton;
     UIButton*                   _clearAllButton;
 }
 
@@ -80,6 +81,15 @@ static const CGFloat kProgressBarUpdateInterval    = 0.1f;  // 50ms
     [[_backButton titleLabel] setFont:[UIFont systemFontOfSize:13.0f]];
     [_backButton addTarget:self action:@selector(backButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_backButton];
+    
+    _ioButton = [[UIButton alloc] init];
+    [_ioButton setTitle:@"Start Audio I/O" forState:UIControlStateNormal];
+    [_ioButton setTitle:@"Stop Audio I/O" forState:UIControlStateSelected];
+    [_ioButton setBackgroundColor:[UIColor colorWithWhite:0.06 alpha:1.0]];
+    [_ioButton setTitleColor:[UIColor colorWithWhite:0.6f alpha:1.0f] forState:UIControlStateNormal];
+    [[_ioButton titleLabel] setFont:[UIFont systemFontOfSize:13.0f]];
+    [_ioButton addTarget:self action:@selector(ioButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:_ioButton];
 
     _durationTextField = [[UITextField alloc] init];
     [_durationTextField setTextColor:[UIColor colorWithWhite:0.4f alpha:1.0f]];
@@ -88,7 +98,7 @@ static const CGFloat kProgressBarUpdateInterval    = 0.1f;  // 50ms
     [_durationTextField setKeyboardType:UIKeyboardTypeDecimalPad];
     [_durationTextField setKeyboardAppearance:UIKeyboardAppearanceDark];
     [_durationTextField setInputAccessoryView:accView];
-    [_durationTextField setBackgroundColor:[UIColor colorWithWhite:0.08f alpha:1.0f]];
+    [_durationTextField setBackgroundColor:[UIColor colorWithWhite:0.1f alpha:1.0f]];
     [_durationTextField setDelegate:self];
     [self.view addSubview:_durationTextField];
     
@@ -186,6 +196,8 @@ static const CGFloat kProgressBarUpdateInterval    = 0.1f;  // 50ms
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:YES animated:animated];
     
+    [self updateIOButtonState:[[TWAudioController sharedController] isRunning]];
+    
     for (int sourceIdx = 0; sourceIdx < kNumSources; sourceIdx++) {
         [self updateSourceEnableButton:_sourceEnableButtons[sourceIdx] withState:[[TWAudioController sharedController] getSeqEnabledAtSourceIdx:sourceIdx]];
     }
@@ -211,7 +223,7 @@ static const CGFloat kProgressBarUpdateInterval    = 0.1f;  // 50ms
     CGFloat screenWidth  = self.view.frame.size.width - (2.0f * xMargin);
     CGFloat screenHeight  = self.view.frame.size.height - self.view.safeAreaInsets.bottom;
     
-    CGFloat titleButtonWidth = screenWidth / 3.0f;
+    CGFloat titleButtonWidth = screenWidth / 4.0f;
     
     
     UIInterfaceOrientation orienation = [[UIApplication sharedApplication] statusBarOrientation];
@@ -221,6 +233,9 @@ static const CGFloat kProgressBarUpdateInterval    = 0.1f;  // 50ms
     
     
     [_backButton setFrame:CGRectMake(xPos, yPos, titleButtonWidth, componentHeight)];
+    
+    xPos += titleButtonWidth;
+    [_ioButton setFrame:CGRectMake(xPos, yPos, titleButtonWidth, componentHeight)];
     
     xPos += titleButtonWidth;
     [_durationTextField setFrame:CGRectMake(xPos, yPos, titleButtonWidth, componentHeight)];
@@ -317,6 +332,16 @@ static const CGFloat kProgressBarUpdateInterval    = 0.1f;  // 50ms
 
 - (void)backButtonTapped:(UIButton*)sender {
     [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)ioButtonTapped:(UIButton*)sender {
+    if ([sender isSelected]) {
+        [[TWAudioController sharedController] stop];
+        [self updateIOButtonState:NO];
+    } else {
+        [[TWAudioController sharedController] start];
+        [self updateIOButtonState:YES];
+    }
 }
 
 - (void)clearAllButtonTapped {
@@ -443,6 +468,15 @@ static const CGFloat kProgressBarUpdateInterval    = 0.1f;  // 50ms
 //    [self updateAndLayoutSeqNoteButtonsForSource:sender.sourceIdx];
 }
 
+- (void)updateIOButtonState:(BOOL)selected {
+    if (selected) {
+        [_ioButton setSelected:YES];
+        [_ioButton setBackgroundColor:[UIColor colorWithWhite:0.14 alpha:1.0]];
+    } else {
+        [_ioButton setSelected:NO];
+        [_ioButton setBackgroundColor:[UIColor colorWithWhite:0.08 alpha:1.0]];
+    }
+}
 
 #pragma mark - ForceButtonDelegate
 

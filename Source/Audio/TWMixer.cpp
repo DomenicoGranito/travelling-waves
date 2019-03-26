@@ -28,7 +28,7 @@ TWMixer::TWMixer()
         _soloGains[idx].setTargetValue(1.0f, 0.0f);
     }
     
-     _soloCount = 0;
+    _soloCount = 0;
     _sampleRate = kDefaultSampleRate;
     _sequencer = new TWSequencer();
     
@@ -57,6 +57,9 @@ TWMixer::~TWMixer()
 //    }
     
     delete _sequencer;
+    dispatch_release(_readQueue);
+    
+    delete _fileStream;
 }
 
 
@@ -88,6 +91,8 @@ void TWMixer::prepare(float sampleRate)
 //    for (size_t idx=0; idx < kNumChannels; idx++) {
 //        _delays[idx].prepare(sampleRate);
 //    }
+    
+    _fileStream->prepare(sampleRate);
 }
 
 void TWMixer::process(float* leftBuffer, float* rightBuffer, int frameCount)
@@ -122,6 +127,9 @@ void TWMixer::process(float* leftBuffer, float* rightBuffer, int frameCount)
         }
         
         
+        _fileStream->getSample(leftBuffer[sample], rightBuffer[sample]);
+        
+        
         // Master Gain
         leftBuffer[sample] *= _leftGain.getCurrentValue();
         rightBuffer[sample] *= _rightGain.getCurrentValue();
@@ -141,6 +149,8 @@ void TWMixer::release()
     }
     
     _sequencer->release();
+    
+    _fileStream->release();
     
 //    for (size_t idx=0; idx < kNumChannels; idx++) {
 //        _delays[idx].release();
@@ -597,6 +607,43 @@ void TWMixer::setSeqFltResonanceAtSourceIdx(int sourceIdx, float resonance, floa
 float TWMixer::getSeqFltResonanceAtSourceIdx(int sourceIdx)
 {
     return _sequencer->getFltResonanceAtSourceIdx(sourceIdx);
+}
+
+
+
+int TWMixer::loadAudioFileAtSourceIdx(int sourceIdx, std::string filepath)
+{
+    return _fileStream->loadAudioFile(filepath);
+}
+
+void TWMixer::startPlaybackAtSourceIdx(int sourceIdx, uint64_t sampleTime)
+{
+    _fileStream->start(sampleTime);
+}
+
+void TWMixer::stopPlaybackAtSourceIdx(int sourceIdx)
+{
+    _fileStream->stop();
+}
+
+void TWMixer::setPlaybackLoopingAtSourceIdx(int sourceIdx, bool isLooping)
+{
+    _fileStream->setLooping(isLooping);
+}
+
+bool TWMixer::getPlaybackLoopingAtSourceIdx(int sourceIdx)
+{
+    return _fileStream->getLooping();
+}
+
+float TWMixer::getNormalizedPlaybackProgressAtSourceIdx(int sourceIdx)
+{
+    return _fileStream->getNormalizedPlaybackProgress();
+}
+
+bool TWMixer::getPlaybackStatusAtSourceIdx(int sourceIdx)
+{
+    return _fileStream->getIsRunning();
 }
 
 

@@ -13,6 +13,8 @@
 #include <vector>
 #include <array>
 
+#include <dispatch/dispatch.h>
+
 #include "TWHeader.h"
 #include "TWEnvelope.h"
 #include "TWBinauralSynth.h"
@@ -20,6 +22,7 @@
 #include "TWTremolo.h"
 #include "TWLevelMeter.h"
 #include "TWParameter.h"
+#include "TWFileStream.h"
 
 class TWAudioEngine {
     
@@ -96,6 +99,16 @@ public:
     
     
     
+    //============================================================
+    // Drum Pad
+    //============================================================
+    int loadAudioFileAtSourceIdx(int sourceIdx, std::string filepath);
+    void startPlaybackAtSourceIdx(int sourceIdx, uint64_t sampleTime);
+    void stopPlaybackAtSourceIdx(int sourceIdx);
+    void setPlaybackParameterAtSourceIdx(int sourceIdx, int paramID, float value, float rampTime_ms);
+    bool getPlaybackParameterAtSourceIdx(int sourceIdx, int paramID);
+    
+    
 private:
     
     float                                           _sampleRate;
@@ -128,6 +141,8 @@ private:
     std::array<TWBinauralBiquad, kNumSources>       _biquads;
     std::array<TWTremolo, kNumSources>              _tremolos;
     
+    std::array<TWFileStream, kNumSources>           _fileStreams;
+    dispatch_queue_t                                _readQueue;
     
     // Private Seq Methods
     void _seqUpdateTotalDurationSamples();

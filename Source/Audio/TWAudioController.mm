@@ -442,4 +442,26 @@ static OSStatus playbackCallback(void *inRefCon,
     return _engine->getOscParameterAtSourceIdx(sourceIdx, paramID);
 }
 
+
+//===== Drum Pad Methods =====//
+- (int)loadAudioFile:(NSString*)filepath atSourceIdx:(int)sourceIdx {
+    return _engine->loadAudioFileAtSourceIdx(sourceIdx, std::string([filepath UTF8String]));
+}
+
+- (void)startPlaybackAtSourceIdx:(int)sourceIdx atSampleTime:(unsigned long long)sampleTime {
+    _engine->startPlaybackAtSourceIdx(sourceIdx, sampleTime);
+}
+
+- (void)stopPlaybackAtSourceIdx:(int)sourceIdx {
+    _engine->stopPlaybackAtSourceIdx(sourceIdx);
+}
+
+- (void)setPlaybackParameter:(int)paramID withValue:(float)value atSourceIdx:(int)sourceIdx inTime:(float)rampTime_ms {
+    _engine->setPlaybackParameterAtSourceIdx(sourceIdx, paramID, value, rampTime_ms);
+}
+
+- (float)getPlaybackParameter:(int)paramID atSourceIdx:(int)sourceIdx {
+    return _engine->getPlaybackParameterAtSourceIdx(sourceIdx, paramID);
+}
+
 @end
