@@ -618,7 +618,7 @@ int TWMixer::loadAudioFileAtSourceIdx(int sourceIdx, std::string filepath)
 
 void TWMixer::startPlaybackAtSourceIdx(int sourceIdx, uint64_t sampleTime)
 {
-    _fileStream->start(sampleTime);
+    
 }
 
 void TWMixer::stopPlaybackAtSourceIdx(int sourceIdx)
@@ -628,12 +628,12 @@ void TWMixer::stopPlaybackAtSourceIdx(int sourceIdx)
 
 void TWMixer::setPlaybackLoopingAtSourceIdx(int sourceIdx, bool isLooping)
 {
-    _fileStream->setLooping(isLooping);
+    
 }
 
 bool TWMixer::getPlaybackLoopingAtSourceIdx(int sourceIdx)
 {
-    return _fileStream->getLooping();
+    return false;
 }
 
 float TWMixer::getNormalizedPlaybackProgressAtSourceIdx(int sourceIdx)

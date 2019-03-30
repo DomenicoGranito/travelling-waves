@@ -16,6 +16,8 @@
 #include "TWHeader.h"
 #include "TWUtils.h"
 
+#include <functional>
+
 
 static TWAudioEngine* _engine;
 static OSStatus playbackCallback(void *inRefCon,
@@ -31,6 +33,14 @@ static OSStatus playbackCallback(void *inRefCon,
 }
 
 
+static void enginePlaybackStatusChanged(int sourceIdx) {
+    TWAudioControllerPlaybackDidEndBlock block = [[TWAudioController sharedController] playbackDidEndBlock];
+    if (block != nil) {
+        block(sourceIdx);
+    }
+}
+
+
 @interface TWAudioController()
 {
     AVAudioFormat*              _currentFormat;
@@ -40,6 +50,7 @@ static OSStatus playbackCallback(void *inRefCon,
 }
 @end
 
+
 @implementation TWAudioController
 
 #pragma mark - Init
@@ -47,17 +58,22 @@ static OSStatus playbackCallback(void *inRefCon,
 - (id)init {
     
     if (self = [super init]) {
-        [self setupAudioSession];
-        [self setupAudioUnit];
-        [self setupAudioEngine];
-        [self setupMediaSession];
-        [self setupNowPlaying];
-        _isRunning = NO;
-        _userInitiatedAudioRunningStatus = NO;
+        [self _initializeAudioServices];
+        [self _setupAudioEngine];
         _delegates = [[NSMutableArray alloc] init];
+        _playbackDidEndBlock = nil;
     }
     
     return self;
+}
+
+- (void)_initializeAudioServices {
+    [self _setupAudioSession];
+    [self _setupAudioUnit];
+    [self _setupMediaSession];
+    [self _setupNowPlaying];
+    _isRunning = NO;
+    _userInitiatedAudioRunningStatus = NO;
 }
 
 
@@ -73,7 +89,7 @@ static OSStatus playbackCallback(void *inRefCon,
 
 #pragma mark - AudioSession
 
-- (void)setupAudioSession {
+- (void)_setupAudioSession {
     
     NSError* error;
     
@@ -97,14 +113,20 @@ static OSStatus playbackCallback(void *inRefCon,
     
     // Listen for Interruptions
     [[NSNotificationCenter defaultCenter] addObserver: self
-                                             selector: @selector(audioSessionInterrupted:)
+                                             selector: @selector(_audioSessionInterrupted:)
                                                  name: AVAudioSessionInterruptionNotification
                                                object: [AVAudioSession sharedInstance]];
     
     // Listen for Route Changes
     [[NSNotificationCenter defaultCenter] addObserver: self
-                                             selector: @selector(audioSessionRouteChanged:)
+                                             selector: @selector(_audioSessionRouteChanged:)
                                                  name: AVAudioSessionRouteChangeNotification
+                                               object: [AVAudioSession sharedInstance]];
+    
+    // Listen for Media Services
+    [[NSNotificationCenter defaultCenter] addObserver: self
+                                             selector: @selector(_audioSessionMediaServicesWereReset:)
+                                                 name: AVAudioSessionMediaServicesWereResetNotification
                                                object: [AVAudioSession sharedInstance]];
     
     // Activate AudioSession
@@ -115,7 +137,7 @@ static OSStatus playbackCallback(void *inRefCon,
 }
 
 
-- (void)setupMediaSession {
+- (void)_setupMediaSession {
     [[[MPRemoteCommandCenter sharedCommandCenter] togglePlayPauseCommand] setEnabled:YES];
     [[[MPRemoteCommandCenter sharedCommandCenter] playCommand] setEnabled:YES];
     [[[MPRemoteCommandCenter sharedCommandCenter] pauseCommand] setEnabled:YES];
@@ -149,7 +171,7 @@ static OSStatus playbackCallback(void *inRefCon,
 }
 
 
-- (void)setupNowPlaying {
+- (void)_setupNowPlaying {
     [[MPNowPlayingInfoCenter defaultCenter]
      setNowPlayingInfo: @{
                           MPMediaItemPropertyTitle : @"Travelling Waves",
@@ -161,7 +183,7 @@ static OSStatus playbackCallback(void *inRefCon,
 }
 
 
-- (void)audioSessionInterrupted:(NSNotification*)notification {
+- (void)_audioSessionInterrupted:(NSNotification*)notification {
     
     AVAudioSessionInterruptionType interruption = (AVAudioSessionInterruptionType)[notification.userInfo[AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
     
@@ -179,9 +201,12 @@ static OSStatus playbackCallback(void *inRefCon,
             }
             break;
     }
+    
+    NSLog(@"Interruption: %@", notification.userInfo);
 }
 
-- (void)audioSessionRouteChanged:(NSNotification*)notification {
+
+- (void)_audioSessionRouteChanged:(NSNotification*)notification {
     if (![notification.name isEqualToString:AVAudioSessionRouteChangeNotification]) {
         return;
     }
@@ -204,7 +229,14 @@ static OSStatus playbackCallback(void *inRefCon,
 }
 
 
-- (void)getSessionProperties {
+- (void)_audioSessionMediaServicesWereReset:(NSNotification*)notification {
+    NSLog(@"Media Services Were Reset: %@", notification.userInfo);
+    [self stop];
+    [self _initializeAudioServices];
+}
+
+
+- (void)_getSessionProperties {
     
     [[AVAudioSession sharedInstance] currentRoute];
     
@@ -214,9 +246,10 @@ static OSStatus playbackCallback(void *inRefCon,
     [[AVAudioSession sharedInstance] inputNumberOfChannels];
 }
 
+
 #pragma mark - AudioUnit
 
-- (void)setupAudioUnit {
+- (void)_setupAudioUnit {
     
     OSStatus status;
     
@@ -279,9 +312,11 @@ static OSStatus playbackCallback(void *inRefCon,
 }
 
 
-- (void)setupAudioEngine {
+- (void)_setupAudioEngine {
     _engine = new TWAudioEngine();
+    _engine->setFinishedPlaybackProc(enginePlaybackStatusChanged);
 }
+
 
 - (void)addToDelegates:(id<TWAudioControllerDelegate>)delegate {
     [_delegates addObject:delegate];
@@ -294,6 +329,7 @@ static OSStatus playbackCallback(void *inRefCon,
     _userInitiatedAudioRunningStatus = YES;
     [self _startEngine];
 }
+
 
 - (void)_startEngine {
     _engine->prepare(_currentFormat.sampleRate);
@@ -314,6 +350,7 @@ static OSStatus playbackCallback(void *inRefCon,
     _userInitiatedAudioRunningStatus = NO;
     [self _stopEngine];
 }
+
 
 - (void)_stopEngine {
     _engine->release();
@@ -339,6 +376,7 @@ static OSStatus playbackCallback(void *inRefCon,
         [self start];
     }
 }
+
 
 - (void)dealloc {
     delete _engine;
@@ -448,7 +486,7 @@ static OSStatus playbackCallback(void *inRefCon,
     return _engine->loadAudioFileAtSourceIdx(sourceIdx, std::string([filepath UTF8String]));
 }
 
-- (void)startPlaybackAtSourceIdx:(int)sourceIdx atSampleTime:(unsigned long long)sampleTime {
+- (void)startPlaybackAtSourceIdx:(int)sourceIdx atSampleTime:(unsigned int)sampleTime {
     _engine->startPlaybackAtSourceIdx(sourceIdx, sampleTime);
 }
 

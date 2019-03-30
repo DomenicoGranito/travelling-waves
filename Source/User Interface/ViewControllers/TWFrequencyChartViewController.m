@@ -82,17 +82,18 @@ typedef enum : NSUInteger {
 - (void)viewDidLayoutSubviews {
     
     // Layout UI
-    CGFloat xMargin      = 0.0f;
-    CGFloat yPos         = self.view.safeAreaInsets.top;
-    CGFloat xPos         = xMargin;
+    CGFloat xMargin         = self.view.safeAreaInsets.left;
+    CGFloat yPos            = self.view.safeAreaInsets.top;
+    CGFloat xPos            = xMargin;
     
-    CGFloat screenWidth  = self.view.frame.size.width - (2.0f * xMargin);
-    CGFloat screenHeight  = self.view.frame.size.height - self.view.safeAreaInsets.bottom;
+    CGFloat screenWidth     = self.view.frame.size.width - self.view.safeAreaInsets.right - self.view.safeAreaInsets.left;
+    CGFloat screenHeight    = self.view.frame.size.height - self.view.safeAreaInsets.bottom;
     
     
+    bool isIPad = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
     UIInterfaceOrientation orienation = [[UIApplication sharedApplication] statusBarOrientation];
     bool isLandscape = (orienation == UIInterfaceOrientationLandscapeLeft) || (orienation == UIInterfaceOrientationLandscapeRight);
-    CGFloat componentHeight = isLandscape ? kLandscapeComponentHeight : kPortraitComponentHeight;
+    CGFloat componentHeight = (isLandscape ? (isIPad ? kLandscapePadComponentHeight : kLandscapePhoneComponentHeight) : kPortraitComponentHeight);
     
     
     [_backButton setFrame:CGRectMake(xPos, yPos, kTitleLabelWidth * 2.0f, componentHeight)];

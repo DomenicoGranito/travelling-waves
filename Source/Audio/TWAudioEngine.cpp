@@ -25,6 +25,7 @@ TWAudioEngine::TWAudioEngine()
 {
     _sampleRate = kDefaultSampleRate;
     _readQueue = dispatch_queue_create("File Read Queue", NULL);
+    _notificationQueue = dispatch_queue_create("Notification Queue", NULL);
     
     for (int sourceIdx=0; sourceIdx < kNumSources; sourceIdx++) {
         
@@ -39,6 +40,8 @@ TWAudioEngine::TWAudioEngine()
         _soloGains[sourceIdx].setTargetValue(1.0f, 0.0f);
         
         _fileStreams[sourceIdx].setReadQueue(_readQueue);
+        _fileStreams[sourceIdx].setNotificationQueue(_notificationQueue);
+        _fileStreams[sourceIdx].setSourceIdx(sourceIdx);
     }
     
     
@@ -68,6 +71,9 @@ TWAudioEngine::~TWAudioEngine()
     
     dispatch_release(_readQueue);
     _readQueue = nullptr;
+    
+    dispatch_release(_notificationQueue);
+    _notificationQueue = nullptr;
 }
 
 
@@ -648,7 +654,7 @@ int TWAudioEngine::loadAudioFileAtSourceIdx(int sourceIdx, std::string filepath)
     return _fileStreams[sourceIdx].loadAudioFile(filepath);
 }
 
-void TWAudioEngine::startPlaybackAtSourceIdx(int sourceIdx, uint64_t sampleTime)
+void TWAudioEngine::startPlaybackAtSourceIdx(int sourceIdx, uint32_t sampleTime)
 {
     _fileStreams[sourceIdx].start(sampleTime);
 }
@@ -660,12 +666,56 @@ void TWAudioEngine::stopPlaybackAtSourceIdx(int sourceIdx)
 
 void TWAudioEngine::setPlaybackParameterAtSourceIdx(int sourceIdx, int paramID, float value, float rampTime_ms = 0.0f)
 {
-//    _fileStreams[sourceIdx].set
+    switch (paramID) {
+        case kPlaybackParam_Velocity:
+            _fileStreams[sourceIdx].setVelocity(value, rampTime_ms);
+            break;
+            
+        case kPlaybackParam_MaxVolume:
+            _fileStreams[sourceIdx].setMaxVolume(value, rampTime_ms);
+            break;
+            
+        case kPlaybackParam_DrumPadMode:
+//            printf("DrumPadMode [%d] : %d\n", sourceIdx, (TWDrumPadMode)value);
+            _fileStreams[sourceIdx].setDrumPadMode((TWDrumPadMode)value);
+            break;
+            
+        default:
+            printf("\nError(setPlaybackParameterAtSourceIdx): Unknown paramID: %d. For sourceIdx: %d\n", paramID, sourceIdx);
+            break;
+    }
 }
 
-bool TWAudioEngine::getPlaybackParameterAtSourceIdx(int sourceIdx, int paramID)
+float TWAudioEngine::getPlaybackParameterAtSourceIdx(int sourceIdx, int paramID)
 {
-    return 0.0f;
+    float returnValue = 0.0f;
+    
+    switch (paramID) {
+        case kPlaybackParam_Velocity:
+            returnValue = _fileStreams[sourceIdx].getVelocity();
+            break;
+            
+        case kPlaybackParam_MaxVolume:
+            returnValue = _fileStreams[sourceIdx].getMaxVolume();
+            break;
+            
+        case kPlaybackParam_DrumPadMode:
+            returnValue = (float)_fileStreams[sourceIdx].getDrumPadMode();
+            break;
+            
+        default:
+            printf("\nError(getPlaybackParameterAtSourceIdx): Unknown paramID: %d. For sourceIdx: %d\n", paramID, sourceIdx);
+            break;
+    }
+    
+    return returnValue;
+}
+
+void TWAudioEngine::setFinishedPlaybackProc(std::function<void(int)> finishedPlaybackProc)
+{
+    for (int sourceIdx=0; sourceIdx < kNumSources; sourceIdx++) {
+        _fileStreams[sourceIdx].setFinishedPlaybackProc(finishedPlaybackProc);
+    }
 }
 
 

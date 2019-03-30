@@ -14,9 +14,14 @@ NS_ASSUME_NONNULL_BEGIN
 @interface TWDrumPad : UIView
 
 @property (nonatomic, assign) TWDrumPadMode drumPadMode;
+
 @property (nonatomic, retain) NSString* titleText;
 
+@property (nonatomic, retain) UIColor* onColor;
+
 - (void)viewWillAppear;
+
+- (void)oneShotPlaybackStopped;
 
 @end
 

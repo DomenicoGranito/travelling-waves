@@ -82,15 +82,6 @@
     [_viewDrumPadButton addTarget:self action:@selector(viewDrumPadButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_viewDrumPadButton];
     
-    _resetPhaseButton = [[UIButton alloc] init];
-    [_resetPhaseButton setTitle:@"Reset Phase" forState:UIControlStateNormal];
-    [_resetPhaseButton setBackgroundColor:[UIColor colorWithWhite:0.14 alpha:1.0]];
-    [_resetPhaseButton setTitleColor:[UIColor colorWithWhite:0.6f alpha:1.0f] forState:UIControlStateNormal];
-    [[_resetPhaseButton titleLabel] setFont:[UIFont systemFontOfSize:13.0f]];
-    [_resetPhaseButton addTarget:self action:@selector(resetButtonTouchDown:) forControlEvents:UIControlEventTouchDown];
-    [_resetPhaseButton addTarget:self action:@selector(resetButtonTouchUp:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:_resetPhaseButton];
-    
     
     _mixerView = [[TWMixerView alloc] init];
     [self.view addSubview:_mixerView];
@@ -141,6 +132,15 @@
     [[_loadProjectButton titleLabel] setFont:[UIFont systemFontOfSize:13.0f]];
     [_loadProjectButton addTarget:self action:@selector(loadProjectButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
     [_verticalScrollView addSubview:_loadProjectButton];
+    
+    _resetPhaseButton = [[UIButton alloc] init];
+    [_resetPhaseButton setTitle:@"Reset Phase" forState:UIControlStateNormal];
+    [_resetPhaseButton setBackgroundColor:[UIColor colorWithWhite:0.14 alpha:1.0]];
+    [_resetPhaseButton setTitleColor:[UIColor colorWithWhite:0.6f alpha:1.0f] forState:UIControlStateNormal];
+    [[_resetPhaseButton titleLabel] setFont:[UIFont systemFontOfSize:13.0f]];
+    [_resetPhaseButton addTarget:self action:@selector(resetButtonTouchDown:) forControlEvents:UIControlEventTouchDown];
+    [_resetPhaseButton addTarget:self action:@selector(resetButtonTouchUp:) forControlEvents:UIControlEventTouchUpInside];
+    [_verticalScrollView addSubview:_resetPhaseButton];
     
     
     // Exit Vertical Scroll View
@@ -215,19 +215,19 @@
 - (void)viewDidLayoutSubviews {
     
     // Layout UI
-    CGFloat xMargin      = 0.0f;
-    CGFloat yPos         = self.view.safeAreaInsets.top;
-    CGFloat xPos         = xMargin;
+    CGFloat xMargin         = self.view.safeAreaInsets.left;
+    CGFloat yPos            = self.view.safeAreaInsets.top;
+    CGFloat xPos            = xMargin;
     
-    CGFloat screenWidth  = self.view.frame.size.width - (2.0f * xMargin);
-    CGFloat screenHeight  = self.view.frame.size.height - self.view.safeAreaInsets.bottom;
+    CGFloat screenWidth     = self.view.frame.size.width - self.view.safeAreaInsets.right - self.view.safeAreaInsets.left;
+    CGFloat screenHeight    = self.view.frame.size.height - self.view.safeAreaInsets.bottom;
     
-    CGFloat titleButtonWidth = screenWidth / 4.0f;
+    CGFloat titleButtonWidth = screenWidth / 3.0f;
     
-    
+    bool isIPad = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
     UIInterfaceOrientation orienation = [[UIApplication sharedApplication] statusBarOrientation];
     bool isLandscape = (orienation == UIInterfaceOrientationLandscapeLeft) || (orienation == UIInterfaceOrientationLandscapeRight);
-    CGFloat componentHeight = isLandscape ? kLandscapeComponentHeight : kPortraitComponentHeight;
+    CGFloat componentHeight = (isLandscape ? (isIPad ? kLandscapePadComponentHeight : kLandscapePhoneComponentHeight) : kPortraitComponentHeight);
     
     
     
@@ -240,16 +240,13 @@
     xPos += titleButtonWidth;
     [_viewDrumPadButton setFrame:CGRectMake(xPos, yPos, titleButtonWidth, componentHeight)];
     
-    xPos += titleButtonWidth;
-    [_resetPhaseButton setFrame:CGRectMake(xPos, yPos, titleButtonWidth, componentHeight)];
-    
     
     
     // Mixer
     xPos = xMargin;
     yPos += componentHeight;
     CGFloat mixerHeight = isLandscape ? (componentHeight * kNumSources / 4.0f) : (componentHeight * kNumSources / 2.0f);
-    [_mixerView setFrame:CGRectMake(xMargin, yPos, self.view.frame.size.width, mixerHeight)];
+    [_mixerView setFrame:CGRectMake(xMargin, yPos, screenWidth, mixerHeight)];
     
     
     // Vertical Scroll View
@@ -265,11 +262,13 @@
     [_pitchRatioControlView setFrame:CGRectMake(0.0f, yPos, screenWidth, pitchRatioControlViewHeight)];
     
     yPos += _pitchRatioControlView.frame.size.height;
-    xPos = xMargin;
+    xPos = 0.0f;
     CGFloat oscViewHeight = componentHeight * 10.0f;
     [_oscView setFrame:CGRectMake(xPos, yPos, screenWidth, oscViewHeight)];
     
-    xPos = xMargin;
+    
+    titleButtonWidth = screenWidth / 4.0f;
+    xPos = 0.0f;
     yPos = _verticalScrollView.contentSize.height - componentHeight;
     [_loadFreqChartButton setFrame:CGRectMake(xPos, yPos, titleButtonWidth, componentHeight)];
     
@@ -279,6 +278,9 @@
     xPos += titleButtonWidth;
     [_loadProjectButton setFrame:CGRectMake(xPos, yPos, titleButtonWidth, componentHeight)];
     
+    xPos += titleButtonWidth;
+    [_resetPhaseButton setFrame:CGRectMake(xPos, yPos, titleButtonWidth, componentHeight)];
+    
     // Exit Vertical Scroll View
     
     
@@ -287,10 +289,15 @@
     // Master Gain
     CGFloat sliderWidth = (screenWidth - (2.0f * kValueLabelWidth)) / 2.0f;
     yPos = screenHeight - componentHeight;
-    [_masterLeftField setFrame:CGRectMake(0.0f, yPos, kValueLabelWidth, componentHeight)];
-    [_masterLeftSlider setFrame:CGRectMake(_masterLeftField.frame.size.width, yPos, sliderWidth, componentHeight)];
-    [_masterRightSlider setFrame:CGRectMake(_masterLeftSlider.frame.origin.x + _masterLeftSlider.frame.size.width, yPos, sliderWidth, componentHeight)];
-    [_masterRightField setFrame:CGRectMake(_masterRightSlider.frame.origin.x + _masterRightSlider.frame.size.width, yPos, kValueLabelWidth, componentHeight)];
+    xPos = xMargin;
+    [_masterLeftField setFrame:CGRectMake(xPos, yPos, kValueLabelWidth, componentHeight)];
+    xPos += _masterLeftField.frame.size.width;
+    [_masterLeftSlider setFrame:CGRectMake(xPos, yPos, sliderWidth, componentHeight)];
+    xPos += _masterLeftSlider.frame.size.width;
+    [_masterRightSlider setFrame:CGRectMake(xPos, yPos, sliderWidth, componentHeight)];
+    xPos += _masterRightSlider.frame.size.width;
+    [_masterRightField setFrame:CGRectMake(xPos, yPos, kValueLabelWidth, componentHeight)];
+    
     [_leftLevelMeterView setFrame:_masterLeftSlider.frame];
     [_rightLevelMeterView setFrame:_masterRightSlider.frame];
     

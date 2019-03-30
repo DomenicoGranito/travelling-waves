@@ -12,9 +12,9 @@
 
 + (BOOL)checkOSStatus:(OSStatus)status inContext:(NSString *)context {
     if(status != noErr) {
-        printf("\n\n\n");
+        printf("\n");
         NSLog(@"Error in %@: %d", context, status);
-        printf("\n\n\n");
+        printf("\n");
         return NO;
     }
     return YES;

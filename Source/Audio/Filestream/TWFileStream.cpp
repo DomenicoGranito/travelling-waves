@@ -7,19 +7,26 @@
 //
 
 #include "TWFileStream.h"
-#include "TWHeader.h"
-
 
 TWFileStream::TWFileStream()
 {
-    _leftBuffer = new TWRingBuffer(kAudioFileReadBufferSize);
-    _rightBuffer = new TWRingBuffer(kAudioFileReadBufferSize);
+    _leftBuffer             = new TWRingBuffer(kAudioFileReadBufferSize);
+    _rightBuffer            = new TWRingBuffer(kAudioFileReadBufferSize);
     
-    _sampleRate = kDefaultSampleRate;
-    _isRunning = false;
-    _audioFile = nullptr;
-    _currentSample = 0;
-    _samplesRead = 0;
+    _sampleRate             = kDefaultSampleRate;
+    _isRunning              = false;
+    _audioFile              = nullptr;
+    _currentFrame           = 0;
+    _framesRead             = 0;
+    _lengthInFrames         = 0;
+    _drumPadMode            = TWDrumPadMode_OneShot;
+    _sourceIdx              = 0;
+    _finishedPlaybackProc   = nullptr;
+    
+    _readABL                = _allocateABL(kNumChannels, kNumChannels * 4, true, kAudioFileReadBufferSize * kNumChannels);
+    
+    _velocity.setTargetValue(1.0f, 0.0f);
+    _maxVolume.setTargetValue(1.0f, 0.0f);
 }
 
 TWFileStream::~TWFileStream()
@@ -29,39 +36,52 @@ TWFileStream::~TWFileStream()
     
     _leftBuffer = nullptr;
     _rightBuffer = nullptr;
+    
+    _deallocateABL(_readABL);
+    
+    _finishedPlaybackProc = nullptr;
 }
 
 void TWFileStream::prepare(float sampleRate)
 {
     _sampleRate = sampleRate;
+    _setIsRunning(true);
 }
 
 void TWFileStream::getSample(float& leftSample, float& rightSample)
 {
     if (!_isRunning) {
-//        leftSample = rightSample = 0.0f;
         return;
     }
     
-    leftSample += _leftBuffer->readAndIncIdx();
-    rightSample += _rightBuffer->readAndIncIdx();
+    float velocity = _velocity.getCurrentValue();
+    float maxVolume = _maxVolume.getCurrentValue();
     
-//    printf("\nReadIdx: %d", _leftBuffer->getReadIdx());
-//    if (_currentSample == (_samplesRead / 2)) {
-//
-//    }
-    _currentSample += 1;
+    leftSample += (velocity * maxVolume * _leftBuffer->readAndIncIdx());
+    rightSample += (velocity * maxVolume * _rightBuffer->readAndIncIdx());
+    
+    _currentFrame += 1;
+    
+    if ((_framesRead - _currentFrame) == (kAudioFileReadBufferSize / 4)) {
+//        _readNextBlock();
+    }
 }
 
 void TWFileStream::release()
 {
-    
+    _setIsRunning(false);
 }
 
 void TWFileStream::setReadQueue(dispatch_queue_t readQueue)
 {
     _readQueue = readQueue;
 }
+
+void TWFileStream::setNotificationQueue(dispatch_queue_t notificationQueue)
+{
+    _notificationQueue = notificationQueue;
+}
+
 
 int TWFileStream::loadAudioFile(std::string filepath)
 {
@@ -83,7 +103,7 @@ int TWFileStream::loadAudioFile(std::string filepath)
     CFRelease(string);
     
     if ((status != noErr) || (_audioFile == NULL)) {
-        printf("\nError in ExtAudioFileOpenURL (%s) : %d", filepath.c_str(), (unsigned int)status);
+        printf("\nError in ExtAudioFileOpenURL (%s) : %d\n", filepath.c_str(), (unsigned int)status);
         _resetAudioFile();
         return -1;
     }
@@ -103,7 +123,7 @@ int TWFileStream::loadAudioFile(std::string filepath)
     
     status = ExtAudioFileSetProperty(_audioFile, kExtAudioFileProperty_ClientDataFormat, sizeof(outASBD), &outASBD);
     if (status) {
-        printf("\nError in setting kExtAudioFileProperty_ClientDataFormat : %d", (unsigned int)status);
+        printf("\nError in setting kExtAudioFileProperty_ClientDataFormat : %d\n", (unsigned int)status);
         _resetAudioFile();
         return -2;
     }
@@ -114,63 +134,74 @@ int TWFileStream::loadAudioFile(std::string filepath)
     UInt32 propSize = sizeof(inASBD);
     status = ExtAudioFileGetProperty(_audioFile, kExtAudioFileProperty_FileDataFormat, &propSize, &inASBD);
     if (status) {
-        printf("\nError in reading kExtAudioFileProperty_FileDataFormat : %d", (unsigned int)status);
+        printf("\nError in reading kExtAudioFileProperty_FileDataFormat : %d\n", (unsigned int)status);
         _resetAudioFile();
     }
-    _printASBD(&outASBD, "TWFileStream: inFileASBD");
-    
+    _printASBD(&inASBD, "TWFileStream: inFileASBD");
+    if (inASBD.mSampleRate <= 0) {
+        printf("\nError in kExtAudioFileProperty_FileDataFormat, invalid file sample rate : %f\n", inASBD.mSampleRate);
+        return -3;
+    }
     
     
     SInt64 length = 0;
     propSize = sizeof(SInt64);
     status = ExtAudioFileGetProperty(_audioFile, kExtAudioFileProperty_FileLengthFrames, &propSize, &length);
     if (status) {
-        printf("\nError in reading kExtAudioFileProperty_FileLengthFrames : %d", (unsigned int)status);
-        _resetAudioFile();
-        return -3;
-    }
-    if (length <= 0) {
-        printf("\nError in reading kExtAudioFileProperty_FileLengthFrames : length: %lld", length);
+        printf("\nError in reading kExtAudioFileProperty_FileLengthFrames : %d\n", (unsigned int)status);
         _resetAudioFile();
         return -4;
+    }
+    if (length <= 0) {
+        printf("\nError in reading kExtAudioFileProperty_FileLengthFrames : length: %lld\n", length);
+        _resetAudioFile();
+        return -5;
+    }
+    
+    
+    _lengthInFrames = uint32_t((_sampleRate * length) / inASBD.mSampleRate);
+    
+    if (_lengthInFrames <= _leftBuffer->getSize()) {
+        _leftBuffer->setWrapPoint(_lengthInFrames);
+        _rightBuffer->setWrapPoint(_lengthInFrames);
     }
     
     _leftBuffer->reset();
     _rightBuffer->reset();
     _readNextBlock();
-//    _readNextBlock();
     
-    _length = length;
-    _currentSample = 0;
-    printf("\nLoaded Audio File (%s) with %lld (of %lld) samples.\n\n", filepath.c_str(), (unsigned long long)_samplesRead, (unsigned long long)_length);
+    _currentFrame = 0;
+    
+    printf("\nLoaded Audio File (%s) of %u total samples.\n", filepath.c_str(), _lengthInFrames);
     
     return 0;
 }
 
 
-int TWFileStream::start(uint64_t startSampleTime)
+int TWFileStream::start(uint32_t startSampleTime)
 {
     _leftBuffer->setReadIdx((int)startSampleTime);
     _rightBuffer->setReadIdx((int)startSampleTime);
+    _currentFrame = startSampleTime;
     _isRunning = true;
-//    printf("\nStart!");
+//    printf("Start! [%d]\n", _sourceIdx);
+    
+    // Debug
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2000 * NSEC_PER_MSEC)), _notificationQueue, ^{
+//        printf("Dispatch After 2000ms! [%d]\n", _sourceIdx);
+        if (_finishedPlaybackProc != nullptr) {
+//            printf("Calling Finished Playback Proc! [%d]\n", _sourceIdx);
+            _finishedPlaybackProc(_sourceIdx);
+        }
+    });
+    
     return 0;
 }
 
 void TWFileStream::stop()
 {
     _isRunning = false;
-//    printf("\nStop!");
-}
-
-void TWFileStream::setLooping(bool isLooping)
-{
-    _isLooping = isLooping;
-}
-
-bool TWFileStream::getLooping()
-{
-    return _isLooping;
+//    printf("\nStop!\n");
 }
 
 bool TWFileStream::getIsRunning()
@@ -181,6 +212,53 @@ bool TWFileStream::getIsRunning()
 float TWFileStream::getNormalizedPlaybackProgress()
 {
     return 0.0f;
+}
+
+void TWFileStream::setVelocity(float velocity, float rampTime_ms)
+{
+    _velocity.setTargetValue(velocity, rampTime_ms * _sampleRate / 1000.0f);
+}
+
+float TWFileStream::getVelocity()
+{
+    return _velocity.getTargetValue();
+}
+
+void TWFileStream::setMaxVolume(float maxVolume, float rampTime_ms)
+{
+    _maxVolume.setTargetValue(maxVolume, rampTime_ms * _sampleRate / 1000.0f);
+}
+
+float TWFileStream::getMaxVolume()
+{
+    return _maxVolume.getTargetValue();
+}
+
+void TWFileStream::setDrumPadMode(TWDrumPadMode drumPadMode)
+{
+    _drumPadMode = drumPadMode;
+}
+
+TWDrumPadMode TWFileStream::getDrumPadMode()
+{
+    return _drumPadMode;
+}
+
+void TWFileStream::setSourceIdx(int sourceIdx)
+{
+    _sourceIdx = sourceIdx;
+    _leftBuffer->setDebugID(sourceIdx);
+    _rightBuffer->setDebugID(sourceIdx);
+}
+
+int TWFileStream::getSourceIdx()
+{
+    return _sourceIdx;
+}
+
+void TWFileStream::setFinishedPlaybackProc(std::function<void(int)> finishedPlaybackProc)
+{
+    _finishedPlaybackProc = finishedPlaybackProc;
 }
 
 
@@ -250,29 +328,30 @@ void TWFileStream::_readNextBlock()
 {
     dispatch_async(_readQueue, ^{
         
-        UInt32 ablSize = kAudioFileReadBufferSize;
-        AudioBufferList* abl = _allocateABL(kNumChannels, kNumChannels * 4, true, ablSize);
-        _printABL(abl, "read");
-        
-        UInt32 framesRead = ablSize;
-        OSStatus status = ExtAudioFileRead(_audioFile, &framesRead, abl);
+        UInt32 samplesRead = kAudioFileReadBufferSize;
+        OSStatus status = ExtAudioFileRead(_audioFile, &samplesRead, _readABL);
         if (status) {
-            printf("\nError in ExtAudioFileRead. Error: %d", status);
+            printf("Error in ExtAudioFileRead. Error: %d\n", status);
             _resetAudioFile();
         } else {
-            _samplesRead += framesRead;
-            printf("\nFrames read : %lu", (unsigned long)framesRead);
-            float* buffer = (float*)abl->mBuffers[0].mData;
-            for (int i=0; i < framesRead; i++) {
-                if ((i % 2) == 0) {
-                    _leftBuffer->writeAndIncIdx(buffer[i]);
-                } else {
-                    _rightBuffer->writeAndIncIdx(buffer[i]);
+            printf("Samples read : %lu\n", (unsigned long)samplesRead);
+            if (samplesRead != 0) {
+                _framesRead += samplesRead;
+                float* buffer = (float*)_readABL->mBuffers[0].mData;
+                for (int i=0; i < samplesRead; i++) {
+                    if ((i % 2) == 0) {
+                        _leftBuffer->writeAndIncIdx(buffer[i]);
+                    } else {
+                        _rightBuffer->writeAndIncIdx(buffer[i]);
+                    }
                 }
+            } else {
+//                if (_isLooping) {
+//                    ExtAudioFileSeek(_audioFile, 0);
+//                }
             }
         }
         
-        _deallocateABL(abl);
     });
 }
 
@@ -280,7 +359,16 @@ void TWFileStream::_resetAudioFile()
 {
     ExtAudioFileDispose(_audioFile);
     _audioFile = NULL;
-    _length = 0;
-    _currentSample = 0;
-    _samplesRead = 0;
+    _lengthInFrames = 0;
+    _currentFrame = 0;
+    _framesRead = 0;
+    
+    _leftBuffer->reset();
+    _rightBuffer->reset();
+}
+
+void TWFileStream::_setIsRunning(bool isRunning)
+{
+    _velocity.setIsRunning(isRunning);
+    _maxVolume.setIsRunning(isRunning);
 }

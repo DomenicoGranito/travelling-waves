@@ -10,8 +10,12 @@
 #define TWFileStream_h
 
 #include "TWRingBuffer.h"
+#include "TWParameter.h"
+#include "TWHeader.h"
+
 #include <stdio.h>
 #include <string>
+#include <functional>
 
 #include <AudioToolbox/ExtendedAudioFile.h>
 #include <dispatch/dispatch.h>
@@ -29,35 +33,54 @@ public:
     void release();
     
     void setReadQueue(dispatch_queue_t readQueue);
+    void setNotificationQueue(dispatch_queue_t notificationQueue);
     int loadAudioFile(std::string filepath);
-    int start(uint64_t startSampleTime);
+    
+    int start(uint32_t startSampleTime);
     void stop();
     
-    void setLooping(bool isLooping);
-    bool getLooping();
+    void setVelocity(float amplitude, float rampTime_ms);
+    float getVelocity();
+    
+    void setMaxVolume(float maxVolume, float rampTime_ms);
+    float getMaxVolume();
+    
+    void setDrumPadMode(TWDrumPadMode drumPadMode);
+    TWDrumPadMode getDrumPadMode();
     
     bool getIsRunning();
     
     float getNormalizedPlaybackProgress();
     
+    void setSourceIdx(int sourceIdx);
+    int getSourceIdx();
     
+    void setFinishedPlaybackProc(std::function<void(int)>finishedPlaybackProc);
     
 private:
     
-    TWRingBuffer*       _leftBuffer;
-    TWRingBuffer*       _rightBuffer;
+    TWRingBuffer*           _leftBuffer;
+    TWRingBuffer*           _rightBuffer;
     
-//    AudioBufferList*    _abl;
-    float               _sampleRate;
+    TWParameter             _velocity;
+    TWParameter             _maxVolume;
     
-    bool                _isRunning;
-    bool                _isLooping;
-    uint64_t            _length;
-    uint64_t            _samplesRead;
-    uint64_t            _currentSample;
+    TWDrumPadMode           _drumPadMode;
     
-    ExtAudioFileRef     _audioFile;
-    dispatch_queue_t    _readQueue;
+    float                   _sampleRate;
+    
+    bool                    _isRunning;
+    uint32_t                _lengthInFrames;
+    uint32_t                _framesRead;
+    uint32_t                _currentFrame;
+    int                     _sourceIdx;
+    
+    AudioBufferList*        _readABL;
+    ExtAudioFileRef         _audioFile;
+    dispatch_queue_t        _readQueue;
+    dispatch_queue_t        _notificationQueue;
+    
+    std::function<void(int)>   _finishedPlaybackProc;
     
     void _printASBD(AudioStreamBasicDescription* asbd, std::string context);
     void _printABL(AudioBufferList *abl, std::string context);
@@ -66,6 +89,8 @@ private:
     
     void _readNextBlock();
     void _resetAudioFile();
+    
+    void _setIsRunning(bool isRunning);
 };
 
 

@@ -152,25 +152,15 @@ static const CGFloat kProgressBarUpdateInterval    = 0.1f;  // 50ms
     
     NSMutableArray* idLabels = [[NSMutableArray alloc] init];
     for (int sourceIdx=0; sourceIdx < kNumSources; sourceIdx++) {
-        UILabel* idLabel1 = [[UILabel alloc] init];
-        [idLabel1 setText:[NSString stringWithFormat:@"%d", sourceIdx+1]];
-        [idLabel1 setFont:[UIFont systemFontOfSize:10.0f]];
-        [idLabel1 setTextAlignment:NSTextAlignmentCenter];
-        [idLabel1 setTextColor:[UIColor colorWithWhite:0.4f alpha:0.6f]];
-        [idLabel1 setTextAlignment:NSTextAlignmentCenter];
-        [idLabel1 setBackgroundColor:[UIColor clearColor]];
-        [self.view addSubview:idLabel1];
-        [idLabels addObject:idLabel1];
-        
-        UILabel* idLabel2 = [[UILabel alloc] init];
-        [idLabel2 setText:[NSString stringWithFormat:@"%d", sourceIdx+1]];
-        [idLabel2 setFont:[UIFont systemFontOfSize:10.0f]];
-        [idLabel2 setTextAlignment:NSTextAlignmentCenter];
-        [idLabel2 setTextColor:[UIColor colorWithWhite:0.4f alpha:0.6f]];
-        [idLabel2 setTextAlignment:NSTextAlignmentCenter];
-        [idLabel2 setBackgroundColor:[UIColor clearColor]];
-        [self.view addSubview:idLabel2];
-        [idLabels addObject:idLabel2];
+        UILabel* idLabel = [[UILabel alloc] init];
+        [idLabel setText:[NSString stringWithFormat:@"%d", sourceIdx+1]];
+        [idLabel setFont:[UIFont systemFontOfSize:10.0f]];
+        [idLabel setTextAlignment:NSTextAlignmentCenter];
+        [idLabel setTextColor:[UIColor colorWithWhite:0.4f alpha:0.6f]];
+        [idLabel setTextAlignment:NSTextAlignmentCenter];
+        [idLabel setBackgroundColor:[UIColor clearColor]];
+        [self.view addSubview:idLabel];
+        [idLabels addObject:idLabel];
     }
     _sourceIdxLabels = [[NSArray alloc] initWithArray:idLabels];
     
@@ -216,19 +206,19 @@ static const CGFloat kProgressBarUpdateInterval    = 0.1f;  // 50ms
 - (void)viewDidLayoutSubviews {
 
     // Layout UI
-    CGFloat xMargin      = 0.0f;
-    CGFloat yPos         = self.view.safeAreaInsets.top;
-    CGFloat xPos         = xMargin;
+    CGFloat xMargin         = self.view.safeAreaInsets.left;
+    CGFloat yPos            = self.view.safeAreaInsets.top;
+    CGFloat xPos            = xMargin;
     
-    CGFloat screenWidth  = self.view.frame.size.width - (2.0f * xMargin);
-    CGFloat screenHeight  = self.view.frame.size.height - self.view.safeAreaInsets.bottom;
+    CGFloat screenWidth     = self.view.frame.size.width - self.view.safeAreaInsets.right - self.view.safeAreaInsets.left;
+    CGFloat screenHeight    = self.view.frame.size.height - self.view.safeAreaInsets.bottom;
     
     CGFloat titleButtonWidth = screenWidth / 4.0f;
     
-    
+    bool isIPad = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
     UIInterfaceOrientation orienation = [[UIApplication sharedApplication] statusBarOrientation];
     bool isLandscape = (orienation == UIInterfaceOrientationLandscapeLeft) || (orienation == UIInterfaceOrientationLandscapeRight);
-    CGFloat componentHeight = isLandscape ? kLandscapeComponentHeight : kPortraitComponentHeight;
+    CGFloat componentHeight = (isLandscape ? (isIPad ? kLandscapePadComponentHeight : kLandscapePhoneComponentHeight) : kPortraitComponentHeight);
     
     
     
@@ -275,30 +265,31 @@ static const CGFloat kProgressBarUpdateInterval    = 0.1f;  // 50ms
     } else {
         yPos += 2.0f * componentHeight;
     }
-    [_floatingEnvelopeView setFrame:CGRectMake(0.0f, yPos , screenWidth, 10.0f * componentHeight)];
+    xPos = xMargin;
+    [_floatingEnvelopeView setFrame:CGRectMake(xPos, yPos , screenWidth, 10.0f * componentHeight)];
+    // TODO: Fix this for iPhone Landscape
     
     
     
     // Sequencer Notes Scroll View and Buttons
-    xPos = kSourceIDLabelWidth;
     
     CGFloat seqNoteScrollViewWidth = screenWidth - kSourceIDLabelWidth;
     _seqScrollWidth = isLandscape ? seqNoteScrollViewWidth : 2.0f * seqNoteScrollViewWidth;
-    
+
     _seqNoteButtonHeight = (screenHeight - yPos) / kNumSources;
-    
     CGFloat seqNoteScrollViewHeight = _seqNoteButtonHeight * (kNumIntervals / 2.0f);
+    
+    xPos = xMargin + kSourceIDLabelWidth;
     [_scrollView setFrame:CGRectMake(xPos, yPos, seqNoteScrollViewWidth, seqNoteScrollViewHeight)];
     [_scrollView setContentSize:CGSizeMake(_seqScrollWidth, seqNoteScrollViewHeight)];
     
-    xPos = 0.0f;
-    for (int sourceIdx=0; sourceIdx < kNumSources * 2; sourceIdx+=2) {
+    xPos = xMargin;
+    for (int sourceIdx=0; sourceIdx < kNumSources; sourceIdx++) {
         UILabel* idLabel1 = (UILabel*)_sourceIdxLabels[sourceIdx];
         [idLabel1 setFrame:CGRectMake(xPos + (0 * screenWidth), yPos, kSourceIDLabelWidth, _seqNoteButtonHeight)];
         
-        UILabel* idLabel2 = (UILabel*)_sourceIdxLabels[sourceIdx+1];
-        [idLabel2 setFrame:CGRectMake(xPos + (1 * screenWidth), yPos, kSourceIDLabelWidth, _seqNoteButtonHeight)];
-        
+//        UILabel* idLabel2 = (UILabel*)_sourceIdxLabels[sourceIdx+1];
+//        [idLabel2 setFrame:CGRectMake(xPos + (1 * screenWidth), yPos, kSourceIDLabelWidth, _seqNoteButtonHeight)];
         yPos += _seqNoteButtonHeight;
     }
     

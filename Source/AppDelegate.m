@@ -9,6 +9,9 @@
 #import "AppDelegate.h"
 #import "TWHomeViewController.h"
 #import "TWMasterController.h"
+#import "TWTestViewController.h"
+
+#define RUN_TEST                0
 
 @interface AppDelegate ()
 {
@@ -31,9 +34,14 @@
     [self.window setBackgroundColor:[UIColor whiteColor]];
     
     // Initialize Home View Controller and Setup Navigation Controller
+#if RUN_TEST
+    TWTestViewController* vc = [[TWTestViewController alloc] init];
+    _navController = [[UINavigationController alloc] initWithRootViewController:vc];
+#else
     _homeViewController = [[TWHomeViewController alloc] init];
     _navController = [[UINavigationController alloc] initWithRootViewController:_homeViewController];
-    
+#endif
+
     [self.window setRootViewController:_navController];
     [self.window makeKeyAndVisible];
     
@@ -51,14 +59,18 @@
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     
+#if !RUN_TEST
     [_homeViewController willEnterBackground];
+#endif
 }
 
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
     // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
     
+#if !RUN_TEST
     [_homeViewController willEnterForeground];
+#endif
 }
 
 

@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)audioControllerDidStop;
 @end
 
+typedef void (^TWAudioControllerPlaybackDidEndBlock)(int sourceIdx);
 
 @interface TWAudioController : NSObject
 
@@ -71,11 +72,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 //===== Drum Pad Methods =====//
 - (int)loadAudioFile:(NSString*)filepath atSourceIdx:(int)sourceIdx;
-- (void)startPlaybackAtSourceIdx:(int)sourceIdx atSampleTime:(unsigned long long)sampleTime;
+- (void)startPlaybackAtSourceIdx:(int)sourceIdx atSampleTime:(unsigned int)sampleTime;
 - (void)stopPlaybackAtSourceIdx:(int)sourceIdx;
 - (void)setPlaybackParameter:(int)paramID withValue:(float)value atSourceIdx:(int)sourceIdx inTime:(float)rampTime_ms;
 - (float)getPlaybackParameter:(int)paramID atSourceIdx:(int)sourceIdx;
-
+@property(nonatomic, copy) TWAudioControllerPlaybackDidEndBlock playbackDidEndBlock;
 
 @end
 

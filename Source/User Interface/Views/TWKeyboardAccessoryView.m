@@ -7,8 +7,9 @@
 //
 
 #import "TWKeyboardAccessoryView.h"
+#import "TWHeader.h"
 
-static const CGFloat kAccessoryHeight   = 50.0f; // 40.0f for iPhone
+//static const CGFloat kAccessoryHeight   = 50.0f; // 40.0f for iPhone
 static const CGFloat kButtonWidth       = 120.0f;
 
 @interface TWKeyboardAccessoryView()
@@ -89,20 +90,33 @@ static const CGFloat kButtonWidth       = 120.0f;
 
 
 - (void)updateLayout {
-    CGRect screenRect = [[[UIApplication sharedApplication] keyWindow] bounds];
-    CGFloat screenWidth = screenRect.size.width;
     
-    [self setFrame:CGRectMake(0.0f, 0.0f, screenWidth, kAccessoryHeight)];
+    CGRect screenRect       = [[[UIApplication sharedApplication] keyWindow] bounds];
+    CGFloat xMargin         = [[[UIApplication sharedApplication] keyWindow] safeAreaInsets].left;
+    CGFloat screenWidth     = screenRect.size.width - xMargin;
+//    CGFloat yPos            = self.view.safeAreaInsets.top;
+    CGFloat xPos            = xMargin;
+//
+//    CGFloat screenWidth     = self.view.frame.size.width - self.view.safeAreaInsets.right - self.view.safeAreaInsets.left;
+//    CGFloat screenHeight    = self.view.frame.size.height - self.view.safeAreaInsets.bottom;
+    
+    bool isIPad = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
+    UIInterfaceOrientation orienation = [[UIApplication sharedApplication] statusBarOrientation];
+    bool isLandscape = (orienation == UIInterfaceOrientationLandscapeLeft) || (orienation == UIInterfaceOrientationLandscapeRight);
+    NSLog(@"Keyboard. isLandscape: %d", isLandscape);
+    CGFloat accessoryHeight = (isIPad ? kKeyboardAccessoryHeightPad : (isLandscape ? kKeyboardAccessoryLandscapeHeightPhone : kKeyboardAccessoryPortraitHeightPhone));
+    
+    [self setFrame:CGRectMake(xPos, 0.0f, screenWidth, accessoryHeight)];
     
     CGFloat leftOffset = 10.0f;
     CGFloat padding = 4.0f;
     CGFloat titleLabelWidth = ((screenWidth - (2.0f * kButtonWidth)) / 2.0f) + leftOffset - padding;
     CGFloat valueLabelWidth = ((screenWidth - (2.0f * kButtonWidth)) / 2.0f) - leftOffset - padding;
     
-    [_cancelButton setFrame:CGRectMake(0.0f, 0.0f, kButtonWidth, kAccessoryHeight)];
-    [_paramTitleLabel setFrame:CGRectMake((screenWidth / 2.0f) - titleLabelWidth + leftOffset - padding, 0.0f, titleLabelWidth, kAccessoryHeight)];
-    [_paramValueLabel setFrame:CGRectMake((screenWidth / 2.0f) + leftOffset + padding, 0.0f, valueLabelWidth, kAccessoryHeight)];
-    [_doneButton setFrame:CGRectMake(screenWidth - kButtonWidth, 0.0f, kButtonWidth, kAccessoryHeight)];
+    [_cancelButton setFrame:CGRectMake(xPos, 0.0f, kButtonWidth, accessoryHeight)];
+    [_paramTitleLabel setFrame:CGRectMake((screenWidth / 2.0f) - titleLabelWidth + leftOffset - padding, 0.0f, titleLabelWidth, accessoryHeight)];
+    [_paramValueLabel setFrame:CGRectMake((screenWidth / 2.0f) + leftOffset + padding, 0.0f, valueLabelWidth, accessoryHeight)];
+    [_doneButton setFrame:CGRectMake(screenWidth - kButtonWidth, 0.0f, kButtonWidth, accessoryHeight)];
 }
 
 

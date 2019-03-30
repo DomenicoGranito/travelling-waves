@@ -7,56 +7,59 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		FC356C4C2223D0F500B93F5C /* TWBinauralBiquad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C402223D0F500B93F5C /* TWBinauralBiquad.cpp */; };
-		FC356C4D2223D0F500B93F5C /* TWBiquad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C412223D0F500B93F5C /* TWBiquad.cpp */; };
-		FC356C4E2223D0F500B93F5C /* TWOscillator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C422223D0F500B93F5C /* TWOscillator.cpp */; };
-		FC356C4F2223D0F500B93F5C /* TWDelay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C452223D0F500B93F5C /* TWDelay.cpp */; };
-		FC356C502223D0F500B93F5C /* TWBinauralSynth.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C492223D0F500B93F5C /* TWBinauralSynth.cpp */; };
-		FC356C512223D0F500B93F5C /* TWTremolo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C4B2223D0F500B93F5C /* TWTremolo.cpp */; };
-		FC356C632223D10400B93F5C /* TWMasterController.mm in Sources */ = {isa = PBXBuildFile; fileRef = FC356C522223D10300B93F5C /* TWMasterController.mm */; };
-		FC356C642223D10400B93F5C /* TWSequencer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C532223D10300B93F5C /* TWSequencer.cpp */; };
-		FC356C652223D10400B93F5C /* TWMixer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C582223D10300B93F5C /* TWMixer.cpp */; };
-		FC356C662223D10400B93F5C /* TWAudioEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C5A2223D10400B93F5C /* TWAudioEngine.cpp */; };
-		FC356C672223D10400B93F5C /* TWLevelMeter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C5B2223D10400B93F5C /* TWLevelMeter.cpp */; };
-		FC356C682223D10400B93F5C /* TWRingBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C5E2223D10400B93F5C /* TWRingBuffer.cpp */; };
-		FC356C692223D10400B93F5C /* TWEnvelope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C5F2223D10400B93F5C /* TWEnvelope.cpp */; };
-		FC356C6A2223D10400B93F5C /* TWParameter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C602223D10400B93F5C /* TWParameter.cpp */; };
-		FC356C6C2223D7BE00B93F5C /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC356C6B2223D7BE00B93F5C /* MediaPlayer.framework */; };
-		FC356C6E2223D7C500B93F5C /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC356C6D2223D7C500B93F5C /* AVFoundation.framework */; };
-		FC356C722223D80200B93F5C /* TWUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C712223D80200B93F5C /* TWUtils.m */; };
-		FC356C902223D8C400B93F5C /* TWLoadProjectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C772223D8C400B93F5C /* TWLoadProjectViewController.m */; };
-		FC356C912223D8C400B93F5C /* TWFrequencyChartViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C792223D8C400B93F5C /* TWFrequencyChartViewController.m */; };
-		FC356C922223D8C400B93F5C /* TWSequencerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C7A2223D8C400B93F5C /* TWSequencerViewController.m */; };
-		FC356C932223D8C400B93F5C /* TWHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C7C2223D8C400B93F5C /* TWHomeViewController.m */; };
-		FC356C942223D8C400B93F5C /* TWSeqNoteButton.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C812223D8C400B93F5C /* TWSeqNoteButton.m */; };
-		FC356C952223D8C400B93F5C /* TWPitchRatioControlView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C822223D8C400B93F5C /* TWPitchRatioControlView.m */; };
-		FC356C962223D8C400B93F5C /* TWOscView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C862223D8C400B93F5C /* TWOscView.m */; };
-		FC356C972223D8C400B93F5C /* TWKeyboardAccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C892223D8C400B93F5C /* TWKeyboardAccessoryView.m */; };
-		FC356C982223D8C400B93F5C /* TWEnvelopeView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C8A2223D8C400B93F5C /* TWEnvelopeView.m */; };
-		FC356C992223D8C400B93F5C /* TWLevelMeterView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C8D2223D8C400B93F5C /* TWLevelMeterView.m */; };
-		FC356C9A2223D8C400B93F5C /* TWMixerView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C8E2223D8C400B93F5C /* TWMixerView.m */; };
-		FC356C9B2223D8C400B93F5C /* TWForceButton.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C8F2223D8C400B93F5C /* TWForceButton.m */; };
-		FC42C729224A187F003253EF /* TestKick.wav in Resources */ = {isa = PBXBuildFile; fileRef = FC42C728224A187F003253EF /* TestKick.wav */; };
-		FC42C72B224A34AB003253EF /* Embryo Synth.wav in Resources */ = {isa = PBXBuildFile; fileRef = FC42C72A224A34AB003253EF /* Embryo Synth.wav */; };
-		FC42C72D224A39FF003253EF /* LRTest.wav in Resources */ = {isa = PBXBuildFile; fileRef = FC42C72C224A39FF003253EF /* LRTest.wav */; };
-		FCBDC336218462CA00E7695C /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCBDC335218462CA00E7695C /* AudioToolbox.framework */; };
-		FCBDC344218463A700E7695C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FCBDC33D218463A700E7695C /* main.m */; };
-		FCBDC345218463A700E7695C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FCBDC33E218463A700E7695C /* AppDelegate.m */; };
-		FCBDC35421846D4E00E7695C /* Travelling_WavesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FCBDC34C21846C5000E7695C /* Travelling_WavesTests.m */; };
-		FCBDC35521846D5500E7695C /* Travelling_WavesUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = FCBDC35021846D3100E7695C /* Travelling_WavesUITests.m */; };
-		FCBDC3602184720A00E7695C /* TWViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FCBDC35E2184720A00E7695C /* TWViewController.m */; };
-		FCBDC364218532D400E7695C /* TWAudioController.mm in Sources */ = {isa = PBXBuildFile; fileRef = FCBDC363218532D400E7695C /* TWAudioController.mm */; };
-		FCD6045D2223E0D5004164AC /* EqualTemperament.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604542223E0D5004164AC /* EqualTemperament.json */; };
-		FCD6045E2223E0D5004164AC /* OsterCurve.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604552223E0D5004164AC /* OsterCurve.json */; };
-		FCD604672223E4F2004164AC /* Organ-like.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604612223E4F2004164AC /* Organ-like.json */; };
-		FCD604682223E4F2004164AC /* Dorianish.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604622223E4F2004164AC /* Dorianish.json */; };
-		FCD604692223E4F2004164AC /* Dorianish Movement.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604632223E4F2004164AC /* Dorianish Movement.json */; };
-		FCD6046A2223E4F2004164AC /* Some Moving Fifths.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604642223E4F2004164AC /* Some Moving Fifths.json */; };
-		FCD6046B2223E4F2004164AC /* Triplet Fifths.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604652223E4F2004164AC /* Triplet Fifths.json */; };
-		FCD6046C2223E4F2004164AC /* Test Movement.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604662223E4F2004164AC /* Test Movement.json */; };
-		FCDE36E92244D0790066DA95 /* TWDrumPadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FCDE36E82244D0790066DA95 /* TWDrumPadViewController.m */; };
-		FCDE36EC2244D2650066DA95 /* TWDrumPad.m in Sources */ = {isa = PBXBuildFile; fileRef = FCDE36EB2244D2650066DA95 /* TWDrumPad.m */; };
-		FCE3BA9422498F4300D28B60 /* TWFileStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCE3BA9222498F4300D28B60 /* TWFileStream.cpp */; };
+		FC356C4C2223D0F500B93F5C /* TWBinauralBiquad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C402223D0F500B93F5C /* TWBinauralBiquad.cpp */; settings = {}; };
+		FC356C4D2223D0F500B93F5C /* TWBiquad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C412223D0F500B93F5C /* TWBiquad.cpp */; settings = {}; };
+		FC356C4E2223D0F500B93F5C /* TWOscillator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C422223D0F500B93F5C /* TWOscillator.cpp */; settings = {}; };
+		FC356C4F2223D0F500B93F5C /* TWDelay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C452223D0F500B93F5C /* TWDelay.cpp */; settings = {}; };
+		FC356C502223D0F500B93F5C /* TWBinauralSynth.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C492223D0F500B93F5C /* TWBinauralSynth.cpp */; settings = {}; };
+		FC356C512223D0F500B93F5C /* TWTremolo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C4B2223D0F500B93F5C /* TWTremolo.cpp */; settings = {}; };
+		FC356C632223D10400B93F5C /* TWMasterController.mm in Sources */ = {isa = PBXBuildFile; fileRef = FC356C522223D10300B93F5C /* TWMasterController.mm */; settings = {}; };
+		FC356C642223D10400B93F5C /* TWSequencer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C532223D10300B93F5C /* TWSequencer.cpp */; settings = {}; };
+		FC356C652223D10400B93F5C /* TWMixer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C582223D10300B93F5C /* TWMixer.cpp */; settings = {}; };
+		FC356C662223D10400B93F5C /* TWAudioEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C5A2223D10400B93F5C /* TWAudioEngine.cpp */; settings = {}; };
+		FC356C672223D10400B93F5C /* TWLevelMeter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C5B2223D10400B93F5C /* TWLevelMeter.cpp */; settings = {}; };
+		FC356C682223D10400B93F5C /* TWRingBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C5E2223D10400B93F5C /* TWRingBuffer.cpp */; settings = {}; };
+		FC356C692223D10400B93F5C /* TWEnvelope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C5F2223D10400B93F5C /* TWEnvelope.cpp */; settings = {}; };
+		FC356C6A2223D10400B93F5C /* TWParameter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C602223D10400B93F5C /* TWParameter.cpp */; settings = {}; };
+		FC356C6C2223D7BE00B93F5C /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC356C6B2223D7BE00B93F5C /* MediaPlayer.framework */; settings = {}; };
+		FC356C6E2223D7C500B93F5C /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC356C6D2223D7C500B93F5C /* AVFoundation.framework */; settings = {}; };
+		FC356C722223D80200B93F5C /* TWUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C712223D80200B93F5C /* TWUtils.m */; settings = {}; };
+		FC356C902223D8C400B93F5C /* TWLoadProjectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C772223D8C400B93F5C /* TWLoadProjectViewController.m */; settings = {}; };
+		FC356C912223D8C400B93F5C /* TWFrequencyChartViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C792223D8C400B93F5C /* TWFrequencyChartViewController.m */; settings = {}; };
+		FC356C922223D8C400B93F5C /* TWSequencerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C7A2223D8C400B93F5C /* TWSequencerViewController.m */; settings = {}; };
+		FC356C932223D8C400B93F5C /* TWHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C7C2223D8C400B93F5C /* TWHomeViewController.m */; settings = {}; };
+		FC356C942223D8C400B93F5C /* TWSeqNoteButton.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C812223D8C400B93F5C /* TWSeqNoteButton.m */; settings = {}; };
+		FC356C952223D8C400B93F5C /* TWPitchRatioControlView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C822223D8C400B93F5C /* TWPitchRatioControlView.m */; settings = {}; };
+		FC356C962223D8C400B93F5C /* TWOscView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C862223D8C400B93F5C /* TWOscView.m */; settings = {}; };
+		FC356C972223D8C400B93F5C /* TWKeyboardAccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C892223D8C400B93F5C /* TWKeyboardAccessoryView.m */; settings = {}; };
+		FC356C982223D8C400B93F5C /* TWEnvelopeView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C8A2223D8C400B93F5C /* TWEnvelopeView.m */; settings = {}; };
+		FC356C992223D8C400B93F5C /* TWLevelMeterView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C8D2223D8C400B93F5C /* TWLevelMeterView.m */; settings = {}; };
+		FC356C9A2223D8C400B93F5C /* TWMixerView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C8E2223D8C400B93F5C /* TWMixerView.m */; settings = {}; };
+		FC356C9B2223D8C400B93F5C /* TWForceButton.m in Sources */ = {isa = PBXBuildFile; fileRef = FC356C8F2223D8C400B93F5C /* TWForceButton.m */; settings = {}; };
+		FC3A29D3224CC9A100767E1B /* TestKick.wav in Resources */ = {isa = PBXBuildFile; fileRef = FC3A29D2224CC9A100767E1B /* TestKick.wav */; settings = {}; };
+		FC3A29D6224D466A00767E1B /* TWCycleStateButton.m in Sources */ = {isa = PBXBuildFile; fileRef = FC3A29D5224D466A00767E1B /* TWCycleStateButton.m */; settings = {}; };
+		FC3A29F7224DC9A500767E1B /* TWTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC3A29F6224DC9A500767E1B /* TWTestViewController.m */; settings = {}; };
+		FC42C72B224A34AB003253EF /* Embryo Synth.wav in Resources */ = {isa = PBXBuildFile; fileRef = FC42C72A224A34AB003253EF /* Embryo Synth.wav */; settings = {}; };
+		FC42C72D224A39FF003253EF /* LRTest.wav in Resources */ = {isa = PBXBuildFile; fileRef = FC42C72C224A39FF003253EF /* LRTest.wav */; settings = {}; };
+		FCBDC336218462CA00E7695C /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCBDC335218462CA00E7695C /* AudioToolbox.framework */; settings = {}; };
+		FCBDC344218463A700E7695C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FCBDC33D218463A700E7695C /* main.m */; settings = {}; };
+		FCBDC345218463A700E7695C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FCBDC33E218463A700E7695C /* AppDelegate.m */; settings = {}; };
+		FCBDC35421846D4E00E7695C /* Travelling_WavesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FCBDC34C21846C5000E7695C /* Travelling_WavesTests.m */; settings = {}; };
+		FCBDC35521846D5500E7695C /* Travelling_WavesUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = FCBDC35021846D3100E7695C /* Travelling_WavesUITests.m */; settings = {}; };
+		FCBDC3602184720A00E7695C /* TWViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FCBDC35E2184720A00E7695C /* TWViewController.m */; settings = {}; };
+		FCBDC364218532D400E7695C /* TWAudioController.mm in Sources */ = {isa = PBXBuildFile; fileRef = FCBDC363218532D400E7695C /* TWAudioController.mm */; settings = {}; };
+		FCD6045D2223E0D5004164AC /* EqualTemperament.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604542223E0D5004164AC /* EqualTemperament.json */; settings = {}; };
+		FCD6045E2223E0D5004164AC /* OsterCurve.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604552223E0D5004164AC /* OsterCurve.json */; settings = {}; };
+		FCD604672223E4F2004164AC /* Organ-like.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604612223E4F2004164AC /* Organ-like.json */; settings = {}; };
+		FCD604682223E4F2004164AC /* Dorianish.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604622223E4F2004164AC /* Dorianish.json */; settings = {}; };
+		FCD604692223E4F2004164AC /* Dorianish Movement.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604632223E4F2004164AC /* Dorianish Movement.json */; settings = {}; };
+		FCD6046A2223E4F2004164AC /* Some Moving Fifths.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604642223E4F2004164AC /* Some Moving Fifths.json */; settings = {}; };
+		FCD6046B2223E4F2004164AC /* Triplet Fifths.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604652223E4F2004164AC /* Triplet Fifths.json */; settings = {}; };
+		FCD6046C2223E4F2004164AC /* Test Movement.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604662223E4F2004164AC /* Test Movement.json */; settings = {}; };
+		FCDE36E92244D0790066DA95 /* TWDrumPadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FCDE36E82244D0790066DA95 /* TWDrumPadViewController.m */; settings = {}; };
+		FCDE36EC2244D2650066DA95 /* TWDrumPad.m in Sources */ = {isa = PBXBuildFile; fileRef = FCDE36EB2244D2650066DA95 /* TWDrumPad.m */; settings = {}; };
+		FCE3BA9422498F4300D28B60 /* TWFileStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCE3BA9222498F4300D28B60 /* TWFileStream.cpp */; settings = {}; };
+		FCE9EA9E224C046D00E310FB /* TWSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = FCE9EA9C224C046C00E310FB /* TWSlider.m */; settings = {}; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -134,7 +137,11 @@
 		FC356C8D2223D8C400B93F5C /* TWLevelMeterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWLevelMeterView.m; sourceTree = "<group>"; };
 		FC356C8E2223D8C400B93F5C /* TWMixerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWMixerView.m; sourceTree = "<group>"; };
 		FC356C8F2223D8C400B93F5C /* TWForceButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWForceButton.m; sourceTree = "<group>"; };
-		FC42C728224A187F003253EF /* TestKick.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = TestKick.wav; sourceTree = "<group>"; };
+		FC3A29D2224CC9A100767E1B /* TestKick.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = TestKick.wav; sourceTree = "<group>"; };
+		FC3A29D4224D466A00767E1B /* TWCycleStateButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TWCycleStateButton.h; sourceTree = "<group>"; };
+		FC3A29D5224D466A00767E1B /* TWCycleStateButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TWCycleStateButton.m; sourceTree = "<group>"; };
+		FC3A29F5224DC9A500767E1B /* TWTestViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TWTestViewController.h; sourceTree = "<group>"; };
+		FC3A29F6224DC9A500767E1B /* TWTestViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TWTestViewController.m; sourceTree = "<group>"; };
 		FC42C72A224A34AB003253EF /* Embryo Synth.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "Embryo Synth.wav"; sourceTree = "<group>"; };
 		FC42C72C224A39FF003253EF /* LRTest.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = LRTest.wav; sourceTree = "<group>"; };
 		FCBDC2FE2184626F00E7695C /* Travelling Waves.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Travelling Waves.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -171,6 +178,8 @@
 		FCDE36EB2244D2650066DA95 /* TWDrumPad.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TWDrumPad.m; sourceTree = "<group>"; };
 		FCE3BA9222498F4300D28B60 /* TWFileStream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TWFileStream.cpp; sourceTree = "<group>"; };
 		FCE3BA9322498F4300D28B60 /* TWFileStream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TWFileStream.h; sourceTree = "<group>"; };
+		FCE9EA9C224C046C00E310FB /* TWSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWSlider.m; sourceTree = "<group>"; };
+		FCE9EA9D224C046C00E310FB /* TWSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWSlider.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -242,6 +251,8 @@
 				FC356C7A2223D8C400B93F5C /* TWSequencerViewController.m */,
 				FCDE36E72244D0790066DA95 /* TWDrumPadViewController.h */,
 				FCDE36E82244D0790066DA95 /* TWDrumPadViewController.m */,
+				FC3A29F5224DC9A500767E1B /* TWTestViewController.h */,
+				FC3A29F6224DC9A500767E1B /* TWTestViewController.m */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -249,6 +260,8 @@
 		FC356C7F2223D8C400B93F5C /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				FCE9EA9D224C046C00E310FB /* TWSlider.h */,
+				FCE9EA9C224C046C00E310FB /* TWSlider.m */,
 				FC356C802223D8C400B93F5C /* TWEnvelopeView.h */,
 				FC356C8A2223D8C400B93F5C /* TWEnvelopeView.m */,
 				FC356C8B2223D8C400B93F5C /* TWSeqNoteButton.h */,
@@ -267,6 +280,8 @@
 				FC356C8F2223D8C400B93F5C /* TWForceButton.m */,
 				FCDE36EA2244D2650066DA95 /* TWDrumPad.h */,
 				FCDE36EB2244D2650066DA95 /* TWDrumPad.m */,
+				FC3A29D4224D466A00767E1B /* TWCycleStateButton.h */,
+				FC3A29D5224D466A00767E1B /* TWCycleStateButton.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -282,9 +297,9 @@
 		FC42C727224A187F003253EF /* E-Drums */ = {
 			isa = PBXGroup;
 			children = (
+				FC3A29D2224CC9A100767E1B /* TestKick.wav */,
 				FC42C72C224A39FF003253EF /* LRTest.wav */,
 				FC42C72A224A34AB003253EF /* Embryo Synth.wav */,
-				FC42C728224A187F003253EF /* TestKick.wav */,
 			);
 			path = "E-Drums";
 			sourceTree = "<group>";
@@ -548,8 +563,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FC42C729224A187F003253EF /* TestKick.wav in Resources */,
 				FCD6046B2223E4F2004164AC /* Triplet Fifths.json in Resources */,
+				FC3A29D3224CC9A100767E1B /* TestKick.wav in Resources */,
 				FC42C72B224A34AB003253EF /* Embryo Synth.wav in Resources */,
 				FCD604692223E4F2004164AC /* Dorianish Movement.json in Resources */,
 				FCD6045E2223E0D5004164AC /* OsterCurve.json in Resources */,
@@ -590,6 +605,7 @@
 				FC356C942223D8C400B93F5C /* TWSeqNoteButton.m in Sources */,
 				FCBDC3602184720A00E7695C /* TWViewController.m in Sources */,
 				FC356C642223D10400B93F5C /* TWSequencer.cpp in Sources */,
+				FC3A29F7224DC9A500767E1B /* TWTestViewController.m in Sources */,
 				FC356C4C2223D0F500B93F5C /* TWBinauralBiquad.cpp in Sources */,
 				FC356C932223D8C400B93F5C /* TWHomeViewController.m in Sources */,
 				FC356C9A2223D8C400B93F5C /* TWMixerView.m in Sources */,
@@ -599,12 +615,14 @@
 				FCDE36E92244D0790066DA95 /* TWDrumPadViewController.m in Sources */,
 				FC356C992223D8C400B93F5C /* TWLevelMeterView.m in Sources */,
 				FC356C682223D10400B93F5C /* TWRingBuffer.cpp in Sources */,
+				FC3A29D6224D466A00767E1B /* TWCycleStateButton.m in Sources */,
 				FC356C982223D8C400B93F5C /* TWEnvelopeView.m in Sources */,
 				FC356C962223D8C400B93F5C /* TWOscView.m in Sources */,
 				FC356C9B2223D8C400B93F5C /* TWForceButton.m in Sources */,
 				FC356C952223D8C400B93F5C /* TWPitchRatioControlView.m in Sources */,
 				FC356C922223D8C400B93F5C /* TWSequencerViewController.m in Sources */,
 				FC356C972223D8C400B93F5C /* TWKeyboardAccessoryView.m in Sources */,
+				FCE9EA9E224C046D00E310FB /* TWSlider.m in Sources */,
 				FCBDC345218463A700E7695C /* AppDelegate.m in Sources */,
 				FCBDC344218463A700E7695C /* main.m in Sources */,
 				FC356C722223D80200B93F5C /* TWUtils.m in Sources */,

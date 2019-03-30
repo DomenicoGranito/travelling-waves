@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <vector>
 #include <array>
+#include <functional>
 
 #include <dispatch/dispatch.h>
 
@@ -103,10 +104,11 @@ public:
     // Drum Pad
     //============================================================
     int loadAudioFileAtSourceIdx(int sourceIdx, std::string filepath);
-    void startPlaybackAtSourceIdx(int sourceIdx, uint64_t sampleTime);
+    void startPlaybackAtSourceIdx(int sourceIdx, uint32_t sampleTime);
     void stopPlaybackAtSourceIdx(int sourceIdx);
     void setPlaybackParameterAtSourceIdx(int sourceIdx, int paramID, float value, float rampTime_ms);
-    bool getPlaybackParameterAtSourceIdx(int sourceIdx, int paramID);
+    float getPlaybackParameterAtSourceIdx(int sourceIdx, int paramID);
+    void setFinishedPlaybackProc(std::function<void(int)>finishedPlaybackProc);
     
     
 private:
@@ -143,6 +145,7 @@ private:
     
     std::array<TWFileStream, kNumSources>           _fileStreams;
     dispatch_queue_t                                _readQueue;
+    dispatch_queue_t                                _notificationQueue;
     
     // Private Seq Methods
     void _seqUpdateTotalDurationSamples();

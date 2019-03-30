@@ -259,9 +259,10 @@
     
     [super setFrame:frame];
     
+    bool isIPad = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
     UIInterfaceOrientation orienation = [[UIApplication sharedApplication] statusBarOrientation];
     bool isLandscape = (orienation == UIInterfaceOrientationLandscapeLeft) || (orienation == UIInterfaceOrientationLandscapeRight);
-    CGFloat componentHeight = isLandscape ? kLandscapeComponentHeight : kPortraitComponentHeight;
+    CGFloat componentHeight = (isLandscape ? (isIPad ? kLandscapePadComponentHeight : kLandscapePhoneComponentHeight) : kPortraitComponentHeight);
     
     CGFloat yPos = 0.0f;
     CGFloat xPos = 0.0f;

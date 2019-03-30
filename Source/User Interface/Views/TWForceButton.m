@@ -59,11 +59,16 @@ static const CGFloat kLongPressInterval_s   = 0.05f;
     
     _feedbackGenerator = [[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleMedium];
     
-    _forceTouchAvailable = (self.traitCollection.forceTouchCapability == UIForceTouchCapabilityAvailable);
     _longPressElapsedTime = 0.0f;
-//    NSLog(@"ForceTouchAvailable: %d", _forceTouchAvailable);
     
     [self setBackgroundColor:_defaultBackgroundColor];
+}
+
+- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
+    [super traitCollectionDidChange:previousTraitCollection];
+    if ([self.traitCollection respondsToSelector:@selector(forceTouchCapability)]) {
+        _forceTouchAvailable = (self.traitCollection.forceTouchCapability == UIForceTouchCapabilityAvailable);
+    }
 }
 
 - (void)setFrame:(CGRect)frame {

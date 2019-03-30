@@ -10,39 +10,50 @@
 #define TWRingBuffer_h
 
 #include <stdio.h>
+#include <stdint.h>
 
 class TWRingBuffer {
     
 public:
     
-    TWRingBuffer(int numSamples);
+    TWRingBuffer(uint32_t size);
     ~TWRingBuffer();
+    
+    uint32_t getSize();
     
     void writeAndIncIdx(float value);
     float readAndIncIdx();
     float readAtIdx(float idx);
     
-    void offsetReadIdx(int offset);
-    void offsetWriteIdx(int offset);
+    void offsetReadIdx(uint32_t offset);
+    void offsetWriteIdx(uint32_t offset);
     
-    void setReadIdx(int newReadIdx);
-    void setWriteIdx(int newWriteIdx);
+    void setReadIdx(uint32_t newReadIdx);
+    void setWriteIdx(uint32_t newWriteIdx);
     
-    int getReadIdx();
-    int getWriteIdx();
+    uint32_t getReadIdx();
+    uint32_t getWriteIdx();
+    
+    void setWrapPoint(uint32_t wrapPoint);
+    uint32_t getWrapPoint();
     
     void reset();
     
+    void setDebugID(int debugID);
+    
 private:
     
-    float*      _buffer;
+    float*          _buffer;
     
-    int         _size;
-    int         _writeIdx;
-    int         _readIdx;
+    uint32_t        _size;
+    uint32_t        _wrapPoint;
+    uint32_t        _writeIdx;
+    uint32_t        _readIdx;
     
-    void        _incReadIdx();
-    void        _incWriteIdx();
+    void            _incReadIdx();
+    void            _incWriteIdx();
+    
+    int             _debugID;
     
     
 };
