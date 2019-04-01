@@ -28,34 +28,41 @@ public:
     TWFileStream();
     ~TWFileStream();
     
+    //--- Audio Source Methods ---//
     void prepare(float sampleRate);
     void getSample(float& leftSample, float& rightSample);
     void release();
     
+    //--- Setup Methods ---//
     void setReadQueue(dispatch_queue_t readQueue);
     void setNotificationQueue(dispatch_queue_t notificationQueue);
     int loadAudioFile(std::string filepath);
     
+    //--- Transport Methods ---//
     int start(uint32_t startSampleTime);
     void stop();
+    TWPlaybackStatus getPlaybackStatus();
+    float getNormalizedPlaybackProgress();
     
+    //--- Playback Property Methods ---//
     void setVelocity(float amplitude, float rampTime_ms);
     float getVelocity();
-    
     void setMaxVolume(float maxVolume, float rampTime_ms);
     float getMaxVolume();
+    void setPlaybackDirection(TWPlaybackDirection newDirection);
+    TWPlaybackDirection getPlaybackDirection();
     
     void setDrumPadMode(TWDrumPadMode drumPadMode);
     TWDrumPadMode getDrumPadMode();
     
-    bool getIsRunning();
     
-    float getNormalizedPlaybackProgress();
+    
+    
     
     void setSourceIdx(int sourceIdx);
     int getSourceIdx();
     
-    void setFinishedPlaybackProc(std::function<void(int)>finishedPlaybackProc);
+    void setFinishedPlaybackProc(std::function<void(int,bool)>finishedPlaybackProc);
     
 private:
     
@@ -64,23 +71,34 @@ private:
     
     TWParameter             _velocity;
     TWParameter             _maxVolume;
+    TWParameter             _fadeOutGain;
     
     TWDrumPadMode           _drumPadMode;
+    
+    TWPlaybackStatus        _playbackStatus;
+    TWPlaybackDirection     _playbackDirection;
     
     float                   _sampleRate;
     
     bool                    _isRunning;
+    
+    bool                    _isStopping;
+    uint32_t                _stopSampleCounter;
+    
     uint32_t                _lengthInFrames;
     uint32_t                _framesRead;
     uint32_t                _currentFrame;
     int                     _sourceIdx;
+    bool                    _entireFileInsideRingBuffer;
+    bool                    _endOfFileReached;
+    bool                    _fileReadError;
     
     AudioBufferList*        _readABL;
     ExtAudioFileRef         _audioFile;
     dispatch_queue_t        _readQueue;
     dispatch_queue_t        _notificationQueue;
     
-    std::function<void(int)>   _finishedPlaybackProc;
+    std::function<void(int,bool)>   _finishedPlaybackProc;
     
     void _printASBD(AudioStreamBasicDescription* asbd, std::string context);
     void _printABL(AudioBufferList *abl, std::string context);
@@ -88,9 +106,18 @@ private:
     void _deallocateABL(AudioBufferList* abl);
     
     void _readNextBlock();
+    void _readEntireAudioFile();
     void _resetAudioFile();
+    uint32_t _readHelper(uint32_t samplesToRead);
+    
+    void _setPlaybackStatus(TWPlaybackStatus newStatus);
+    std::string _playbackStatusToString(TWPlaybackStatus status);
     
     void _setIsRunning(bool isRunning);
+    
+    void _smoothLoopPoint();
+    void _setStopStatusAfterSamples(uint32_t samples);
+    void _stopTick();
 };
 
 

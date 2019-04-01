@@ -24,9 +24,11 @@
     NSArray*                    _drumPads;
     NSArray*                    _velocitySliders;
     NSArray*                    _drumPadModeButtons;
+    NSArray*                    _playbackDirectionButtons;
     
     UIButton*                   _toggleVelocityButton;
     UIButton*                   _toggleDrumPadModeButton;
+    UIButton*                   _togglePlaybackDirectionButton;
     
     UIButton*                   _editingAllButton;
     BOOL                        _editingAllToggle;
@@ -74,9 +76,15 @@
                                              [UIColor colorWithRed:0.2f green:0.32f blue:0.2f alpha:0.8f],
                                              [UIColor colorWithRed:0.2f green:0.2f blue:0.46f alpha:0.8f]];
     
+    NSArray<NSString*>* playbackDirectionTitles = @[@"Forward", @"Reverse"];
+    NSArray<UIColor*>* playbackDirectionColors = @[[UIColor colorWithRed:0.3f green:0.2f blue:0.1f alpha:0.8f],
+                                             [UIColor colorWithRed:0.1f green:0.2f blue:0.3f alpha:0.8f]];
+    
+    
     NSMutableArray* drumPads = [[NSMutableArray alloc] init];
     NSMutableArray* velocitySliders = [[NSMutableArray alloc] init];
     NSMutableArray* drumPadModeButtons = [[NSMutableArray alloc] init];
+    NSMutableArray* playbackDirectionButtons = [[NSMutableArray alloc] init];
     for (int i=0; i < kNumSources; i++) {
         TWDrumPad* drumPad = [[TWDrumPad alloc] init];
         [drumPad setTag:i];
@@ -104,10 +112,22 @@
         [drumPadModeButton setHidden:YES];
         [self.view addSubview:drumPadModeButton];
         [drumPadModeButtons addObject:drumPadModeButton];
+        
+        TWCycleStateButton* playbackDirectionButton = [[TWCycleStateButton alloc] initWithNumberOfStates:2];
+        [playbackDirectionButton setTag:i];
+        [playbackDirectionButton setStateColors:playbackDirectionColors];
+        [playbackDirectionButton setStateTitles:playbackDirectionTitles];
+        [playbackDirectionButton setTitleColor:[UIColor colorWithWhite:0.06f alpha:1.0f] forState:UIControlStateNormal];
+        [[playbackDirectionButton titleLabel] setFont:[UIFont systemFontOfSize:11.0f]];
+        [playbackDirectionButton addTarget:self action:@selector(playbackDirectionChanged:) forControlEvents:UIControlEventTouchUpInside];
+        [playbackDirectionButton setHidden:YES];
+        [self.view addSubview:playbackDirectionButton];
+        [playbackDirectionButtons addObject:playbackDirectionButton];
     }
     _drumPads = [[NSArray alloc] initWithArray:drumPads];
     _velocitySliders = [[NSArray alloc] initWithArray:velocitySliders];
     _drumPadModeButtons = [[NSArray alloc] initWithArray:drumPadModeButtons];
+    _playbackDirectionButtons = [[NSArray alloc] initWithArray:playbackDirectionButtons];
     
     
     _toggleVelocityButton = [[UIButton alloc] init];
@@ -128,6 +148,15 @@
     [_toggleDrumPadModeButton addTarget:self action:@selector(toggleDrumPadModeUp:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_toggleDrumPadModeButton];
     
+    _togglePlaybackDirectionButton = [[UIButton alloc] init];
+    [_togglePlaybackDirectionButton setTitle:@"Direction" forState:UIControlStateNormal];
+    [_togglePlaybackDirectionButton setBackgroundColor:[UIColor colorWithWhite:0.08 alpha:1.0f]];
+    [_togglePlaybackDirectionButton setTitleColor:[UIColor colorWithWhite:0.3f alpha:0.8f] forState:UIControlStateNormal];
+    [[_togglePlaybackDirectionButton titleLabel] setFont:[UIFont systemFontOfSize:12.0f]];
+    [_togglePlaybackDirectionButton addTarget:self action:@selector(togglePlaybackDirectionDown:) forControlEvents:UIControlEventTouchDown];
+    [_togglePlaybackDirectionButton addTarget:self action:@selector(togglePlaybackDirectionUp:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:_togglePlaybackDirectionButton];
+    
     _editingAllButton = [[UIButton alloc] init];
     [_editingAllButton setTitle:@"Edit One" forState:UIControlStateNormal];
     [_editingAllButton setTitle:@"Edit All" forState:UIControlStateSelected];
@@ -138,10 +167,10 @@
     [self.view addSubview:_editingAllButton];
     _editingAllToggle = NO;
     
-    [[TWAudioController sharedController] setPlaybackDidEndBlock:^(int sourceIdx) {
+    [[TWAudioController sharedController] setPlaybackDidEndBlock:^(int sourceIdx, bool success) {
         dispatch_sync(dispatch_get_main_queue(), ^{
             TWDrumPad* drumPad = [self->_drumPads objectAtIndex:sourceIdx];
-            [drumPad oneShotPlaybackStopped];
+            [drumPad playbackStopped:success];
         });
     }];
     
@@ -163,6 +192,10 @@
         TWDrumPadMode currentMode = (TWDrumPadMode)[[TWAudioController sharedController] getPlaybackParameter:kPlaybackParam_DrumPadMode atSourceIdx:i];
         [drumPadModeButton setCurrentState:(NSUInteger)currentMode];
         [drumPad setDrumPadMode:currentMode];
+        
+        TWCycleStateButton* playbackDirectionButton = (TWCycleStateButton*)[_playbackDirectionButtons objectAtIndex:i];
+        TWPlaybackDirection direction = (TWPlaybackDirection)[[TWAudioController sharedController] getPlaybackParameter:kPlaybackParam_PlaybackDirection atSourceIdx:i];
+        [playbackDirectionButton setCurrentState:(NSUInteger)direction];
     }
     
     [self updateIOButtonState:[[TWAudioController sharedController] isRunning]];
@@ -224,6 +257,9 @@
         TWCycleStateButton* drumPadModeButton = (TWCycleStateButton*)[_drumPadModeButtons objectAtIndex:i];
         [drumPadModeButton setFrame:CGRectMake(xPos, yPos, padSize, padSize)];
         
+        TWCycleStateButton* playbackDirectionButton = (TWCycleStateButton*)[_playbackDirectionButtons objectAtIndex:i];
+        [playbackDirectionButton setFrame:CGRectMake(xPos, yPos, padSize, padSize)];
+        
         xPos += padSize + padPad;
         if (column == 3) {
             yPos += padSize + padPad;
@@ -241,6 +277,9 @@
         yPos += padPad + padSize;
         [_toggleDrumPadModeButton setFrame:CGRectMake(xPos, yPos, padSize, padSize)];
         
+        yPos += padPad + padSize;
+        [_togglePlaybackDirectionButton setFrame:CGRectMake(xPos, yPos, padSize, padSize)];
+        
         xPos += padPad + padSize;
         yPos = componentHeight + padPad;
         [_editingAllButton setFrame:CGRectMake(xPos, yPos, padSize, padSize)];
@@ -253,6 +292,9 @@
         
         xPos += padSize + padPad;
         [_toggleDrumPadModeButton setFrame:CGRectMake(xPos, yPos, padSize, padSize)];
+        
+        xPos += padSize + padPad;
+        [_togglePlaybackDirectionButton setFrame:CGRectMake(xPos, yPos, padSize, padSize)];
         
         xPos = xMargin + padPad;
         yPos += padPad + padSize;
@@ -325,14 +367,14 @@
 //===== Drum Pad Mode =====//
 
 - (void)toggleDrumPadModeDown:(UIButton*)sender {
-    for (UIButton* drumPadModeButton in _drumPadModeButtons) {
+    for (TWCycleStateButton* drumPadModeButton in _drumPadModeButtons) {
         [drumPadModeButton setHidden:NO];
     }
     [sender setBackgroundColor:[UIColor colorWithWhite:0.2 alpha:1.0]];
 }
 
 - (void)toggleDrumPadModeUp:(UIButton*)sender {
-    for (UIButton* drumPadModeButton in _drumPadModeButtons) {
+    for (TWCycleStateButton* drumPadModeButton in _drumPadModeButtons) {
         [drumPadModeButton setHidden:YES];
     }
     [sender setBackgroundColor:[UIColor colorWithWhite:0.08 alpha:1.0f]];
@@ -362,6 +404,40 @@
 }
 
 
+//--- Playback Direction ---//
+
+- (void)togglePlaybackDirectionDown:(UIButton*)sender {
+    for (TWCycleStateButton* playbackDirectionButton in _playbackDirectionButtons) {
+        [playbackDirectionButton setHidden:NO];
+    }
+    [sender setBackgroundColor:[UIColor colorWithWhite:0.2 alpha:1.0]];
+}
+
+- (void)togglePlaybackDirectionUp:(UIButton*)sender {
+    for (TWCycleStateButton* playbackDirectionButton in _playbackDirectionButtons) {
+        [playbackDirectionButton setHidden:YES];
+    }
+    [sender setBackgroundColor:[UIColor colorWithWhite:0.08 alpha:1.0f]];
+}
+
+- (void)playbackDirectionChanged:(TWCycleStateButton*)sender {
+    [sender incrementState];
+    NSUInteger currentState = [sender currentState];
+    
+    [[TWAudioController sharedController] setPlaybackParameter:kPlaybackParam_PlaybackDirection withValue:(float)currentState atSourceIdx:(int)sender.tag inTime:0.0f];
+    
+    if (_editingAllToggle) {
+        for (TWCycleStateButton* playbackDirectionButton in _playbackDirectionButtons) {
+            if (playbackDirectionButton != sender) {
+                [playbackDirectionButton setCurrentState:currentState];
+                [[TWAudioController sharedController] setPlaybackParameter:kPlaybackParam_PlaybackDirection withValue:(float)currentState atSourceIdx:(int)playbackDirectionButton.tag inTime:0.0f];
+            }
+        }
+    }
+}
+
+
+
 //===== All Button =====//
 - (void)editingAllButtonTapped:(UIButton*)sender {
     if ([sender isSelected]) {
@@ -388,21 +464,21 @@
         NSLog(@"Error! SampleURL is nil!");
     }
     
-    NSString* sampleURL2 = [[NSBundle mainBundle] pathForResource:@"LRTest" ofType:@"wav"];
-    NSString* outSampleURL2 = [sampleURL2 stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
-    if (sampleURL2 != nil) {
-        [[TWAudioController sharedController] loadAudioFile:outSampleURL2 atSourceIdx:1];
-    } else {
-        NSLog(@"Error! SampleURL is nil!");
-    }
-    
-    NSString* sampleURL3 = [[NSBundle mainBundle] pathForResource:@"TestKick" ofType:@"wav"];
-    NSString* outSampleURL3 = [sampleURL3 stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
-    if (sampleURL3 != nil) {
-        [[TWAudioController sharedController] loadAudioFile:outSampleURL3 atSourceIdx:2];
-    } else {
-        NSLog(@"Error! SampleURL is nil!");
-    }
+//    NSString* sampleURL2 = [[NSBundle mainBundle] pathForResource:@"LRTest" ofType:@"wav"];
+//    NSString* outSampleURL2 = [sampleURL2 stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
+//    if (sampleURL2 != nil) {
+//        [[TWAudioController sharedController] loadAudioFile:outSampleURL2 atSourceIdx:1];
+//    } else {
+//        NSLog(@"Error! SampleURL is nil!");
+//    }
+//
+//    NSString* sampleURL3 = [[NSBundle mainBundle] pathForResource:@"TestKick" ofType:@"wav"];
+//    NSString* outSampleURL3 = [sampleURL3 stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
+//    if (sampleURL3 != nil) {
+//        [[TWAudioController sharedController] loadAudioFile:outSampleURL3 atSourceIdx:2];
+//    } else {
+//        NSLog(@"Error! SampleURL is nil!");
+//    }
 }
 
 

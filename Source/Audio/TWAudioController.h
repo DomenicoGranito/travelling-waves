@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)audioControllerDidStop;
 @end
 
-typedef void (^TWAudioControllerPlaybackDidEndBlock)(int sourceIdx);
+typedef void (^TWAudioControllerPlaybackDidEndBlock)(int sourceIdx, bool success);
 
 @interface TWAudioController : NSObject
 

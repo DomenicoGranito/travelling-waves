@@ -13,6 +13,7 @@
 {
     UILabel*                        _titleLabel;
     UIView*                         _touchView;
+    UIView*                         _errorView;
     TWTouchState                    _touchState;
     BOOL                            _forceTouchAvailable;
     BOOL                            _toggleState;
@@ -46,6 +47,12 @@
     [_touchView setBackgroundColor:[UIColor colorWithWhite:0.5f alpha:1.0f]];
     [_touchView setAlpha:0.0f];
     [self addSubview:_touchView];
+    
+    _errorView = [[UIView alloc] init];
+    [_errorView setUserInteractionEnabled:NO];
+    [_errorView setBackgroundColor:[UIColor colorWithRed:1.0f green:0.1f blue:0.1f alpha:1.0f]];
+    [_errorView setAlpha:0.0f];
+    [self addSubview:_errorView];
 
     _touchState = TWTouchState_Up;
     _drumPadMode = TWDrumPadMode_OneShot;
@@ -68,6 +75,7 @@
     
     [_titleLabel setFrame:CGRectMake(0.0f, 0.0, frame.size.width, frame.size.height)];
     [_touchView setFrame:CGRectMake(0.0f, 0.0f, frame.size.width, frame.size.height)];
+    [_errorView setFrame:CGRectMake(0.0f, 0.0f, frame.size.width, frame.size.height)];
 }
 
 - (void)viewWillAppear {
@@ -249,10 +257,19 @@
 
 
 
-- (void)oneShotPlaybackStopped {
+- (void)playbackStopped:(BOOL)successfully {
     if (_drumPadMode == TWDrumPadMode_OneShot) {
         [_touchView setAlpha:0.0f];
         _oneShotTouchIgnore = YES;
+    }
+    
+    if (!successfully) {
+        [_errorView setAlpha:1.0f];
+        [UIView animateWithDuration:0.5f delay:0.2f options:UIViewAnimationOptionCurveEaseIn animations:^{
+            [self->_errorView setAlpha:0.0f];
+        } completion:^(BOOL finished) {
+            
+        }];
     }
 }
 

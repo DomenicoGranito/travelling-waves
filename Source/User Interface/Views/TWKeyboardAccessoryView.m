@@ -103,7 +103,7 @@ static const CGFloat kButtonWidth       = 120.0f;
     bool isIPad = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
     UIInterfaceOrientation orienation = [[UIApplication sharedApplication] statusBarOrientation];
     bool isLandscape = (orienation == UIInterfaceOrientationLandscapeLeft) || (orienation == UIInterfaceOrientationLandscapeRight);
-    NSLog(@"Keyboard. isLandscape: %d", isLandscape);
+//    NSLog(@"Keyboard. isLandscape: %d", isLandscape);
     CGFloat accessoryHeight = (isIPad ? kKeyboardAccessoryHeightPad : (isLandscape ? kKeyboardAccessoryLandscapeHeightPhone : kKeyboardAccessoryPortraitHeightPhone));
     
     [self setFrame:CGRectMake(xPos, 0.0f, screenWidth, accessoryHeight)];

@@ -22,6 +22,10 @@ public:
     uint32_t getSize();
     
     void writeAndIncIdx(float value);
+   
+    float read();
+    void incReadIdx();
+    
     float readAndIncIdx();
     float readAtIdx(float idx);
     
@@ -34,8 +38,16 @@ public:
     uint32_t getReadIdx();
     uint32_t getWriteIdx();
     
-    void setWrapPoint(uint32_t wrapPoint);
-    uint32_t getWrapPoint();
+    void setReadWrapPoint(uint32_t readWrapPoint);
+    uint32_t getReadWrapPoint();
+    
+    void setWriteWrapPoint(uint32_t writeWrapPoint);
+    uint32_t getWriteWrapPoint();
+    
+    void setReadStartPoint(uint32_t readStartPoint);
+    uint32_t getReadStartPoint();
+    
+    void fadeOutTailEnd(uint32_t endSamplesToFadeOut);
     
     void reset();
     
@@ -46,11 +58,14 @@ private:
     float*          _buffer;
     
     uint32_t        _size;
-    uint32_t        _wrapPoint;
-    uint32_t        _writeIdx;
-    uint32_t        _readIdx;
     
-    void            _incReadIdx();
+    uint32_t        _writeIdx;
+    uint32_t        _writeWrapPoint;
+    
+    uint32_t        _readIdx;
+    uint32_t        _readWrapPoint;
+    uint32_t        _readStartPoint;
+    
     void            _incWriteIdx();
     
     int             _debugID;

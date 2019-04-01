@@ -105,11 +105,15 @@
 //#define kSeqParam_AmpSustainTime                2
 
 /* Audio File Playback Stream */
-#define kAudioFileReadBufferSize                131072
+#define kAudioFileReadBufferNumFrames           32768
+#define kAudioFileRingBufferSize                kAudioFileReadBufferNumFrames * 4
+#define kAudioFilePlaybackFadeOutTime_ms        20.0f
 
 #define kPlaybackParam_Velocity                 1
 #define kPlaybackParam_MaxVolume                2
 #define kPlaybackParam_DrumPadMode              3
+#define kPlaybackParam_PlaybackDirection        4
+#define kPlaybackParam_NormalizedProgress       5       // Readonly
 
 
 
@@ -134,10 +138,17 @@ typedef enum {
 
 
 typedef enum {
-    TWPlaybackStatus_Stopped    = 0,
-    TWPlaybackStatus_Playing    = 1,
-    TWPlaybackStatus_Recording  = 2,
+    TWPlaybackStatus_Uninitialized  = 0,
+    TWPlaybackStatus_Stopped        = 1,
+    TWPlaybackStatus_Playing        = 2,
+    TWPlaybackStatus_Recording      = 3,
 } TWPlaybackStatus;
+
+
+typedef enum {
+    TWPlaybackDirection_Forward     = 0,
+    TWPlaybackDirection_Reverse     = 1
+} TWPlaybackDirection;
 
 
 #endif /* TWHeader_h */

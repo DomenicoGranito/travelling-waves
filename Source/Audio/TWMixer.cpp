@@ -643,7 +643,7 @@ float TWMixer::getNormalizedPlaybackProgressAtSourceIdx(int sourceIdx)
 
 bool TWMixer::getPlaybackStatusAtSourceIdx(int sourceIdx)
 {
-    return _fileStream->getIsRunning();
+    return (_fileStream->getPlaybackStatus() == TWPlaybackStatus_Playing);
 }
 
 

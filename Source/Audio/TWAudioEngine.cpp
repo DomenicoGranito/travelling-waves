@@ -680,6 +680,10 @@ void TWAudioEngine::setPlaybackParameterAtSourceIdx(int sourceIdx, int paramID, 
             _fileStreams[sourceIdx].setDrumPadMode((TWDrumPadMode)value);
             break;
             
+        case kPlaybackParam_PlaybackDirection:
+            _fileStreams[sourceIdx].setPlaybackDirection((TWPlaybackDirection)value);
+            break;
+            
         default:
             printf("\nError(setPlaybackParameterAtSourceIdx): Unknown paramID: %d. For sourceIdx: %d\n", paramID, sourceIdx);
             break;
@@ -703,15 +707,19 @@ float TWAudioEngine::getPlaybackParameterAtSourceIdx(int sourceIdx, int paramID)
             returnValue = (float)_fileStreams[sourceIdx].getDrumPadMode();
             break;
             
+        case kPlaybackParam_PlaybackDirection:
+            returnValue = (float)_fileStreams[sourceIdx].getPlaybackDirection();
+            break;
+            
         default:
-            printf("\nError(getPlaybackParameterAtSourceIdx): Unknown paramID: %d. For sourceIdx: %d\n", paramID, sourceIdx);
+            printf("\nError(TWAudioEnging::getPlaybackParameterAtSourceIdx): Unknown paramID: %d. For sourceIdx: %d\n", paramID, sourceIdx);
             break;
     }
     
     return returnValue;
 }
 
-void TWAudioEngine::setFinishedPlaybackProc(std::function<void(int)> finishedPlaybackProc)
+void TWAudioEngine::setFinishedPlaybackProc(std::function<void(int,bool)> finishedPlaybackProc)
 {
     for (int sourceIdx=0; sourceIdx < kNumSources; sourceIdx++) {
         _fileStreams[sourceIdx].setFinishedPlaybackProc(finishedPlaybackProc);
