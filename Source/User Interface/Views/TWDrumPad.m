@@ -9,12 +9,21 @@
 #import "TWDrumPad.h"
 #import "TWAudioController.h"
 
+#import <QuartzCore/QuartzCore.h>
+
+
 @interface TWDrumPad()
 {
     UILabel*                        _titleLabel;
+    
     UIView*                         _touchView;
     UIView*                         _errorView;
+    
+    UIView*                         _hitView;
+//    CAGradientLayer*                _hitViewGradient;
+    
     TWTouchState                    _touchState;
+    int                             _touchDownCount;
     BOOL                            _forceTouchAvailable;
     BOOL                            _toggleState;
     BOOL                            _oneShotTouchIgnore;
@@ -53,11 +62,29 @@
     [_errorView setBackgroundColor:[UIColor colorWithRed:1.0f green:0.1f blue:0.1f alpha:1.0f]];
     [_errorView setAlpha:0.0f];
     [self addSubview:_errorView];
-
+    
+//    _hitViewGradient = [CAGradientLayer layer];
+//    NSArray* hitViewGradientColors = [NSArray arrayWithObjects:
+//                                      [UIColor colorWithRed:0.75f green:0.15f blue:0.15f alpha:1.0f],
+//                                      [UIColor colorWithWhite:0.5f alpha:1.0f],
+//                                      nil];
+//    [_hitViewGradient setColors:hitViewGradientColors];
+//    [_hitViewGradient setType:kCAGradientLayerRadial];
+    
+    _hitView = [[UIView alloc] init];
+    [_hitView setUserInteractionEnabled:NO];
+    [_hitView setBackgroundColor:[UIColor colorWithRed:0.6f green:0.8f blue:0.15f alpha:0.6f]];
+    [_hitView setAlpha:0.0f];
+    [_hitView.layer setMasksToBounds:YES];
+//    [_hitView.layer insertSublayer:_hitViewGradient atIndex:0];
+    [self addSubview:_hitView];
+    
     _touchState = TWTouchState_Up;
     _drumPadMode = TWDrumPadMode_OneShot;
     _toggleState = NO;
     _oneShotTouchIgnore = NO;
+    
+    [self setMultipleTouchEnabled:YES];
     
     [self setBackgroundColor:[UIColor colorWithWhite:0.1f alpha:1.0]];
 }
@@ -76,10 +103,25 @@
     [_titleLabel setFrame:CGRectMake(0.0f, 0.0, frame.size.width, frame.size.height)];
     [_touchView setFrame:CGRectMake(0.0f, 0.0f, frame.size.width, frame.size.height)];
     [_errorView setFrame:CGRectMake(0.0f, 0.0f, frame.size.width, frame.size.height)];
+//    [_hitViewGradient setFrame:CGRectMake(0.0f, 0.0f, frame.size.width, frame.size.height)];
+    
+    
+    CGFloat hitViewMargin = 0.0f;
+    
+    CGFloat hitXPos = hitViewMargin * frame.size.width;
+    CGFloat hitYPos = hitViewMargin * frame.size.height;
+    CGFloat hitWidth = frame.size.width - (2.0f * hitXPos);
+    CGFloat hitHeight = frame.size.width - (2.0f * hitYPos);
+    CGFloat hitViewCornerRadius = hitViewMargin * frame.size.width;
+    
+    [_hitView.layer setCornerRadius:hitViewCornerRadius];
+    [_hitView setFrame:CGRectMake(hitXPos, hitYPos, hitWidth, hitHeight)];
+//    [_hitView.layer insertSublayer:_hitViewGradient atIndex:0];
 }
 
 - (void)viewWillAppear {
-    
+    _touchDownCount = 0;
+    _touchState = TWTouchState_Up;
 }
 
 - (void)setTitleText:(NSString *)titleText {
@@ -114,6 +156,7 @@
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     
     _touchState = TWTouchState_Down;
+    _touchDownCount++;
     
 //    float velocity = 0.5f;
 //    if (_forceTouchAvailable) {
@@ -146,6 +189,11 @@
         default:
             break;
     }
+    
+    [_hitView setAlpha:1.0f];
+    [UIView animateWithDuration:kHitFlashTime_s delay:0.0f options:UIViewAnimationOptionCurveEaseOut animations:^{
+        [self->_hitView setAlpha:0.0f];
+    } completion:^(BOOL finished) {}];
     
 //    for (UITouch* touch in touches) {
 //        NSLog(@"Began Touch: %@", touch);
@@ -211,7 +259,13 @@
 
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     
+    _touchDownCount--;
+    if (_touchDownCount > 0) {
+        return;
+    }
+    
     _touchState = TWTouchState_Up;
+    _touchDownCount = 0;
     
     switch (_drumPadMode) {
             
@@ -253,6 +307,8 @@
 //        NSLog(@"Cancelled Touch: %@", touch);
 //    }
 //    NSLog(@"Cancelled Event: %@", event);
+    _touchDownCount = 0;
+    _touchState = TWTouchState_Up;
 }
 
 
@@ -264,6 +320,7 @@
     }
     
     if (!successfully) {
+        [_touchView setAlpha:0.0f];
         [_errorView setAlpha:1.0f];
         [UIView animateWithDuration:0.5f delay:0.2f options:UIViewAnimationOptionCurveEaseIn animations:^{
             [self->_errorView setAlpha:0.0f];

@@ -32,6 +32,8 @@
     
     UIButton*                   _editingAllButton;
     BOOL                        _editingAllToggle;
+    
+    int                         _debugCount;
 }
 @end
 
@@ -159,12 +161,12 @@
     [self.view addSubview:_togglePlaybackDirectionButton];
     
     _editingAllButton = [[UIButton alloc] init];
-    [_editingAllButton setTitle:@"Edit One" forState:UIControlStateNormal];
-    [_editingAllButton setTitle:@"Edit All" forState:UIControlStateSelected];
+    [_editingAllButton setTitle:@"Edit All" forState:UIControlStateNormal];
     [_editingAllButton setBackgroundColor:[UIColor colorWithWhite:0.1 alpha:1.0f]];
     [_editingAllButton setTitleColor:[UIColor colorWithWhite:0.3f alpha:0.8f] forState:UIControlStateNormal];
     [[_editingAllButton titleLabel] setFont:[UIFont systemFontOfSize:12.0f]];
-    [_editingAllButton addTarget:self action:@selector(editingAllButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+    [_editingAllButton addTarget:self action:@selector(editingAllButtonTouchDown:) forControlEvents:UIControlEventTouchDown];
+    [_editingAllButton addTarget:self action:@selector(editingAllButtonTouchUp:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_editingAllButton];
     _editingAllToggle = NO;
     
@@ -176,6 +178,8 @@
     }];
     
     [self.view setBackgroundColor:[UIColor colorWithWhite:0.12f alpha:1.0f]];
+    
+    _debugCount = 0;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -269,37 +273,52 @@
     }
     
     
+    //----- Options / Properties Buttons ---//
+    
+    CGFloat optionsButtonHeight = 0.0f;
+    CGFloat optionsButtonWidth = 0.0f;
+    
     if (isLandscape) {
+        optionsButtonHeight = padSize;
+        optionsButtonWidth = (screenWidth - (4.0 * padSize) - (7.0f * padPad)) / 2.0f;
+        if (optionsButtonWidth > padSize) {
+            optionsButtonWidth = padSize;
+        }
         
-        xPos += (4.0 * (padSize + padPad)) + componentHeight;
-        yPos = componentHeight + padPad;
-        [_toggleVelocityButton setFrame:CGRectMake(xPos, yPos, padSize, padSize)];
+        xPos = xMargin + (4.0 * padSize) + (5.0f * padPad);
+        yPos = yMargin + componentHeight + padPad;
+        [_toggleVelocityButton setFrame:CGRectMake(xPos, yPos, optionsButtonWidth, optionsButtonHeight)];
         
-        yPos += padPad + padSize;
-        [_toggleDrumPadModeButton setFrame:CGRectMake(xPos, yPos, padSize, padSize)];
+        yPos += padPad + optionsButtonHeight;
+        [_toggleDrumPadModeButton setFrame:CGRectMake(xPos, yPos, optionsButtonWidth, optionsButtonHeight)];
         
-        yPos += padPad + padSize;
-        [_togglePlaybackDirectionButton setFrame:CGRectMake(xPos, yPos, padSize, padSize)];
+        yPos += padPad + optionsButtonHeight;
+        [_togglePlaybackDirectionButton setFrame:CGRectMake(xPos, yPos, optionsButtonWidth, optionsButtonHeight)];
         
-        xPos += padPad + padSize;
-        yPos = componentHeight + padPad;
-        [_editingAllButton setFrame:CGRectMake(xPos, yPos, padSize, padSize)];
+        xPos += padPad + optionsButtonWidth;
+        yPos = yMargin + componentHeight + padPad;
+        [_editingAllButton setFrame:CGRectMake(xPos, yPos, optionsButtonWidth, optionsButtonHeight)];
         
     } else {
+        optionsButtonHeight = (screenHeight - yMargin - componentHeight - (4.0 * padSize) - (7.0f * padPad)) / 2.0f;
+        if (optionsButtonHeight > padSize) {
+            optionsButtonHeight = padSize;
+        }
+        optionsButtonWidth = padSize;
         
         xPos = xMargin + padPad;
-        yPos = yMargin + (2.0f * componentHeight) + (4.0 * padSize) + (5.0 * padPad);
-        [_toggleVelocityButton setFrame:CGRectMake(xPos, yPos, padSize, padSize)];
+        yPos = yMargin + componentHeight + (4.0 * padSize) + (5.0 * padPad);
+        [_toggleVelocityButton setFrame:CGRectMake(xPos, yPos, optionsButtonWidth, optionsButtonHeight)];
         
-        xPos += padSize + padPad;
-        [_toggleDrumPadModeButton setFrame:CGRectMake(xPos, yPos, padSize, padSize)];
+        xPos += optionsButtonWidth + padPad;
+        [_toggleDrumPadModeButton setFrame:CGRectMake(xPos, yPos, optionsButtonWidth, optionsButtonHeight)];
         
-        xPos += padSize + padPad;
-        [_togglePlaybackDirectionButton setFrame:CGRectMake(xPos, yPos, padSize, padSize)];
+        xPos += optionsButtonWidth + padPad;
+        [_togglePlaybackDirectionButton setFrame:CGRectMake(xPos, yPos, optionsButtonWidth, optionsButtonHeight)];
         
         xPos = xMargin + padPad;
-        yPos += padPad + padSize;
-        [_editingAllButton setFrame:CGRectMake(xPos, yPos, padSize, padSize)];
+        yPos += padPad + optionsButtonHeight;
+        [_editingAllButton setFrame:CGRectMake(xPos, yPos, optionsButtonWidth, optionsButtonHeight)];
     }
 }
 
@@ -331,7 +350,7 @@
 
 
 - (void)loadProjectButtonDown:(UIButton*)sender {
-    [sender setBackgroundColor:[UIColor colorWithWhite:0.4 alpha:1.0f]];
+    [sender setBackgroundColor:[UIColor colorWithWhite:0.2 alpha:1.0f]];
 }
 
 - (void)loadProjectButtonUp:(UIButton*)sender {
@@ -359,7 +378,7 @@
     for (TWSlider* velocitySlider in _velocitySliders) {
         [velocitySlider setHidden:NO];
     }
-    [sender setBackgroundColor:[UIColor colorWithRed:0.2 green:0.6 blue:0.2 alpha:0.5]];
+    [sender setBackgroundColor:[UIColor colorWithWhite:0.2 alpha:1.0]];
 }
 
 - (void)toggleVelocityButtonUp:(UIButton*)sender {
@@ -446,16 +465,13 @@
 
 
 //===== All Button =====//
-- (void)editingAllButtonTapped:(UIButton*)sender {
-    if ([sender isSelected]) {
-        _editingAllToggle = NO;
-        [sender setBackgroundColor:[UIColor colorWithWhite:0.1 alpha:1.0f]];
-        [sender setSelected:NO];
-    } else {
-        _editingAllToggle = YES;
-        [sender setBackgroundColor:[UIColor colorWithWhite:0.2 alpha:1.0f]];
-        [sender setSelected:YES];
-    }
+- (void)editingAllButtonTouchDown:(UIButton*)sender {
+    _editingAllToggle = YES;
+    [sender setBackgroundColor:[UIColor colorWithWhite:0.2 alpha:1.0f]];
+}
+- (void)editingAllButtonTouchUp:(UIButton*)sender {
+    _editingAllToggle = NO;
+    [sender setBackgroundColor:[UIColor colorWithWhite:0.1 alpha:1.0f]];
 }
 
 
@@ -463,29 +479,58 @@
 
 - (void)testInit {
     
-    NSString* sampleURL1 = [[NSBundle mainBundle] pathForResource:@"Embryo Synth" ofType:@"wav"];
-    NSString* outSampleURL1 = [sampleURL1 stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
-    if (sampleURL1 != nil) {
-        [[TWAudioController sharedController] loadAudioFile:outSampleURL1 atSourceIdx:0];
+    NSString* string;
+    
+    switch (_debugCount) {
+        case 0:
+            string = @"Embryo Synth";
+            break;
+            
+        case 1:
+            string = @"LRTest";
+            break;
+            
+        case 2:
+            string = @"TestKick";
+            break;
+            
+        default:
+            break;
+    }
+   
+    NSString* sampleURL = [[NSBundle mainBundle] pathForResource:string ofType:@"wav"];
+    NSString* outSampleURL = [sampleURL stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
+    if (sampleURL != nil) {
+        [[TWAudioController sharedController] loadAudioFile:outSampleURL atSourceIdx:0];
     } else {
         NSLog(@"Error! SampleURL is nil!");
     }
     
-    NSString* sampleURL2 = [[NSBundle mainBundle] pathForResource:@"LRTest" ofType:@"wav"];
-    NSString* outSampleURL2 = [sampleURL2 stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
-    if (sampleURL2 != nil) {
-        [[TWAudioController sharedController] loadAudioFile:outSampleURL2 atSourceIdx:1];
-    } else {
-        NSLog(@"Error! SampleURL is nil!");
-    }
-
-    NSString* sampleURL3 = [[NSBundle mainBundle] pathForResource:@"TestKick" ofType:@"wav"];
-    NSString* outSampleURL3 = [sampleURL3 stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
-    if (sampleURL3 != nil) {
-        [[TWAudioController sharedController] loadAudioFile:outSampleURL3 atSourceIdx:2];
-    } else {
-        NSLog(@"Error! SampleURL is nil!");
-    }
+    _debugCount = (_debugCount + 1) % 3;
+    
+//    NSString* sampleURL1 = [[NSBundle mainBundle] pathForResource:@"Embryo Synth" ofType:@"wav"];
+//    NSString* outSampleURL1 = [sampleURL1 stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
+//    if (sampleURL1 != nil) {
+//        [[TWAudioController sharedController] loadAudioFile:outSampleURL1 atSourceIdx:0];
+//    } else {
+//        NSLog(@"Error! SampleURL is nil!");
+//    }
+//
+//    NSString* sampleURL2 = [[NSBundle mainBundle] pathForResource:@"LRTest" ofType:@"wav"];
+//    NSString* outSampleURL2 = [sampleURL2 stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
+//    if (sampleURL2 != nil) {
+//        [[TWAudioController sharedController] loadAudioFile:outSampleURL2 atSourceIdx:1];
+//    } else {
+//        NSLog(@"Error! SampleURL is nil!");
+//    }
+//
+//    NSString* sampleURL3 = [[NSBundle mainBundle] pathForResource:@"TestKick" ofType:@"wav"];
+//    NSString* outSampleURL3 = [sampleURL3 stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
+//    if (sampleURL3 != nil) {
+//        [[TWAudioController sharedController] loadAudioFile:outSampleURL3 atSourceIdx:2];
+//    } else {
+//        NSLog(@"Error! SampleURL is nil!");
+//    }
 }
 
 

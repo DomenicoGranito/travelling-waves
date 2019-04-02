@@ -34,9 +34,10 @@ TWMemoryPlayer::TWMemoryPlayer()
     //--- ABL Settings ---//
     float byteDepth         = 4;
     bool isInterleaved      = true;
-    _readABL                = _allocateABL(kNumChannels, kNumChannels * byteDepth, isInterleaved, kAudioFileReadBufferNumFrames * kNumChannels);
+    _readABL                = _allocateABL(kNumChannels, kNumChannels * byteDepth, isInterleaved, kAudioFileReadBufferNumFrames);
     
     _buffer                 = nullptr;
+    _audioFile              = NULL;
     
     _setFadeOutTime(kAudioFilePlaybackFadeOutTime_ms);
     
@@ -113,6 +114,8 @@ int TWMemoryPlayer::loadAudioFile(std::string filepath)
     _reset();
     
     
+//    printf("TWMemoryPlayer::loadAudioFile [%d] : starting to load file : %s\n", _sourceIdx, filepath.c_str());
+    
     
     CFStringRef string = CFStringCreateWithCString(kCFAllocatorDefault, filepath.c_str(), kCFStringEncodingUTF8);
     CFURLRef url = CFURLCreateWithString(kCFAllocatorDefault, string, NULL);
@@ -123,7 +126,7 @@ int TWMemoryPlayer::loadAudioFile(std::string filepath)
     CFRelease(string);
     
     if ((status != noErr) || (_audioFile == NULL)) {
-        printf("\nTWMemoryPlayer::loadAudioFile [%d]. Error in ExtAudioFileOpenURL (%s) : %d\n", _sourceIdx, filepath.c_str(), (unsigned int)status);
+        printf("\nTWMemoryPlayer::loadAudioFile [%d] : Error in ExtAudioFileOpenURL (%s) : %d\n", _sourceIdx, filepath.c_str(), (unsigned int)status);
         _reset();
         return -1;
     }
@@ -134,13 +137,13 @@ int TWMemoryPlayer::loadAudioFile(std::string filepath)
     UInt32 propSize = sizeof(inASBD);
     status = ExtAudioFileGetProperty(_audioFile, kExtAudioFileProperty_FileDataFormat, &propSize, &inASBD);
     if (status) {
-        printf("\nTWMemoryPlayer::loadAudioFile [%d]. Error in reading kExtAudioFileProperty_FileDataFormat : %d\n", _sourceIdx, (unsigned int)status);
+        printf("\nTWMemoryPlayer::loadAudioFile [%d] : Error in reading kExtAudioFileProperty_FileDataFormat : %d\n", _sourceIdx, (unsigned int)status);
         _reset();
         return -2;
     }
-    //    _printASBD(&inASBD, "TWFileStream: inFileASBD");
+//    _printASBD(&inASBD, "TWFileStream: inFileASBD");
     if (inASBD.mSampleRate <= 0) {
-        printf("\nTWMemoryPlayer::loadAudioFile [%d]. Error in kExtAudioFileProperty_FileDataFormat, invalid file sample rate : %f\n", _sourceIdx, inASBD.mSampleRate);
+        printf("\nTWMemoryPlayer::loadAudioFile [%d] : Error in kExtAudioFileProperty_FileDataFormat, invalid file sample rate : %f\n", _sourceIdx, inASBD.mSampleRate);
         _reset();
         return -3;
     }
@@ -151,12 +154,12 @@ int TWMemoryPlayer::loadAudioFile(std::string filepath)
     propSize = sizeof(SInt64);
     status = ExtAudioFileGetProperty(_audioFile, kExtAudioFileProperty_FileLengthFrames, &propSize, &length);
     if (status) {
-        printf("\nTWMemoryPlayer::loadAudioFile [%d]. Error in reading kExtAudioFileProperty_FileLengthFrames : %d\n", _sourceIdx, (unsigned int)status);
+        printf("\nTWMemoryPlayer::loadAudioFile [%d] : Error in reading kExtAudioFileProperty_FileLengthFrames : %d\n", _sourceIdx, (unsigned int)status);
         _reset();
         return -4;
     }
     if (length <= 0) {
-        printf("\nTWMemoryPlayer::loadAudioFile [%d]. Error in reading kExtAudioFileProperty_FileLengthFrames : length: %lld\n", _sourceIdx, length);
+        printf("\nTWMemoryPlayer::loadAudioFile [%d] : Error in reading kExtAudioFileProperty_FileLengthFrames : length: %lld\n", _sourceIdx, length);
         _reset();
         return -5;
     }
@@ -164,10 +167,9 @@ int TWMemoryPlayer::loadAudioFile(std::string filepath)
     
     
     _lengthInFrames = uint32_t((_sampleRate * length) / inASBD.mSampleRate);
-//    printf("TWMemoryPlayer::loadAudioFile : length in frames = %u\n", _lengthInFrames);
-    
+//    printf("TWMemoryPlayer::loadAudioFile [%d] : length in frames = %u\n", _sourceIdx, _lengthInFrames);
     if (_lengthInFrames > kMemoryPlayerMaxSizeFrames) {
-        printf("\nTWMemoryPlayer::loadAudioFile [%d]. Unfortunately, this file is too big for memory player :'( . length: %u\n", _sourceIdx, _lengthInFrames);
+        printf("\nTWMemoryPlayer::loadAudioFile [%d] : Unfortunately, this file is too big for memory player :'( . length: %u\n", _sourceIdx, _lengthInFrames);
         _reset();
         return -6;
     }
@@ -186,19 +188,22 @@ int TWMemoryPlayer::loadAudioFile(std::string filepath)
     
     status = ExtAudioFileSetProperty(_audioFile, kExtAudioFileProperty_ClientDataFormat, sizeof(outASBD), &outASBD);
     if (status) {
-        printf("\nTWMemoryPlayer::loadAudioFile [%d]. Error in setting kExtAudioFileProperty_ClientDataFormat : %d\n", _sourceIdx, (unsigned int)status);
+        printf("\nTWMemoryPlayer::loadAudioFile [%d] : Error in setting kExtAudioFileProperty_ClientDataFormat : %d\n", _sourceIdx, (unsigned int)status);
         _reset();
         return -7;
     }
     
     
     
+//    printf("TWMemoryPlayer::loadAudioFile [%d] : Creating new buffer\n", _sourceIdx);
     _buffer = new float * [kNumChannels];
     for (int c = 0; c < kNumChannels; c++) {
         _buffer[c] = new float[_lengthInFrames];
     }
     
     
+    
+//    _printABL(_readABL, "TWMemoryPlayer::loadAudioFile ReadABL\n");
     UInt32 framesRead = kAudioFileReadBufferNumFrames;
     while (framesRead > 0) {
         status = _readHelper(&framesRead);
@@ -237,9 +242,11 @@ int TWMemoryPlayer::start(int32_t startSampleTime)
         return -1;
     }
     
-//    printf("Start! SampleTime : %d\n", startSampleTime);
-    _setReadIdx(startSampleTime);
+//    printf("Start[%d]! SampleTime : %d\n", _sourceIdx, startSampleTime);
+    _isStopping = false;
+    _stopSampleCounter = 0;
     _fadeOutGain.setTargetValue(1.0f, 0.0f);
+    _setReadIdx(startSampleTime);
     _isRunning = true;
     _setPlaybackStatus(TWPlaybackStatus_Playing);
     
@@ -406,7 +413,7 @@ OSStatus TWMemoryPlayer::_readHelper(uint32_t * framesToRead)
         return status;
     }
     
-//    printf("TWMemoryPlayer::_readHelper : frames read : %u\n", *framesToRead);
+//    printf("TWMemoryPlayer::_readHelper [%d] : frames read : %u\n", _sourceIdx, *framesToRead);
     
     uint32_t framesRead = *framesToRead;
     if (framesRead == 0) {
@@ -428,6 +435,7 @@ OSStatus TWMemoryPlayer::_readHelper(uint32_t * framesToRead)
 void TWMemoryPlayer::_reset()
 {
     if (_buffer != nullptr) {
+//        printf("TWMemoryPlayer::_reset [%d]. Deleting buffer\n", _sourceIdx);
         for (int channel = 0; channel < kNumChannels; channel++) {
             delete [] _buffer[channel];
         }
@@ -449,8 +457,22 @@ void TWMemoryPlayer::_reset()
     _setPlaybackStatus(TWPlaybackStatus_Uninitialized);
     _isRunning          = false;
     
+    
     if (_audioFile) {
-        ExtAudioFileDispose(_audioFile);
+//        printf("TWMemoryPlayer::_reset [%d] : Disposing audio file\n", _sourceIdx);
+        OSStatus status = ExtAudioFileDispose(_audioFile);
+        if (status) {
+            printf("TWMemoryPlayer::_reset [%d] : Error in ExtAudioFileDispose : %d", _sourceIdx, (int)status);
+        }
+    }
+    _audioFile = NULL;
+    
+    
+    UInt32 byteDepth = 4;
+    UInt32 bytesPerFrame = kNumChannels * byteDepth;
+    UInt32 capacityFrames = kAudioFileReadBufferNumFrames;
+    for (int bufferIdx = 0; bufferIdx < _readABL->mNumberBuffers; bufferIdx++) {
+        _readABL->mBuffers[bufferIdx].mDataByteSize = capacityFrames * bytesPerFrame;
     }
 }
 
@@ -595,7 +617,7 @@ void TWMemoryPlayer::_checkForFadeOut()
 //                printf("Forward Start Fade Out. ReadIdx = %d, fadeOutSamples = %u\n", _readIdx, _fadeOutNumSamples);
             } else if (_readIdx == 0) {
                 _fadeOutGain.setTargetValue(1.0f, 0.0f);
-                printf("Forward End Fade Out Now. ReadIdx = %d\n", _readIdx);
+//                printf("Forward End Fade Out Now. ReadIdx = %d\n", _readIdx);
             }
             break;
             
@@ -605,7 +627,7 @@ void TWMemoryPlayer::_checkForFadeOut()
 //                printf("Reverse Start Fade Out ReadIdx = %d, fadeOutSamples = %u\n", _readIdx, _fadeOutNumSamples);
             } else if (_readIdx == 0) {
                 _fadeOutGain.setTargetValue(1.0f, 0.0f);
-                printf("Reverse End Fade Out Now. ReadIdx = %d\n", _readIdx);
+//                printf("Reverse End Fade Out Now. ReadIdx = %d\n", _readIdx);
             }
             break;
             

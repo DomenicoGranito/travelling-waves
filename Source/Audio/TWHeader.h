@@ -43,6 +43,7 @@
 #define kKeyboardAccessoryHeightPad             50.0f
 #define kKeyboardAccessoryPortraitHeightPhone   40.0f
 #define kKeyboardAccessoryLandscapeHeightPhone  35.0f
+#define kHitFlashTime_s                         0.15f
 
 
 /* Defaults */

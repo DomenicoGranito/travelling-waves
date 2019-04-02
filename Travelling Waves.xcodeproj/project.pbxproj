@@ -60,6 +60,7 @@
 		FCDE36E92244D0790066DA95 /* TWDrumPadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FCDE36E82244D0790066DA95 /* TWDrumPadViewController.m */; };
 		FCDE36EC2244D2650066DA95 /* TWDrumPad.m in Sources */ = {isa = PBXBuildFile; fileRef = FCDE36EB2244D2650066DA95 /* TWDrumPad.m */; };
 		FCE9EA9E224C046D00E310FB /* TWSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = FCE9EA9C224C046C00E310FB /* TWSlider.m */; };
+		FCFB52CF22538CEB007C3BB5 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCFB52CE22538CEB007C3BB5 /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -182,6 +183,7 @@
 		FCE3BA9322498F4300D28B60 /* TWFileStream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TWFileStream.h; sourceTree = "<group>"; };
 		FCE9EA9C224C046C00E310FB /* TWSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWSlider.m; sourceTree = "<group>"; };
 		FCE9EA9D224C046C00E310FB /* TWSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWSlider.h; sourceTree = "<group>"; };
+		FCFB52CE22538CEB007C3BB5 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -189,6 +191,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FCFB52CF22538CEB007C3BB5 /* QuartzCore.framework in Frameworks */,
 				FC356C6E2223D7C500B93F5C /* AVFoundation.framework in Frameworks */,
 				FC356C6C2223D7BE00B93F5C /* MediaPlayer.framework in Frameworks */,
 				FCBDC336218462CA00E7695C /* AudioToolbox.framework in Frameworks */,
@@ -331,6 +334,7 @@
 		FCBDC334218462CA00E7695C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FCFB52CE22538CEB007C3BB5 /* QuartzCore.framework */,
 				FC356C6D2223D7C500B93F5C /* AVFoundation.framework */,
 				FC356C6B2223D7BE00B93F5C /* MediaPlayer.framework */,
 				FCBDC335218462CA00E7695C /* AudioToolbox.framework */,
