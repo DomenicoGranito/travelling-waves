@@ -25,6 +25,7 @@ TWMemoryPlayer::TWMemoryPlayer()
     _drumPadMode            = TWDrumPadMode_OneShot;
     _playbackDirection      = TWPlaybackDirection_Forward;
     _sourceIdx              = 0;
+    _fadeOutNumSamples      = 0;
     
     _finishedPlaybackProc   = nullptr;
     _readQueue              = nullptr;
@@ -36,6 +37,9 @@ TWMemoryPlayer::TWMemoryPlayer()
     _readABL                = _allocateABL(kNumChannels, kNumChannels * byteDepth, isInterleaved, kAudioFileReadBufferNumFrames * kNumChannels);
     
     _buffer                 = nullptr;
+    
+    _setFadeOutTime(kAudioFilePlaybackFadeOutTime_ms);
+    
     _reset();
 }
 
@@ -55,6 +59,7 @@ void TWMemoryPlayer::prepare(float sampleRate)
 {
     _sampleRate = sampleRate;
     _setIsIORunning(true);
+    _setFadeOutTime(kAudioFilePlaybackFadeOutTime_ms);
 }
 
 void TWMemoryPlayer::getSample(float& leftSample, float& rightSample)
@@ -159,6 +164,7 @@ int TWMemoryPlayer::loadAudioFile(std::string filepath)
     
     
     _lengthInFrames = uint32_t((_sampleRate * length) / inASBD.mSampleRate);
+//    printf("TWMemoryPlayer::loadAudioFile : length in frames = %u\n", _lengthInFrames);
     
     if (_lengthInFrames > kMemoryPlayerMaxSizeFrames) {
         printf("\nTWMemoryPlayer::loadAudioFile [%d]. Unfortunately, this file is too big for memory player :'( . length: %u\n", _sourceIdx, _lengthInFrames);
@@ -202,8 +208,6 @@ int TWMemoryPlayer::loadAudioFile(std::string filepath)
         }
     }
     
-    _fadeOutTailEnd((kAudioFilePlaybackFadeOutTime_ms / 1000.0f) * _sampleRate);
-    
     _setPlaybackStatus(TWPlaybackStatus_Stopped);
     
     return 0;
@@ -233,6 +237,7 @@ int TWMemoryPlayer::start(int32_t startSampleTime)
         return -1;
     }
     
+//    printf("Start! SampleTime : %d\n", startSampleTime);
     _setReadIdx(startSampleTime);
     _fadeOutGain.setTargetValue(1.0f, 0.0f);
     _isRunning = true;
@@ -401,12 +406,19 @@ OSStatus TWMemoryPlayer::_readHelper(uint32_t * framesToRead)
         return status;
     }
     
-    float* buffer = (float*)_readABL->mBuffers[0].mData;
+//    printf("TWMemoryPlayer::_readHelper : frames read : %u\n", *framesToRead);
+    
     uint32_t framesRead = *framesToRead;
+    if (framesRead == 0) {
+        return 0;
+    }
+    
+    float* buffer = (float*)_readABL->mBuffers[0].mData;
     for (int i = 0; i < framesRead; i++) {
         for (int c = 0; c < kNumChannels; c++) {
-            _buffer[c][i] = buffer[(i * kNumChannels) + c];
+            _buffer[c][_writeIdx] = buffer[(i * kNumChannels) + c];
         }
+        _writeIdx = (_writeIdx + 1) % _lengthInFrames;
     }
     
     return 0;
@@ -424,15 +436,15 @@ void TWMemoryPlayer::_reset()
     _buffer = nullptr;
     
     
-//    _writeIdx           = 0;
+    _writeIdx           = 0;
     _readIdx            = 0;
     
     _lengthInFrames     = 0;
-//    _currentFrame       = 0;
-    
     
     _isStopping         = false;
     _stopSampleCounter  = 0;
+    
+    _shouldFadeOut      = false;
     
     _setPlaybackStatus(TWPlaybackStatus_Uninitialized);
     _isRunning          = false;
@@ -508,7 +520,7 @@ void TWMemoryPlayer::_stoppingTick()
 
 void TWMemoryPlayer::_incDecReadIdx()
 {
-    uint32_t previousReadIdx = _readIdx;
+    int32_t previousReadIdx = _readIdx;
     
     switch (_playbackDirection) {
         
@@ -517,12 +529,18 @@ void TWMemoryPlayer::_incDecReadIdx()
             break;
             
         case TWPlaybackDirection_Reverse:
-            _readIdx = (_readIdx - 1) % _lengthInFrames;
+            _readIdx = _readIdx - 1;
+            if (_readIdx < 0) {
+                _readIdx = _lengthInFrames - 1;
+            }
+//            printf("ReadIdx : %u. Prev: %u. Len : %u\n", _readIdx, previousReadIdx, _lengthInFrames);
             break;
             
         default:
             break;
     }
+    
+    _checkForFadeOut();
     
     if (_drumPadMode == TWDrumPadMode_OneShot) {
         if ((previousReadIdx != 0) && (_readIdx == 0)) {
@@ -538,6 +556,7 @@ void TWMemoryPlayer::_incDecReadIdx()
 
 void TWMemoryPlayer::_setReadIdx(int32_t newReadIdx)
 {
+//    printf("TWMemoryPlayer::_setReadIdx : %d\n", newReadIdx);
     switch (_playbackDirection) {
             
         case TWPlaybackDirection_Forward:
@@ -545,7 +564,11 @@ void TWMemoryPlayer::_setReadIdx(int32_t newReadIdx)
             break;
             
         case TWPlaybackDirection_Reverse:
-            _readIdx = _lengthInFrames - 1 - (newReadIdx % _lengthInFrames);
+            if (newReadIdx < 0) {
+                _readIdx = (newReadIdx * -1) - 1;
+            } else {
+                _readIdx = _lengthInFrames - 1 - newReadIdx;
+            }
             break;
             
         default:
@@ -553,17 +576,40 @@ void TWMemoryPlayer::_setReadIdx(int32_t newReadIdx)
     }
 }
 
-void TWMemoryPlayer::_fadeOutTailEnd(uint32_t endSamplesToFadeOut)
+void TWMemoryPlayer::_setFadeOutTime(float fadeOutTime_ms)
 {
-    float dec = 1.0f / endSamplesToFadeOut;
-    float gain = 1.0f;
-    for (uint32_t i = endSamplesToFadeOut; i > 0; i--) {
-        gain -= dec;
-        if (gain <= 0.0f) {
-            gain = 0.0f;
-        }
-        for (int c = 0; c < kNumChannels; c++) {
-            _buffer[c][_lengthInFrames - i] *= gain;
-        }
+    _fadeOutNumSamples = (fadeOutTime_ms / 1000.0f * _sampleRate);
+}
+
+void TWMemoryPlayer::_checkForFadeOut()
+{
+    if (!_shouldFadeOut) {
+        return;
+    }
+    
+    switch (_playbackDirection) {
+            
+        case TWPlaybackDirection_Forward:
+            if (_readIdx == _lengthInFrames - _fadeOutNumSamples - 1) {
+                _fadeOutGain.setTargetValue(0.0f, _fadeOutNumSamples);
+//                printf("Forward Start Fade Out. ReadIdx = %d, fadeOutSamples = %u\n", _readIdx, _fadeOutNumSamples);
+            } else if (_readIdx == 0) {
+                _fadeOutGain.setTargetValue(1.0f, 0.0f);
+                printf("Forward End Fade Out Now. ReadIdx = %d\n", _readIdx);
+            }
+            break;
+            
+        case TWPlaybackDirection_Reverse:
+            if (_readIdx == _fadeOutNumSamples - 1) {
+                _fadeOutGain.setTargetValue(0.0f, _fadeOutNumSamples);
+//                printf("Reverse Start Fade Out ReadIdx = %d, fadeOutSamples = %u\n", _readIdx, _fadeOutNumSamples);
+            } else if (_readIdx == 0) {
+                _fadeOutGain.setTargetValue(1.0f, 0.0f);
+                printf("Reverse End Fade Out Now. ReadIdx = %d\n", _readIdx);
+            }
+            break;
+            
+        default:
+            break;
     }
 }

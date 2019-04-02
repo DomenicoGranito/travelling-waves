@@ -72,8 +72,9 @@ private:
     float                   _sampleRate;
     
     float**                 _buffer;
-    uint32_t                 _readIdx;
-    uint32_t                _lengthInFrames;
+    int32_t                 _readIdx;
+    uint32_t                _writeIdx;
+    int32_t                 _lengthInFrames;
     
     
     TWParameter             _currentVelocity;
@@ -89,6 +90,8 @@ private:
     bool                    _isRunning;
     bool                    _isStopping;
     uint32_t                _stopSampleCounter;
+    uint32_t                _fadeOutNumSamples;
+    bool                    _shouldFadeOut;
     
     
     std::function<void(int,bool)>   _finishedPlaybackProc;
@@ -114,11 +117,13 @@ private:
     
     void _setIsIORunning(bool isIORunning);
     
-    void _stoppingTick();
-    
-    void _incDecReadIdx();
     void _setReadIdx(int32_t newReadIdx);
-    void _fadeOutTailEnd(uint32_t endSamplesToFadeOut);
+    void _setFadeOutTime(float fadeOutTime_ms);
+    
+    //--- On IO Proc ---//
+    void _stoppingTick();
+    void _incDecReadIdx();
+    void _checkForFadeOut();
 };
 
 #endif /* TWMemoryPlayer_h */

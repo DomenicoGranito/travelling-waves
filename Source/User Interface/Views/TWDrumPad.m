@@ -66,7 +66,7 @@
     [super traitCollectionDidChange:previousTraitCollection];
     if ([self.traitCollection respondsToSelector:@selector(forceTouchCapability)]) {
         _forceTouchAvailable = (self.traitCollection.forceTouchCapability == UIForceTouchCapabilityAvailable);
-//        _forceTouchAvailable = NO;
+        _forceTouchAvailable = NO;
     }
 }
 

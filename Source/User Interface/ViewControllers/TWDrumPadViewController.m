@@ -63,7 +63,8 @@
     [_loadProjectButton setBackgroundColor:[UIColor colorWithWhite:0.1 alpha:1.0f]];
     [_loadProjectButton setTitleColor:[UIColor colorWithWhite:0.6f alpha:1.0f] forState:UIControlStateNormal];
     [[_loadProjectButton titleLabel] setFont:[UIFont systemFontOfSize:13.0f]];
-    [_loadProjectButton addTarget:self action:@selector(loadProjectButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+    [_loadProjectButton addTarget:self action:@selector(loadProjectButtonDown:) forControlEvents:UIControlEventTouchDown];
+    [_loadProjectButton addTarget:self action:@selector(loadProjectButtonUp:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_loadProjectButton];
     
 //    _testView = [[UIView alloc] init];
@@ -328,8 +329,14 @@
     }
 }
 
-- (void)loadProjectButtonTapped:(UIButton*)sender {
+
+- (void)loadProjectButtonDown:(UIButton*)sender {
+    [sender setBackgroundColor:[UIColor colorWithWhite:0.4 alpha:1.0f]];
+}
+
+- (void)loadProjectButtonUp:(UIButton*)sender {
     [self testInit];
+    [sender setBackgroundColor:[UIColor colorWithWhite:0.1 alpha:1.0f]];
 }
 
 
@@ -464,21 +471,21 @@
         NSLog(@"Error! SampleURL is nil!");
     }
     
-//    NSString* sampleURL2 = [[NSBundle mainBundle] pathForResource:@"LRTest" ofType:@"wav"];
-//    NSString* outSampleURL2 = [sampleURL2 stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
-//    if (sampleURL2 != nil) {
-//        [[TWAudioController sharedController] loadAudioFile:outSampleURL2 atSourceIdx:1];
-//    } else {
-//        NSLog(@"Error! SampleURL is nil!");
-//    }
-//
-//    NSString* sampleURL3 = [[NSBundle mainBundle] pathForResource:@"TestKick" ofType:@"wav"];
-//    NSString* outSampleURL3 = [sampleURL3 stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
-//    if (sampleURL3 != nil) {
-//        [[TWAudioController sharedController] loadAudioFile:outSampleURL3 atSourceIdx:2];
-//    } else {
-//        NSLog(@"Error! SampleURL is nil!");
-//    }
+    NSString* sampleURL2 = [[NSBundle mainBundle] pathForResource:@"LRTest" ofType:@"wav"];
+    NSString* outSampleURL2 = [sampleURL2 stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
+    if (sampleURL2 != nil) {
+        [[TWAudioController sharedController] loadAudioFile:outSampleURL2 atSourceIdx:1];
+    } else {
+        NSLog(@"Error! SampleURL is nil!");
+    }
+
+    NSString* sampleURL3 = [[NSBundle mainBundle] pathForResource:@"TestKick" ofType:@"wav"];
+    NSString* outSampleURL3 = [sampleURL3 stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
+    if (sampleURL3 != nil) {
+        [[TWAudioController sharedController] loadAudioFile:outSampleURL3 atSourceIdx:2];
+    } else {
+        NSLog(@"Error! SampleURL is nil!");
+    }
 }
 
 
