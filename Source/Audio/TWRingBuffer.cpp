@@ -21,8 +21,6 @@ TWRingBuffer::TWRingBuffer(uint32_t size)
     
     _writeWrapPoint     = _size;
     _readWrapPoint      = _size;
-    
-    _readStartPoint     = 0;
 }
 
 TWRingBuffer::~TWRingBuffer()
@@ -78,77 +76,65 @@ void TWRingBuffer::reset()
     _readIdx        = 0;
     _writeIdx       = 0;
     _readWrapPoint  = _size;
-    _readStartPoint = 0;
     _writeWrapPoint = _size;
 }
 
 
-void TWRingBuffer::offsetReadIdx(uint32_t offset)
+void TWRingBuffer::offsetReadIdx(int32_t offset)
 {
     _readIdx = (_readIdx + offset) % _readWrapPoint;
 }
 
 
-void TWRingBuffer::offsetWriteIdx(uint32_t offset)
+void TWRingBuffer::offsetWriteIdx(int32_t offset)
 {
     _writeIdx = (_writeIdx + offset) % _size;
 }
 
 
-uint32_t TWRingBuffer::getReadIdx()
+int32_t TWRingBuffer::getReadIdx()
 {
     return _readIdx;
 }
 
 
-uint32_t TWRingBuffer::getWriteIdx()
+int32_t TWRingBuffer::getWriteIdx()
 {
     return _writeIdx;
 }
 
 
-void TWRingBuffer::setReadIdx(uint32_t newReadIdx)
+void TWRingBuffer::setReadIdx(int32_t newReadIdx)
 {
     _readIdx = newReadIdx % _readWrapPoint;
 }
 
 
-void TWRingBuffer::setWriteIdx(uint32_t newWriteIdx)
+void TWRingBuffer::setWriteIdx(int32_t newWriteIdx)
 {
     _writeIdx = newWriteIdx % _size;
 }
 
 
-void TWRingBuffer::setReadWrapPoint(uint32_t readWrapPoint)
+void TWRingBuffer::setReadWrapPoint(int32_t readWrapPoint)
 {
     _readWrapPoint = readWrapPoint;
-    printf("Set read wrap point [%d] : %u. Size : %u\n", _debugID, readWrapPoint, _size);
 }
 
 
-uint32_t TWRingBuffer::getReadWrapPoint()
+int32_t TWRingBuffer::getReadWrapPoint()
 {
     return _readWrapPoint;
 }
 
-void TWRingBuffer::setWriteWrapPoint(uint32_t writeWrapPoint)
+void TWRingBuffer::setWriteWrapPoint(int32_t writeWrapPoint)
 {
     _writeWrapPoint = writeWrapPoint;
 }
 
-uint32_t TWRingBuffer::getWriteWrapPoint()
+int32_t TWRingBuffer::getWriteWrapPoint()
 {
     return _writeWrapPoint;
-}
-
-void TWRingBuffer::setReadStartPoint(uint32_t readStartPoint)
-{
-    _readStartPoint = readStartPoint;
-}
-
-uint32_t TWRingBuffer::getReadStartPoint()
-{
-    return _readStartPoint;
 }
 
 
@@ -159,27 +145,12 @@ float TWRingBuffer::read()
 
 void TWRingBuffer::incReadIdx()
 {
-//    uint32_t currentReadIdx = _readIdx;
-//    currentReadIdx = (currentReadIdx + 1) % _readWrapPoint;
-//
-//    if ((currentReadIdx == 0) && (_readIdx != 0)) {
-//        <#statements#>
-//    }
     _readIdx = ((_readIdx + 1) % _readWrapPoint);
-//    if (_readIdx == 0) {
-//        printf("Read wrap point reached [%d] : %u\n", _debugID, _readWrapPoint);
-//    }
 }
 
 void TWRingBuffer::_incWriteIdx()
 {
     _writeIdx = (_writeIdx + 1) % _writeWrapPoint;
-}
-
-
-void TWRingBuffer::setDebugID(int debugID)
-{
-    _debugID = debugID;
 }
 
 

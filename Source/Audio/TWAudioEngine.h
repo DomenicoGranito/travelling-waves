@@ -23,7 +23,7 @@
 #include "TWTremolo.h"
 #include "TWLevelMeter.h"
 #include "TWParameter.h"
-#include "TWFileStream.h"
+#include "TWMemoryPlayer.h"
 
 class TWAudioEngine {
     
@@ -105,7 +105,7 @@ public:
     //============================================================
     int loadAudioFileAtSourceIdx(int sourceIdx, std::string filepath);
     void startPlaybackAtSourceIdx(int sourceIdx, uint32_t sampleTime);
-    void stopPlaybackAtSourceIdx(int sourceIdx);
+    void stopPlaybackAtSourceIdx(int sourceIdx, float fadeOut_ms);
     void setPlaybackParameterAtSourceIdx(int sourceIdx, int paramID, float value, float rampTime_ms);
     float getPlaybackParameterAtSourceIdx(int sourceIdx, int paramID);
     void setFinishedPlaybackProc(std::function<void(int,bool)>finishedPlaybackProc);
@@ -143,7 +143,7 @@ private:
     std::array<TWBinauralBiquad, kNumSources>       _biquads;
     std::array<TWTremolo, kNumSources>              _tremolos;
     
-    std::array<TWFileStream, kNumSources>           _fileStreams;
+    std::array<TWMemoryPlayer, kNumSources>         _memoryPlayers;
     dispatch_queue_t                                _readQueue;
     dispatch_queue_t                                _notificationQueue;
     

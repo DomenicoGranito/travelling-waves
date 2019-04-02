@@ -29,29 +29,24 @@ public:
     float readAndIncIdx();
     float readAtIdx(float idx);
     
-    void offsetReadIdx(uint32_t offset);
-    void offsetWriteIdx(uint32_t offset);
+    void offsetReadIdx(int32_t offset);
+    void offsetWriteIdx(int32_t offset);
     
-    void setReadIdx(uint32_t newReadIdx);
-    void setWriteIdx(uint32_t newWriteIdx);
+    void setReadIdx(int32_t newReadIdx);
+    void setWriteIdx(int32_t newWriteIdx);
     
-    uint32_t getReadIdx();
-    uint32_t getWriteIdx();
+    int32_t getReadIdx();
+    int32_t getWriteIdx();
     
-    void setReadWrapPoint(uint32_t readWrapPoint);
-    uint32_t getReadWrapPoint();
+    void setReadWrapPoint(int32_t readWrapPoint);
+    int32_t getReadWrapPoint();
     
-    void setWriteWrapPoint(uint32_t writeWrapPoint);
-    uint32_t getWriteWrapPoint();
-    
-    void setReadStartPoint(uint32_t readStartPoint);
-    uint32_t getReadStartPoint();
+    void setWriteWrapPoint(int32_t writeWrapPoint);
+    int32_t getWriteWrapPoint();
     
     void fadeOutTailEnd(uint32_t endSamplesToFadeOut);
     
     void reset();
-    
-    void setDebugID(int debugID);
     
 private:
     
@@ -59,17 +54,12 @@ private:
     
     uint32_t        _size;
     
-    uint32_t        _writeIdx;
-    uint32_t        _writeWrapPoint;
+    int32_t        _writeIdx;
+    int32_t        _writeWrapPoint;
     
-    uint32_t        _readIdx;
-    uint32_t        _readWrapPoint;
-    uint32_t        _readStartPoint;
+    int32_t        _readIdx;
+    int32_t        _readWrapPoint;
     
-    void            _incWriteIdx();
-    
-    int             _debugID;
-    
-    
+    void           _incWriteIdx();
 };
 #endif /* TWRingBuffer_h */

@@ -23,7 +23,7 @@
 #include "TWParameter.h"
 #include "TWHeader.h"
 #include "TWSequencer.h"
-#include "TWFileStream.h"
+#include "TWMemoryPlayer.h"
 
 
 class TWMixer {
@@ -162,7 +162,7 @@ public:
     //--- Audio File Playback Stream ---//
     int loadAudioFileAtSourceIdx(int sourceIdx, std::string filepath);
     void startPlaybackAtSourceIdx(int sourceIdx, uint64_t sampleTime);
-    void stopPlaybackAtSourceIdx(int sourceIdx);
+    void stopPlaybackAtSourceIdx(int sourceIdx, uint32_t fadeOutInSamples);
     void setPlaybackLoopingAtSourceIdx(int sourceIdx, bool isLooping);
     bool getPlaybackLoopingAtSourceIdx(int sourceIdx);
     float getNormalizedPlaybackProgressAtSourceIdx(int sourceIdx);
@@ -193,7 +193,7 @@ private:
     
     TWSequencer*                                _sequencer;
     
-    TWFileStream*                               _fileStream;
+    TWMemoryPlayer*                             _memoryPlayer;
     dispatch_queue_t                            _readQueue;
     
     

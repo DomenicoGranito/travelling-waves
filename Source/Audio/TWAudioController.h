@@ -73,7 +73,7 @@ typedef void (^TWAudioControllerPlaybackDidEndBlock)(int sourceIdx, bool success
 //===== Drum Pad Methods =====//
 - (int)loadAudioFile:(NSString*)filepath atSourceIdx:(int)sourceIdx;
 - (void)startPlaybackAtSourceIdx:(int)sourceIdx atSampleTime:(unsigned int)sampleTime;
-- (void)stopPlaybackAtSourceIdx:(int)sourceIdx;
+- (void)stopPlaybackAtSourceIdx:(int)sourceIdx fadeOutTime:(float)fadeOut_ms;
 - (void)setPlaybackParameter:(int)paramID withValue:(float)value atSourceIdx:(int)sourceIdx inTime:(float)rampTime_ms;
 - (float)getPlaybackParameter:(int)paramID atSourceIdx:(int)sourceIdx;
 @property(nonatomic, copy) TWAudioControllerPlaybackDidEndBlock playbackDidEndBlock;

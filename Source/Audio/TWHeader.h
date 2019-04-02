@@ -105,8 +105,9 @@
 //#define kSeqParam_AmpSustainTime                2
 
 /* Audio File Playback Stream */
-#define kAudioFileReadBufferNumFrames           32768
-#define kAudioFileRingBufferSize                kAudioFileReadBufferNumFrames * 4
+//#define kAudioFileReadBufferNumFrames           32768
+//#define kAudioFileRingBufferSize                kAudioFileReadBufferNumFrames * 4
+#define kMemoryPlayerMaxSizeFrames              2880000     // 60 seconds @ 48KHz
 #define kAudioFilePlaybackFadeOutTime_ms        20.0f
 
 #define kPlaybackParam_Velocity                 1

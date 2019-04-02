@@ -131,7 +131,7 @@
                 [[TWAudioController sharedController] startPlaybackAtSourceIdx:(int)self.tag atSampleTime:0];
                 [_touchView setAlpha:1.0f];
             } else {
-                [[TWAudioController sharedController] stopPlaybackAtSourceIdx:(int)self.tag];
+                [[TWAudioController sharedController] stopPlaybackAtSourceIdx:(int)self.tag fadeOutTime:kAudioFilePlaybackFadeOutTime_ms];
                 [_touchView setAlpha:0.0f];
             }
             break;
@@ -216,7 +216,7 @@
     switch (_drumPadMode) {
             
         case TWDrumPadMode_Momentary:
-            [[TWAudioController sharedController] stopPlaybackAtSourceIdx:(int)self.tag];
+            [[TWAudioController sharedController] stopPlaybackAtSourceIdx:(int)self.tag fadeOutTime:kAudioFilePlaybackFadeOutTime_ms];
             [_touchView setAlpha:0.0f];
             break;
             

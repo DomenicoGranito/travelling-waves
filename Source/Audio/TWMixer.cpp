@@ -59,7 +59,7 @@ TWMixer::~TWMixer()
     delete _sequencer;
     dispatch_release(_readQueue);
     
-    delete _fileStream;
+    delete _memoryPlayer;
 }
 
 
@@ -92,7 +92,7 @@ void TWMixer::prepare(float sampleRate)
 //        _delays[idx].prepare(sampleRate);
 //    }
     
-    _fileStream->prepare(sampleRate);
+    _memoryPlayer->prepare(sampleRate);
 }
 
 void TWMixer::process(float* leftBuffer, float* rightBuffer, int frameCount)
@@ -127,7 +127,7 @@ void TWMixer::process(float* leftBuffer, float* rightBuffer, int frameCount)
         }
         
         
-        _fileStream->getSample(leftBuffer[sample], rightBuffer[sample]);
+        _memoryPlayer->getSample(leftBuffer[sample], rightBuffer[sample]);
         
         
         // Master Gain
@@ -150,7 +150,7 @@ void TWMixer::release()
     
     _sequencer->release();
     
-    _fileStream->release();
+    _memoryPlayer->release();
     
 //    for (size_t idx=0; idx < kNumChannels; idx++) {
 //        _delays[idx].release();
@@ -613,7 +613,7 @@ float TWMixer::getSeqFltResonanceAtSourceIdx(int sourceIdx)
 
 int TWMixer::loadAudioFileAtSourceIdx(int sourceIdx, std::string filepath)
 {
-    return _fileStream->loadAudioFile(filepath);
+    return _memoryPlayer->loadAudioFile(filepath);
 }
 
 void TWMixer::startPlaybackAtSourceIdx(int sourceIdx, uint64_t sampleTime)
@@ -621,9 +621,9 @@ void TWMixer::startPlaybackAtSourceIdx(int sourceIdx, uint64_t sampleTime)
     
 }
 
-void TWMixer::stopPlaybackAtSourceIdx(int sourceIdx)
+void TWMixer::stopPlaybackAtSourceIdx(int sourceIdx, uint32_t fadeOutInSamples)
 {
-    _fileStream->stop();
+    _memoryPlayer->stop(fadeOutInSamples);
 }
 
 void TWMixer::setPlaybackLoopingAtSourceIdx(int sourceIdx, bool isLooping)
@@ -638,12 +638,12 @@ bool TWMixer::getPlaybackLoopingAtSourceIdx(int sourceIdx)
 
 float TWMixer::getNormalizedPlaybackProgressAtSourceIdx(int sourceIdx)
 {
-    return _fileStream->getNormalizedPlaybackProgress();
+    return _memoryPlayer->getNormalizedPlaybackProgress();
 }
 
 bool TWMixer::getPlaybackStatusAtSourceIdx(int sourceIdx)
 {
-    return (_fileStream->getPlaybackStatus() == TWPlaybackStatus_Playing);
+    return (_memoryPlayer->getPlaybackStatus() == TWPlaybackStatus_Playing);
 }
 
 

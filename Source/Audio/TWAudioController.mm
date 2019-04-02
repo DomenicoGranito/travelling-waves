@@ -490,8 +490,8 @@ static void enginePlaybackStatusChanged(int sourceIdx, bool success) {
     _engine->startPlaybackAtSourceIdx(sourceIdx, sampleTime);
 }
 
-- (void)stopPlaybackAtSourceIdx:(int)sourceIdx {
-    _engine->stopPlaybackAtSourceIdx(sourceIdx);
+- (void)stopPlaybackAtSourceIdx:(int)sourceIdx fadeOutTime:(float)fadeOut_ms {
+    _engine->stopPlaybackAtSourceIdx(sourceIdx, fadeOut_ms);
 }
 
 - (void)setPlaybackParameter:(int)paramID withValue:(float)value atSourceIdx:(int)sourceIdx inTime:(float)rampTime_ms {

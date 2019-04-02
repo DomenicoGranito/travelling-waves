@@ -6,6 +6,8 @@
 //  Copyright © 2019 Govinda Ram Pingali. All rights reserved.
 //
 
+#if 0
+
 #include "TWFileStream.h"
 
 
@@ -349,8 +351,6 @@ TWDrumPadMode TWFileStream::getDrumPadMode()
 void TWFileStream::setSourceIdx(int sourceIdx)
 {
     _sourceIdx = sourceIdx;
-    _leftBuffer->setDebugID(sourceIdx);
-    _rightBuffer->setDebugID(sourceIdx);
 }
 
 int TWFileStream::getSourceIdx()
@@ -597,3 +597,6 @@ void TWFileStream::_stopTick()
         }
     }
 }
+
+
+#endif
