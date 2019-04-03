@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)viewWillAppear;
 
-- (void)playbackStopped:(BOOL)successfully;
+- (void)playbackStopped:(int)status;
 
 @end
 

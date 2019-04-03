@@ -26,7 +26,7 @@
     int                             _touchDownCount;
     BOOL                            _forceTouchAvailable;
     BOOL                            _toggleState;
-    BOOL                            _oneShotTouchIgnore;
+    BOOL                            _touchesMovedIgnore;
 }
 @end
 
@@ -82,7 +82,7 @@
     _touchState = TWTouchState_Up;
     _drumPadMode = TWDrumPadMode_OneShot;
     _toggleState = NO;
-    _oneShotTouchIgnore = NO;
+    _touchesMovedIgnore = NO;
     
     [self setMultipleTouchEnabled:YES];
     
@@ -139,7 +139,7 @@
     if (_drumPadMode != TWDrumPadMode_Toggle) {
         _toggleState = NO;
     }
-    _oneShotTouchIgnore = NO;
+    _touchesMovedIgnore = NO;
 }
 
 /*
@@ -180,7 +180,7 @@
             break;
             
         case TWDrumPadMode_OneShot:
-            _oneShotTouchIgnore = NO;
+            _touchesMovedIgnore = NO;
         case TWDrumPadMode_Momentary:
             [[TWAudioController sharedController] startPlaybackAtSourceIdx:(int)self.tag atSampleTime:0];
             [_touchView setAlpha:1.0f];
@@ -213,7 +213,7 @@
 
 - (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     
-    if (_oneShotTouchIgnore) {
+    if (_touchesMovedIgnore) {
         return;
     }
     
@@ -313,16 +313,37 @@
 
 
 
-- (void)playbackStopped:(BOOL)successfully {
+- (void)playbackStopped:(int)status {
+    
     if (_drumPadMode == TWDrumPadMode_OneShot) {
         [_touchView setAlpha:0.0f];
-        _oneShotTouchIgnore = YES;
+        _touchesMovedIgnore = YES;
     }
     
-    if (!successfully) {
+    
+    BOOL success = YES;
+    switch ((TWPlaybackFinishedStatus)status) {
+        case TWPlaybackFinishedStatus_NoIORunning:
+            [_errorView setBackgroundColor:[UIColor colorWithRed:1.0f green:0.9f blue:0.1f alpha:1.0f]];
+            _touchesMovedIgnore = YES;
+            success = false;
+            break;
+            
+        case TWPlaybackFinishedStatus_Uninitialized:
+            [_errorView setBackgroundColor:[UIColor colorWithRed:1.0f green:0.1f blue:0.1f alpha:1.0f]];
+            _touchesMovedIgnore = YES;
+            success = false;
+            break;
+            
+        default:
+            _touchesMovedIgnore = NO;
+            break;
+    }
+    
+    if (!success) {
         [_touchView setAlpha:0.0f];
         [_errorView setAlpha:1.0f];
-        [UIView animateWithDuration:0.5f delay:0.2f options:UIViewAnimationOptionCurveEaseIn animations:^{
+        [UIView animateWithDuration:0.3f delay:0.1f options:UIViewAnimationOptionCurveEaseIn animations:^{
             [self->_errorView setAlpha:0.0f];
         } completion:^(BOOL finished) {
             

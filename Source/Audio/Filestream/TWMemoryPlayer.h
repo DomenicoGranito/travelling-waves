@@ -36,12 +36,11 @@ public:
     
     
     //--- Setup Methods ---//
-    void setReadQueue(dispatch_queue_t readQueue);
     void setNotificationQueue(dispatch_queue_t notificationQueue);
     
     int loadAudioFile(std::string filepath);
     
-    void setFinishedPlaybackProc(std::function<void(int,bool)>finishedPlaybackProc);
+    void setFinishedPlaybackProc(std::function<void(int,int)>finishedPlaybackProc);
     
     
     //--- Transport Methods ---//
@@ -87,17 +86,16 @@ private:
     TWPlaybackStatus        _playbackStatus;
     int                     _sourceIdx;
     
-    bool                    _isRunning;
+    bool                    _isIORunning;
+    bool                    _isPlaying;
     bool                    _isStopping;
     uint32_t                _stopSampleCounter;
     uint32_t                _fadeOutNumSamples;
     bool                    _shouldFadeOut;
     
     
-    std::function<void(int,bool)>   _finishedPlaybackProc;
+    std::function<void(int,int)>   _finishedPlaybackProc;
     
-    
-    dispatch_queue_t        _readQueue;
     dispatch_queue_t        _notificationQueue;
     
     AudioBufferList*        _readABL;

@@ -26,9 +26,9 @@ TWMemoryPlayer::TWMemoryPlayer()
     _playbackDirection      = TWPlaybackDirection_Forward;
     _sourceIdx              = 0;
     _fadeOutNumSamples      = 0;
+    _isIORunning            = 0;
     
     _finishedPlaybackProc   = nullptr;
-    _readQueue              = nullptr;
     _notificationQueue      = nullptr;
     
     //--- ABL Settings ---//
@@ -65,7 +65,7 @@ void TWMemoryPlayer::prepare(float sampleRate)
 
 void TWMemoryPlayer::getSample(float& leftSample, float& rightSample)
 {
-    if (!_isRunning) {
+    if (!_isPlaying) {
         return;
     }
     
@@ -92,12 +92,6 @@ void TWMemoryPlayer::release()
 // Setup Methods
 //============================================================================================================
 
-void TWMemoryPlayer::setReadQueue(dispatch_queue_t readQueue)
-{
-    _readQueue = readQueue;
-}
-
-
 void TWMemoryPlayer::setNotificationQueue(dispatch_queue_t notificationQueue)
 {
     _notificationQueue = notificationQueue;
@@ -106,7 +100,7 @@ void TWMemoryPlayer::setNotificationQueue(dispatch_queue_t notificationQueue)
 
 int TWMemoryPlayer::loadAudioFile(std::string filepath)
 {
-    if (_isRunning) {
+    if (_isPlaying) {
         stop(0);
     }
     
@@ -219,7 +213,7 @@ int TWMemoryPlayer::loadAudioFile(std::string filepath)
 }
 
 
-void TWMemoryPlayer::setFinishedPlaybackProc(std::function<void(int,bool)>finishedPlaybackProc)
+void TWMemoryPlayer::setFinishedPlaybackProc(std::function<void(int,int)>finishedPlaybackProc)
 {
     _finishedPlaybackProc = finishedPlaybackProc;
 }
@@ -232,14 +226,28 @@ void TWMemoryPlayer::setFinishedPlaybackProc(std::function<void(int,bool)>finish
 
 int TWMemoryPlayer::start(int32_t startSampleTime)
 {
+    int status = TWPlaybackFinishedStatus_Success;
+    
     if (_playbackStatus == TWPlaybackStatus_Uninitialized) {
         printf("TWMemoryPlayer::start : Error! Stream is %s\n", _playbackStatusToString(_playbackStatus).c_str());
+        status = TWPlaybackFinishedStatus_Uninitialized;
         dispatch_async(_notificationQueue, ^{
             if (_finishedPlaybackProc != nullptr) {
-                _finishedPlaybackProc(_sourceIdx, false);
+                _finishedPlaybackProc(_sourceIdx, status);
             }
         });
-        return -1;
+        return status;
+    }
+    
+    if (!_isIORunning) {
+        printf("TWMemoryPlayer::start : Error! IO Not Running\n");
+        status = TWPlaybackFinishedStatus_NoIORunning;
+        dispatch_async(_notificationQueue, ^{
+            if (_finishedPlaybackProc != nullptr) {
+                _finishedPlaybackProc(_sourceIdx, TWPlaybackFinishedStatus_NoIORunning);
+            }
+        });
+        return status;
     }
     
 //    printf("Start[%d]! SampleTime : %d\n", _sourceIdx, startSampleTime);
@@ -247,10 +255,10 @@ int TWMemoryPlayer::start(int32_t startSampleTime)
     _stopSampleCounter = 0;
     _fadeOutGain.setTargetValue(1.0f, 0.0f);
     _setReadIdx(startSampleTime);
-    _isRunning = true;
+    _isPlaying = true;
     _setPlaybackStatus(TWPlaybackStatus_Playing);
     
-    return 0;
+    return status;
 }
 
 void TWMemoryPlayer::stop(uint32_t fadeOutSamples)
@@ -258,7 +266,7 @@ void TWMemoryPlayer::stop(uint32_t fadeOutSamples)
     if (fadeOutSamples == 0) {
         _stopSampleCounter = 0;
         _isStopping = false;
-        _isRunning = false;
+        _isPlaying = false;
     } else {
         _fadeOutGain.setTargetValue(0.0f, fadeOutSamples);
         _stopSampleCounter = fadeOutSamples;
@@ -455,7 +463,7 @@ void TWMemoryPlayer::_reset()
     _shouldFadeOut      = false;
     
     _setPlaybackStatus(TWPlaybackStatus_Uninitialized);
-    _isRunning          = false;
+    _isPlaying          = false;
     
     
     if (_audioFile) {
@@ -519,6 +527,7 @@ void TWMemoryPlayer::_setIsIORunning(bool isIORunning)
     _currentVelocity.setIsRunning(isIORunning);
     _maxVolume.setIsRunning(isIORunning);
     _fadeOutGain.setIsRunning(isIORunning);
+    _isIORunning = isIORunning;
 }
 
 
@@ -531,7 +540,7 @@ void TWMemoryPlayer::_stoppingTick()
         _stopSampleCounter--;
         if (_stopSampleCounter == 0) {
             _isStopping = false;
-            _isRunning = false;
+            _isPlaying = false;
             _setPlaybackStatus(TWPlaybackStatus_Stopped);
         }
     }
@@ -569,7 +578,7 @@ void TWMemoryPlayer::_incDecReadIdx()
             stop(0);
             dispatch_async(_notificationQueue, ^{
                 if (_finishedPlaybackProc != nullptr) {
-                    _finishedPlaybackProc(_sourceIdx, true);
+                    _finishedPlaybackProc(_sourceIdx, TWPlaybackFinishedStatus_Success);
                 }
             });
         }

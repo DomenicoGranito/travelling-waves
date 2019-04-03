@@ -33,10 +33,10 @@ static OSStatus playbackCallback(void *inRefCon,
 }
 
 
-static void enginePlaybackStatusChanged(int sourceIdx, bool success) {
+static void enginePlaybackStatusChanged(int sourceIdx, int status) {
     TWAudioControllerPlaybackDidEndBlock block = [[TWAudioController sharedController] playbackDidEndBlock];
     if (block != nil) {
-        block(sourceIdx, success);
+        block(sourceIdx, status);
     }
 }
 

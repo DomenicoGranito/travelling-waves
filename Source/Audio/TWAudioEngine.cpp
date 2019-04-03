@@ -24,7 +24,6 @@
 TWAudioEngine::TWAudioEngine()
 {
     _sampleRate = kDefaultSampleRate;
-    _readQueue = dispatch_queue_create("File Read Queue", NULL);
     _notificationQueue = dispatch_queue_create("Notification Queue", NULL);
     
     for (int sourceIdx=0; sourceIdx < kNumSources; sourceIdx++) {
@@ -39,7 +38,6 @@ TWAudioEngine::TWAudioEngine()
         _solos[sourceIdx] = false;
         _soloGains[sourceIdx].setTargetValue(1.0f, 0.0f);
         
-        _memoryPlayers[sourceIdx].setReadQueue(_readQueue);
         _memoryPlayers[sourceIdx].setNotificationQueue(_notificationQueue);
         _memoryPlayers[sourceIdx].setSourceIdx(sourceIdx);
     }
@@ -68,9 +66,6 @@ TWAudioEngine::~TWAudioEngine()
     for (int sourceIdx=0; sourceIdx < kNumSources; sourceIdx++) {
         _seqNotes[sourceIdx].clear();
     }
-    
-    dispatch_release(_readQueue);
-    _readQueue = nullptr;
     
     dispatch_release(_notificationQueue);
     _notificationQueue = nullptr;
@@ -720,7 +715,7 @@ float TWAudioEngine::getPlaybackParameterAtSourceIdx(int sourceIdx, int paramID)
     return returnValue;
 }
 
-void TWAudioEngine::setFinishedPlaybackProc(std::function<void(int,bool)> finishedPlaybackProc)
+void TWAudioEngine::setFinishedPlaybackProc(std::function<void(int,int)> finishedPlaybackProc)
 {
     for (int sourceIdx=0; sourceIdx < kNumSources; sourceIdx++) {
         _memoryPlayers[sourceIdx].setFinishedPlaybackProc(finishedPlaybackProc);

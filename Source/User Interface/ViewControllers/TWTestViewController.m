@@ -30,8 +30,8 @@
     [_testButton addTarget:self action:@selector(testButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_testButton];
     
-    [[TWAudioController sharedController] setPlaybackDidEndBlock:^(int sourceIdx, bool success) {
-        NSLog(@"Holy Shit! [%d], [%d]", sourceIdx, success);
+    [[TWAudioController sharedController] setPlaybackDidEndBlock:^(int sourceIdx, int status) {
+        NSLog(@"Dayumn! [%d], [%d]", sourceIdx, status);
     }];
     
     [self.view setBackgroundColor:[UIColor colorWithWhite:0.12f alpha:1.0f]];

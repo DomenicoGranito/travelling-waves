@@ -25,10 +25,12 @@
     NSArray*                    _velocitySliders;
     NSArray*                    _drumPadModeButtons;
     NSArray*                    _playbackDirectionButtons;
+    NSArray*                    _loadAudioFileButtons;
     
     UIButton*                   _toggleVelocityButton;
     UIButton*                   _toggleDrumPadModeButton;
     UIButton*                   _togglePlaybackDirectionButton;
+    UIButton*                   _toggleLoadAudioFileButton;
     
     UIButton*                   _editingAllButton;
     BOOL                        _editingAllToggle;
@@ -160,6 +162,15 @@
     [_togglePlaybackDirectionButton addTarget:self action:@selector(togglePlaybackDirectionUp:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_togglePlaybackDirectionButton];
     
+    _toggleLoadAudioFileButton = [[UIButton alloc] init];
+    [_toggleLoadAudioFileButton setTitle:@"Direction" forState:UIControlStateNormal];
+    [_toggleLoadAudioFileButton setBackgroundColor:[UIColor colorWithWhite:0.08 alpha:1.0f]];
+    [_toggleLoadAudioFileButton setTitleColor:[UIColor colorWithWhite:0.3f alpha:0.8f] forState:UIControlStateNormal];
+    [[_toggleLoadAudioFileButton titleLabel] setFont:[UIFont systemFontOfSize:12.0f]];
+    [_toggleLoadAudioFileButton addTarget:self action:@selector(toggleLoadAudioFileDown:) forControlEvents:UIControlEventTouchDown];
+    [_toggleLoadAudioFileButton addTarget:self action:@selector(toggleLoadAudioFileUp:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:_toggleLoadAudioFileButton];
+    
     _editingAllButton = [[UIButton alloc] init];
     [_editingAllButton setTitle:@"Edit All" forState:UIControlStateNormal];
     [_editingAllButton setBackgroundColor:[UIColor colorWithWhite:0.1 alpha:1.0f]];
@@ -170,10 +181,10 @@
     [self.view addSubview:_editingAllButton];
     _editingAllToggle = NO;
     
-    [[TWAudioController sharedController] setPlaybackDidEndBlock:^(int sourceIdx, bool success) {
+    [[TWAudioController sharedController] setPlaybackDidEndBlock:^(int sourceIdx, int status) {
         dispatch_sync(dispatch_get_main_queue(), ^{
             TWDrumPad* drumPad = [self->_drumPads objectAtIndex:sourceIdx];
-            [drumPad playbackStopped:success];
+            [drumPad playbackStopped:status];
         });
     }];
     
@@ -462,6 +473,16 @@
     }
 }
 
+
+- (void)toggleLoadAudioFileDown:(UIButton*)sender {
+    
+    [sender setBackgroundColor:[UIColor colorWithWhite:0.2 alpha:1.0]];
+}
+
+- (void)toggleLoadAudioFileUp:(UIButton*)sender {
+    
+    [sender setBackgroundColor:[UIColor colorWithWhite:0.08 alpha:1.0]];
+}
 
 
 //===== All Button =====//

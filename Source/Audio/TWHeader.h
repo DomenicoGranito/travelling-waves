@@ -102,20 +102,16 @@
 #define kSeqParam_FltQ                          11
 #define kSeqNumParams                           11
 
-//#define kPadParam_Start                         1
-//#define kSeqParam_AmpSustainTime                2
-
-/* Audio File Playback Stream */
-//#define kAudioFileReadBufferNumFrames           32768
-//#define kAudioFileRingBufferSize                kAudioFileReadBufferNumFrames * 4
-#define kMemoryPlayerMaxSizeFrames              2880000     // 60 seconds @ 48KHz
-#define kAudioFilePlaybackFadeOutTime_ms        10.0f
-
 #define kPlaybackParam_Velocity                 1
 #define kPlaybackParam_MaxVolume                2
 #define kPlaybackParam_DrumPadMode              3
 #define kPlaybackParam_PlaybackDirection        4
 #define kPlaybackParam_NormalizedProgress       5       // Readonly
+
+
+/* Audio File Playback Stream */
+#define kMemoryPlayerMaxSizeFrames              2880000     // 60 seconds @ 48KHz
+#define kAudioFilePlaybackFadeOutTime_ms        10.0f
 
 
 
@@ -126,10 +122,10 @@ struct TWFrame {
 
 
 typedef enum : int {
-    TWDrumPadMode_OneShot       = 0,
-    TWDrumPadMode_Momentary     = 1,
-    TWDrumPadMode_Toggle        = 2,
-    TWDrumPadMode_NumModes      = 3
+    TWDrumPadMode_OneShot                       = 0,
+    TWDrumPadMode_Momentary                     = 1,
+    TWDrumPadMode_Toggle                        = 2,
+    TWDrumPadMode_NumModes                      = 3
 } TWDrumPadMode;
 
 
@@ -140,17 +136,23 @@ typedef enum {
 
 
 typedef enum {
-    TWPlaybackStatus_Uninitialized  = 0,
-    TWPlaybackStatus_Stopped        = 1,
-    TWPlaybackStatus_Playing        = 2,
-    TWPlaybackStatus_Recording      = 3,
+    TWPlaybackStatus_Uninitialized              = 0,
+    TWPlaybackStatus_Stopped                    = 1,
+    TWPlaybackStatus_Playing                    = 2,
+    TWPlaybackStatus_Recording                  = 3,
 } TWPlaybackStatus;
 
 
 typedef enum {
-    TWPlaybackDirection_Forward     = 0,
-    TWPlaybackDirection_Reverse     = 1
+    TWPlaybackDirection_Forward                 = 0,
+    TWPlaybackDirection_Reverse                 = 1
 } TWPlaybackDirection;
 
+
+typedef enum {
+    TWPlaybackFinishedStatus_Success            = 0,
+    TWPlaybackFinishedStatus_Uninitialized      = 1,
+    TWPlaybackFinishedStatus_NoIORunning        = 2
+} TWPlaybackFinishedStatus;
 
 #endif /* TWHeader_h */
