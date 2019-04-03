@@ -1,12 +1,12 @@
 //
-//  TWSlider.m
+//  TWFillSlider.m
 //  Travelling Waves
 //
 //  Created by Govinda Pingali on 2/17/16.
 //  Copyright © 2018 Govinda Ram Pingali. All rights reserved.
 //
 
-#import "TWSlider.h"
+#import "TWFillSlider.h"
 #import <QuartzCore/QuartzCore.h>
 
 
@@ -14,7 +14,7 @@
 
 #define DISPLAY_VALUE_LABEL     0
 
-@interface TWSlider()
+@interface TWFillSlider()
 {
     CALayer*            _onTrackLayer;
     CALayer*            _offTrackLayer;
@@ -28,7 +28,7 @@
 @end
 
 
-@implementation TWSlider
+@implementation TWFillSlider
 
 - (id)init {
     if (self = [super init]) {

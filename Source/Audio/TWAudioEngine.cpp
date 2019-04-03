@@ -707,6 +707,18 @@ float TWAudioEngine::getPlaybackParameterAtSourceIdx(int sourceIdx, int paramID)
             returnValue = (float)_memoryPlayers[sourceIdx].getPlaybackDirection();
             break;
             
+        case kPlaybackParam_PlaybackStatus:
+            returnValue = (float)_memoryPlayers[sourceIdx].getPlaybackStatus();
+            break;
+            
+        case kPlaybackParam_NormalizedProgress:
+            returnValue = _memoryPlayers[sourceIdx].getNormalizedPlaybackProgress();
+            break;
+            
+        case kPlaybackParam_LengthInSeconds:
+            returnValue = _memoryPlayers[sourceIdx].getLengthInSeconds();
+            break;
+            
         default:
             printf("\nError(TWAudioEnging::getPlaybackParameterAtSourceIdx): Unknown paramID: %d. For sourceIdx: %d\n", paramID, sourceIdx);
             break;
@@ -715,10 +727,10 @@ float TWAudioEngine::getPlaybackParameterAtSourceIdx(int sourceIdx, int paramID)
     return returnValue;
 }
 
-void TWAudioEngine::setFinishedPlaybackProc(std::function<void(int,int)> finishedPlaybackProc)
+void TWAudioEngine::setPlaybackFinishedProc(std::function<void(int,int)> finishedPlaybackProc)
 {
     for (int sourceIdx=0; sourceIdx < kNumSources; sourceIdx++) {
-        _memoryPlayers[sourceIdx].setFinishedPlaybackProc(finishedPlaybackProc);
+        _memoryPlayers[sourceIdx].setPlaybackFinishedProc(finishedPlaybackProc);
     }
 }
 

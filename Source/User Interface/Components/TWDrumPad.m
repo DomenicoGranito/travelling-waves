@@ -8,25 +8,85 @@
 
 #import "TWDrumPad.h"
 #import "TWAudioController.h"
-
 #import <QuartzCore/QuartzCore.h>
+
+
+static const CGFloat kHitViewAreaInset  = 0.05f;
+static const CGFloat kTickViewWidth     = 2.0f;
+
+
+@implementation TWHitView
+
+- (void)drawRect:(CGRect)rect {
+
+    CGFloat width = self.bounds.size.width;
+    CGFloat height = self.bounds.size.height;
+    
+    CGMutablePathRef path = CGPathCreateMutable();
+    
+    // Add the outer arc to the path (as if you wanted to fill the entire circle)
+    CGPathMoveToPoint(path, nil, 0.0f, 0.0f);
+    CGPathAddRect(path, nil, CGRectMake(0.0f, 0.0f, width, height));
+    CGPathCloseSubpath(path);
+    
+    // Add the inner arc to the path (later used to substract the inner area)
+    CGFloat xPos1 = (kHitViewAreaInset / 2.0f) * width;
+    CGFloat yPos1 = (kHitViewAreaInset / 2.0f) * height;
+    CGFloat inWidth = width * (1.0f - kHitViewAreaInset);
+    CGFloat inHeight = height *  (1.0f - kHitViewAreaInset);
+    CGPathMoveToPoint(path, nil, xPos1, yPos1);
+    CGPathAddRect(path, nil, CGRectMake(xPos1, yPos1, inWidth, inHeight));
+    CGPathCloseSubpath(path);
+    
+    // Add the path to the context
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextAddPath(context, path);
+    
+    // Fill the path using the even-odd fill rule
+    CGContextSetGrayFillColor(context, 0.12, 1.0f);
+    CGContextEOFillPath(context);
+    
+    CGPathRelease(path);
+}
+
+@end
+
+
+
+@implementation TWTickView
+
+- (void)drawRect:(CGRect)rect {
+    UIBezierPath* path = [UIBezierPath bezierPathWithRect:CGRectMake((rect.size.width - kTickViewWidth) / 2.0f, 0.0f, kTickViewWidth, rect.size.height / 2.0f)];
+    [[UIColor colorWithWhite:0.4f alpha:0.8f] set];
+    [path fill];
+}
+
+@end
+
 
 
 @interface TWDrumPad()
 {
+    BOOL                            _forceTouchAvailable;
+    
     UILabel*                        _titleLabel;
     
     UIView*                         _touchView;
     UIView*                         _errorView;
     
-    UIView*                         _hitView;
-//    CAGradientLayer*                _hitViewGradient;
+    TWHitView*                      _hitView;
+    
+    TWTickView*                     _tickView;
     
     TWTouchState                    _touchState;
+    
     int                             _touchDownCount;
-    BOOL                            _forceTouchAvailable;
     BOOL                            _toggleState;
     BOOL                            _touchesMovedIgnore;
+    
+    TWPlaybackStatus                _playbackStatus;
+    
+    BOOL                            _initTime;
 }
 @end
 
@@ -41,7 +101,10 @@
     return self;
 }
 
+
 - (void)initialize {
+    
+    _initTime   = YES;
     
     _titleLabel = [[UILabel alloc] init];
     [_titleLabel setTextAlignment:NSTextAlignmentCenter];
@@ -57,37 +120,37 @@
     [_touchView setAlpha:0.0f];
     [self addSubview:_touchView];
     
+    _tickView = [[TWTickView alloc] init];
+    [_tickView setUserInteractionEnabled:NO];
+    [_tickView setBackgroundColor:[UIColor clearColor]];
+    [_tickView setAlpha:0.0f];
+    [self addSubview:_tickView];
+    
     _errorView = [[UIView alloc] init];
     [_errorView setUserInteractionEnabled:NO];
     [_errorView setBackgroundColor:[UIColor colorWithRed:1.0f green:0.1f blue:0.1f alpha:1.0f]];
     [_errorView setAlpha:0.0f];
     [self addSubview:_errorView];
     
-//    _hitViewGradient = [CAGradientLayer layer];
-//    NSArray* hitViewGradientColors = [NSArray arrayWithObjects:
-//                                      [UIColor colorWithRed:0.75f green:0.15f blue:0.15f alpha:1.0f],
-//                                      [UIColor colorWithWhite:0.5f alpha:1.0f],
-//                                      nil];
-//    [_hitViewGradient setColors:hitViewGradientColors];
-//    [_hitViewGradient setType:kCAGradientLayerRadial];
-    
-    _hitView = [[UIView alloc] init];
+    _hitView = [[TWHitView alloc] init];
     [_hitView setUserInteractionEnabled:NO];
-    [_hitView setBackgroundColor:[UIColor colorWithRed:0.6f green:0.8f blue:0.15f alpha:0.6f]];
+    [_hitView setBackgroundColor:[UIColor clearColor]];
     [_hitView setAlpha:0.0f];
-    [_hitView.layer setMasksToBounds:YES];
-//    [_hitView.layer insertSublayer:_hitViewGradient atIndex:0];
     [self addSubview:_hitView];
     
     _touchState = TWTouchState_Up;
     _drumPadMode = TWDrumPadMode_OneShot;
+    _playbackDirection = TWPlaybackDirection_Forward;
     _toggleState = NO;
     _touchesMovedIgnore = NO;
+    _lengthInSeconds = 0.0f;
+    _playbackStatus = TWPlaybackStatus_Uninitialized;
     
     [self setMultipleTouchEnabled:YES];
     
     [self setBackgroundColor:[UIColor colorWithWhite:0.1f alpha:1.0]];
 }
+
 
 - (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
     [super traitCollectionDidChange:previousTraitCollection];
@@ -97,31 +160,49 @@
     }
 }
 
+
 - (void)setFrame:(CGRect)frame {
     [super setFrame:frame];
     
     [_titleLabel setFrame:CGRectMake(0.0f, 0.0, frame.size.width, frame.size.height)];
     [_touchView setFrame:CGRectMake(0.0f, 0.0f, frame.size.width, frame.size.height)];
     [_errorView setFrame:CGRectMake(0.0f, 0.0f, frame.size.width, frame.size.height)];
-//    [_hitViewGradient setFrame:CGRectMake(0.0f, 0.0f, frame.size.width, frame.size.height)];
-    
-    
-    CGFloat hitViewMargin = 0.0f;
-    
-    CGFloat hitXPos = hitViewMargin * frame.size.width;
-    CGFloat hitYPos = hitViewMargin * frame.size.height;
-    CGFloat hitWidth = frame.size.width - (2.0f * hitXPos);
-    CGFloat hitHeight = frame.size.width - (2.0f * hitYPos);
-    CGFloat hitViewCornerRadius = hitViewMargin * frame.size.width;
-    
-    [_hitView.layer setCornerRadius:hitViewCornerRadius];
-    [_hitView setFrame:CGRectMake(hitXPos, hitYPos, hitWidth, hitHeight)];
-//    [_hitView.layer insertSublayer:_hitViewGradient atIndex:0];
+    [_hitView setFrame:CGRectMake(0.0f, 0.0f, frame.size.width, frame.size.height)];
+    [_tickView setFrame:CGRectMake(0.0f, 0.0f, frame.size.width, frame.size.height)];
 }
 
+
 - (void)viewWillAppear {
+    
+    _initTime = YES;
+    
     _touchDownCount = 0;
     _touchState = TWTouchState_Up;
+    
+    _playbackDirection = (TWPlaybackDirection)[[TWAudioController sharedController] getPlaybackParameter:kPlaybackParam_PlaybackDirection atSourceIdx:(int)self.tag];
+    
+    _playbackStatus = [[TWAudioController sharedController] getPlaybackParameter:kPlaybackParam_PlaybackStatus atSourceIdx:(int)self.tag];
+    if (_playbackStatus == TWPlaybackStatus_Playing) {
+        [_touchView setAlpha:1.0f];
+        [_tickView setAlpha:1.0f];
+    } else {
+        [_touchView setAlpha:0.0f];
+        [_tickView setAlpha:0.0f];
+    }
+    
+    [self stopProgressAnimation];
+}
+
+- (void)viewDidAppear {
+    _initTime = NO;
+    if (_playbackStatus == TWPlaybackStatus_Playing) {
+        [self startProgressAnimation];
+    }
+}
+
+
+- (void)viewWillDisappear {
+    [self stopProgressAnimation];
 }
 
 - (void)setTitleText:(NSString *)titleText {
@@ -129,10 +210,12 @@
     [_titleLabel setText:_titleText];
 }
 
+
 - (void)setOnColor:(UIColor *)onColor {
     _onColor = onColor;
     [_touchView setBackgroundColor:_onColor];
 }
+
 
 - (void)setDrumPadMode:(TWDrumPadMode)drumPadMode {
     _drumPadMode = drumPadMode;
@@ -140,6 +223,18 @@
         _toggleState = NO;
     }
     _touchesMovedIgnore = NO;
+    if (_playbackStatus == TWPlaybackStatus_Playing) {
+        [self stopProgressAnimation];
+        [self startProgressAnimation];
+    }
+}
+
+- (void)setPlaybackDirection:(TWPlaybackDirection)playbackDirection {
+    _playbackDirection = playbackDirection;
+    if (_playbackStatus == TWPlaybackStatus_Playing) {
+        [self stopProgressAnimation];
+        [self startProgressAnimation];
+    }
 }
 
 /*
@@ -173,9 +268,15 @@
             if (_toggleState) {
                 [[TWAudioController sharedController] startPlaybackAtSourceIdx:(int)self.tag atSampleTime:0];
                 [_touchView setAlpha:1.0f];
+                [_tickView setAlpha:1.0f];
+                _playbackStatus = TWPlaybackStatus_Playing;
+                [self startProgressAnimation];
             } else {
                 [[TWAudioController sharedController] stopPlaybackAtSourceIdx:(int)self.tag fadeOutTime:kAudioFilePlaybackFadeOutTime_ms];
                 [_touchView setAlpha:0.0f];
+                [_tickView setAlpha:0.0f];
+                _playbackStatus = TWPlaybackStatus_Stopped;
+                [self stopProgressAnimation];
             }
             break;
             
@@ -184,30 +285,20 @@
         case TWDrumPadMode_Momentary:
             [[TWAudioController sharedController] startPlaybackAtSourceIdx:(int)self.tag atSampleTime:0];
             [_touchView setAlpha:1.0f];
+            [_tickView setAlpha:1.0f];
+            _playbackStatus = TWPlaybackStatus_Playing;
+            [self startProgressAnimation];
             break;
             
         default:
             break;
     }
     
+    
     [_hitView setAlpha:1.0f];
     [UIView animateWithDuration:kHitFlashTime_s delay:0.0f options:UIViewAnimationOptionCurveEaseOut animations:^{
         [self->_hitView setAlpha:0.0f];
     } completion:^(BOOL finished) {}];
-    
-//    for (UITouch* touch in touches) {
-//        NSLog(@"Began Touch: %@", touch);
-//    }
-//    NSLog(@"Began Event: %@", event);
-    
-//    [_forceView setFrame:_forceViewCenterRect];
-
-//    if (!_forceTouchAvailable) {
-//        _longPressTimer = [NSTimer scheduledTimerWithTimeInterval:kLongPressInterval_s repeats:YES block:^(NSTimer * _Nonnull timer) {
-//            self->_longPressElapsedTime += kLongPressInterval_s;
-//            [self processNormalizedForce:self->_longPressElapsedTime / kLongPressTime_s];
-//        }];
-//    }
 }
 
 
@@ -233,27 +324,6 @@
     
 //    [[TWAudioController sharedController] setPlaybackParameter:kPlaybackParam_Velocity withValue:velocity atSourceIdx:(int)self.tag inTime:10.0f];
     [_touchView setAlpha:velocity];
-    
-    
-    
-    
-    
-//    for (UITouch* touch in touches) {
-//        NSLog(@"Moved Touch: %@", touch);
-//    }
-//    NSLog(@"Moved Event: %@", event);
-    
-//    if (_ignoreEvents) {
-//        return;
-//    }
-//
-//    if (!_forceTouchAvailable) {
-//        return;
-//    }
-//
-//    UITouch* touch = [touches anyObject];
-//    CGFloat force = touch.force;
-//    [self processNormalizedForce:force/touch.maximumPossibleForce];
 }
 
 
@@ -272,6 +342,9 @@
         case TWDrumPadMode_Momentary:
             [[TWAudioController sharedController] stopPlaybackAtSourceIdx:(int)self.tag fadeOutTime:kAudioFilePlaybackFadeOutTime_ms];
             [_touchView setAlpha:0.0f];
+            [_tickView setAlpha:0.0f];
+            _playbackStatus = TWPlaybackStatus_Stopped;
+            [self stopProgressAnimation];
             break;
             
         case TWDrumPadMode_OneShot:
@@ -281,25 +354,6 @@
         default:
             break;
     }
-    
-    
-//    for (UITouch* touch in touches) {
-//        NSLog(@"Ended Touch: %@", touch);
-//    }
-//    NSLog(@"Ended Event: %@", event);
-    
-//    if (!_forceTouchAvailable) {
-//        _longPressElapsedTime = 0.0f;
-//        [_longPressTimer invalidate];
-//    }
-//
-//    if (!_ignoreEvents) {
-//        if (self.delegate && [self.delegate respondsToSelector:@selector(forceButtonTouchUpInside:)]) {
-//            [_delegate forceButtonTouchUpInside:self];
-//        }
-//    }
-//    _ignoreEvents = NO;
-//    [_forceView setFrame:CGRectZero];
 }
 
 - (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
@@ -317,9 +371,11 @@
     
     if (_drumPadMode == TWDrumPadMode_OneShot) {
         [_touchView setAlpha:0.0f];
+        [_tickView setAlpha:0.0f];
+        _playbackStatus = TWPlaybackStatus_Stopped;
+        [self stopProgressAnimation];
         _touchesMovedIgnore = YES;
     }
-    
     
     BOOL success = YES;
     switch ((TWPlaybackFinishedStatus)status) {
@@ -342,13 +398,80 @@
     
     if (!success) {
         [_touchView setAlpha:0.0f];
+        [_tickView setAlpha:0.0f];
         [_errorView setAlpha:1.0f];
+        _playbackStatus = TWPlaybackStatus_Uninitialized;
+        [self stopProgressAnimation];
         [UIView animateWithDuration:0.3f delay:0.1f options:UIViewAnimationOptionCurveEaseIn animations:^{
             [self->_errorView setAlpha:0.0f];
         } completion:^(BOOL finished) {
             
         }];
     }
+}
+
+
+//- (void) runSpinAnimationOnView:(UIView*)view duration:(CGFloat)duration rotations:(CGFloat)rotations repeat:(float)repeat {
+//    CABasicAnimation* rotationAnimation;
+//    rotationAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
+//    rotationAnimation.toValue = [NSNumber numberWithFloat: M_PI * 2.0 /* full rotation*/ * rotations * duration ];
+//    rotationAnimation.duration = duration;
+//    rotationAnimation.cumulative = YES;
+//    rotationAnimation.repeatCount = repeat ? HUGE_VALF : 0;
+//
+//    [view.layer addAnimation:rotationAnimation forKey:@"rotationAnimation"];
+//}
+
+- (void)startProgressAnimation {
+    
+    if (_initTime) {
+        return;
+    }
+    
+    CABasicAnimation* rotationAnimation;
+    rotationAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
+    
+    float normalizedProgress = [[TWAudioController sharedController] getPlaybackParameter:kPlaybackParam_NormalizedProgress atSourceIdx:(int)self.tag];
+    
+    
+    NSNumber* fromValue;
+    NSNumber* toValue;
+    
+    switch (_playbackDirection) {
+        case TWPlaybackDirection_Forward:
+            fromValue = [NSNumber numberWithFloat:(2.0f * M_PI * normalizedProgress)];
+            toValue = [NSNumber numberWithFloat:(2.0f * M_PI) * (1.0f + normalizedProgress)];
+            break;
+            
+        case TWPlaybackDirection_Reverse:
+            fromValue = [NSNumber numberWithFloat:(2.0f * M_PI * normalizedProgress)];
+            toValue = [NSNumber numberWithFloat:(2.0f * M_PI) * (1.0f - normalizedProgress)];
+            break;
+            
+        default:
+            break;
+    }
+    
+    float repeatCount = HUGE_VALF;
+    switch (_drumPadMode) {
+        case TWDrumPadMode_OneShot:
+            repeatCount = 0.0f;
+            break;
+        default:
+            break;
+    }
+    
+    rotationAnimation.fromValue = fromValue;
+    rotationAnimation.toValue = toValue;
+    rotationAnimation.duration = _lengthInSeconds;
+    rotationAnimation.cumulative = NO;
+    rotationAnimation.repeatCount = repeatCount;
+    
+    [_tickView.layer addAnimation:rotationAnimation forKey:@"rotationAnimation"];
+}
+
+- (void)stopProgressAnimation {
+    [_tickView.layer removeAllAnimations];
 }
 
 @end

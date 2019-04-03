@@ -28,7 +28,7 @@ TWMemoryPlayer::TWMemoryPlayer()
     _fadeOutNumSamples      = 0;
     _isIORunning            = 0;
     
-    _finishedPlaybackProc   = nullptr;
+    _playbackFinishedProc   = nullptr;
     _notificationQueue      = nullptr;
     
     //--- ABL Settings ---//
@@ -102,6 +102,11 @@ int TWMemoryPlayer::loadAudioFile(std::string filepath)
 {
     if (_isPlaying) {
         stop(0);
+        dispatch_async(_notificationQueue, ^{
+            if (_playbackFinishedProc) {
+                _playbackFinishedProc(_sourceIdx, TWPlaybackFinishedStatus_Success);
+            }
+        });
     }
     
     
@@ -213,9 +218,9 @@ int TWMemoryPlayer::loadAudioFile(std::string filepath)
 }
 
 
-void TWMemoryPlayer::setFinishedPlaybackProc(std::function<void(int,int)>finishedPlaybackProc)
+void TWMemoryPlayer::setPlaybackFinishedProc(std::function<void(int,int)>playbackFinishedProc)
 {
-    _finishedPlaybackProc = finishedPlaybackProc;
+    _playbackFinishedProc = playbackFinishedProc;
 }
 
 
@@ -232,8 +237,8 @@ int TWMemoryPlayer::start(int32_t startSampleTime)
         printf("TWMemoryPlayer::start : Error! Stream is %s\n", _playbackStatusToString(_playbackStatus).c_str());
         status = TWPlaybackFinishedStatus_Uninitialized;
         dispatch_async(_notificationQueue, ^{
-            if (_finishedPlaybackProc != nullptr) {
-                _finishedPlaybackProc(_sourceIdx, status);
+            if (_playbackFinishedProc != nullptr) {
+                _playbackFinishedProc(_sourceIdx, status);
             }
         });
         return status;
@@ -243,8 +248,8 @@ int TWMemoryPlayer::start(int32_t startSampleTime)
         printf("TWMemoryPlayer::start : Error! IO Not Running\n");
         status = TWPlaybackFinishedStatus_NoIORunning;
         dispatch_async(_notificationQueue, ^{
-            if (_finishedPlaybackProc != nullptr) {
-                _finishedPlaybackProc(_sourceIdx, TWPlaybackFinishedStatus_NoIORunning);
+            if (_playbackFinishedProc != nullptr) {
+                _playbackFinishedProc(_sourceIdx, TWPlaybackFinishedStatus_NoIORunning);
             }
         });
         return status;
@@ -267,6 +272,7 @@ void TWMemoryPlayer::stop(uint32_t fadeOutSamples)
         _stopSampleCounter = 0;
         _isStopping = false;
         _isPlaying = false;
+        _setPlaybackStatus(TWPlaybackStatus_Stopped);
     } else {
         _fadeOutGain.setTargetValue(0.0f, fadeOutSamples);
         _stopSampleCounter = fadeOutSamples;
@@ -281,7 +287,15 @@ TWPlaybackStatus TWMemoryPlayer::getPlaybackStatus()
 
 float TWMemoryPlayer::getNormalizedPlaybackProgress()
 {
-    return 0.0f;
+    if (_lengthInFrames <= 0) {
+        return 0.0f;
+    }
+    return ((float)_readIdx / _lengthInFrames);
+}
+
+float TWMemoryPlayer::getLengthInSeconds()
+{
+    return (float)_lengthInFrames / _sampleRate;
 }
 
 
@@ -577,8 +591,8 @@ void TWMemoryPlayer::_incDecReadIdx()
         if ((previousReadIdx != 0) && (_readIdx == 0)) {
             stop(0);
             dispatch_async(_notificationQueue, ^{
-                if (_finishedPlaybackProc != nullptr) {
-                    _finishedPlaybackProc(_sourceIdx, TWPlaybackFinishedStatus_Success);
+                if (_playbackFinishedProc != nullptr) {
+                    _playbackFinishedProc(_sourceIdx, TWPlaybackFinishedStatus_Success);
                 }
             });
         }

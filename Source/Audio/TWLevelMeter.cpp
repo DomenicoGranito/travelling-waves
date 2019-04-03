@@ -37,7 +37,13 @@ void TWLevelMeter::prepare(float sampleRate)
 void TWLevelMeter::process(float sample)
 {
     _buffer[_sampleCount] = sample;
-    _sampleCount = (_sampleCount + 1) % _windowSize_samples;
+    
+    uint32_t sampleCount = (_sampleCount + 1);
+    if (sampleCount >= _windowSize_samples) {
+        _sampleCount = 0;
+    } else {
+        _sampleCount = sampleCount;
+    }
 }
 
 

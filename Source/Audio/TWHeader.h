@@ -106,7 +106,9 @@
 #define kPlaybackParam_MaxVolume                2
 #define kPlaybackParam_DrumPadMode              3
 #define kPlaybackParam_PlaybackDirection        4
-#define kPlaybackParam_NormalizedProgress       5       // Readonly
+#define kPlaybackParam_PlaybackStatus           5       // Readonly
+#define kPlaybackParam_NormalizedProgress       6       // Readonly
+#define kPlaybackParam_LengthInSeconds          7       // Readonly
 
 
 /* Audio File Playback Stream */

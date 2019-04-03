@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)audioControllerDidStop;
 @end
 
-typedef void (^TWAudioControllerPlaybackDidEndBlock)(int sourceIdx, int status);
+typedef void (^TWAudioControllerPlaybackFinishedBlock)(int sourceIdx, int status);
 
 @interface TWAudioController : NSObject
 
@@ -76,7 +76,7 @@ typedef void (^TWAudioControllerPlaybackDidEndBlock)(int sourceIdx, int status);
 - (void)stopPlaybackAtSourceIdx:(int)sourceIdx fadeOutTime:(float)fadeOut_ms;
 - (void)setPlaybackParameter:(int)paramID withValue:(float)value atSourceIdx:(int)sourceIdx inTime:(float)rampTime_ms;
 - (float)getPlaybackParameter:(int)paramID atSourceIdx:(int)sourceIdx;
-@property(nonatomic, copy) TWAudioControllerPlaybackDidEndBlock playbackDidEndBlock;
+@property(nonatomic, copy) TWAudioControllerPlaybackFinishedBlock playbackFinishedBlock;
 
 @end
 

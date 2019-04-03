@@ -33,8 +33,8 @@ static OSStatus playbackCallback(void *inRefCon,
 }
 
 
-static void enginePlaybackStatusChanged(int sourceIdx, int status) {
-    TWAudioControllerPlaybackDidEndBlock block = [[TWAudioController sharedController] playbackDidEndBlock];
+static void enginePlaybackFinishedProc(int sourceIdx, int status) {
+    TWAudioControllerPlaybackFinishedBlock block = [[TWAudioController sharedController] playbackFinishedBlock];
     if (block != nil) {
         block(sourceIdx, status);
     }
@@ -61,7 +61,7 @@ static void enginePlaybackStatusChanged(int sourceIdx, int status) {
         [self _initializeAudioServices];
         [self _setupAudioEngine];
         _delegates = [[NSMutableArray alloc] init];
-        _playbackDidEndBlock = nil;
+        _playbackFinishedBlock = nil;
     }
     
     return self;
@@ -314,7 +314,7 @@ static void enginePlaybackStatusChanged(int sourceIdx, int status) {
 
 - (void)_setupAudioEngine {
     _engine = new TWAudioEngine();
-    _engine->setFinishedPlaybackProc(enginePlaybackStatusChanged);
+    _engine->setPlaybackFinishedProc(enginePlaybackFinishedProc);
 }
 
 

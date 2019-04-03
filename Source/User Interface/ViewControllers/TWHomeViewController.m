@@ -253,7 +253,10 @@
     yPos += _mixerView.frame.size.height;
     CGFloat scrollViewHeight = screenHeight - yPos - componentHeight;
     [_verticalScrollView setFrame:CGRectMake(xMargin, yPos, screenWidth, scrollViewHeight)];
-    [_verticalScrollView setContentSize:CGSizeMake(screenWidth, ((kNumSources / 2.0f) + 14.0f) * componentHeight)];
+    
+    CGFloat scrollViewContentHeight = isLandscape ? (3.0f * kButtonYMargin) + (((kNumSources / 4.0f) + 12.0f) * componentHeight) :
+                                                    (4.0f * kButtonYMargin) + (((kNumSources / 2.0f) + 12.0f) * componentHeight);
+    [_verticalScrollView setContentSize:CGSizeMake(screenWidth, scrollViewContentHeight)];
     
     
     // Enter Vertical Scroll View

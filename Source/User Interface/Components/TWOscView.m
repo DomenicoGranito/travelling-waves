@@ -97,6 +97,8 @@ static const float kCutoffFrequencyMax = 20000.0f;
     UILabel*                    _fmFreqLabel;
     UISlider*                   _fmFreqSlider;
     UITextField*                _fmFreqField;
+    
+    UIView*                     _fmBackView;
 }
 @end
 
@@ -201,7 +203,7 @@ static const float kCutoffFrequencyMax = 20000.0f;
     
     _tremBackView = [[UIView alloc] init];
     [_tremBackView setUserInteractionEnabled:NO];
-    [_tremBackView setBackgroundColor:[UIColor colorWithWhite:0.06f alpha:0.2f]];
+    [_tremBackView setBackgroundColor:[UIColor colorWithWhite:0.06f alpha:0.3f]];
     [self addSubview:_tremBackView];
     
     _tremFLabel = [[UILabel alloc] init];
@@ -413,6 +415,12 @@ static const float kCutoffFrequencyMax = 20000.0f;
     
     
     // FM
+    
+    _fmBackView = [[UIView alloc] init];
+    [_fmBackView setUserInteractionEnabled:NO];
+    [_fmBackView setBackgroundColor:[UIColor colorWithWhite:0.06f alpha:0.3f]];
+    [self addSubview:_fmBackView];
+    
     
     _fmAmountLabel = [[UILabel alloc] init];
     [_fmAmountLabel setText:@"FM-G:"];
@@ -636,6 +644,7 @@ static const float kCutoffFrequencyMax = 20000.0f;
     // FM
     yPos += componentHeight;
     xPos = 0.0f;
+    [_fmBackView setFrame:CGRectMake(xPos, yPos, frame.size.width, 1.0f * componentHeight)];
     [_fmAmountLabel setFrame:CGRectMake(xPos, yPos, kTitleLabelWidth, componentHeight)];
     
     xPos += _fmAmountLabel.frame.size.width;

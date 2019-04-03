@@ -8,7 +8,7 @@
 
 #import "TWDrumPadViewController.h"
 #import "TWDrumPad.h"
-#import "TWSlider.h"
+#import "TWFillSlider.h"
 #import "TWHeader.h"
 #import "TWCycleStateButton.h"
 #import "TWAudioController.h"
@@ -77,19 +77,20 @@
 //    [self.view addSubview:_testView];
     
     NSArray<NSString*>* drumPadModeTitles = @[@"1-Shot", @"Momentary", @"Toggle"];
-    NSArray<UIColor*>* drumPadModeColors = @[[UIColor colorWithRed:0.4f green:0.2f blue:0.2f alpha:0.8f],
-                                             [UIColor colorWithRed:0.2f green:0.32f blue:0.2f alpha:0.8f],
-                                             [UIColor colorWithRed:0.2f green:0.2f blue:0.46f alpha:0.8f]];
+    NSArray<UIColor*>* drumPadModeColors = @[[UIColor colorWithRed:0.4f green:0.2f blue:0.2f alpha:0.7f],
+                                             [UIColor colorWithRed:0.2f green:0.32f blue:0.2f alpha:0.7f],
+                                             [UIColor colorWithRed:0.2f green:0.2f blue:0.46f alpha:0.7f]];
     
     NSArray<NSString*>* playbackDirectionTitles = @[@"Forward", @"Reverse"];
-    NSArray<UIColor*>* playbackDirectionColors = @[[UIColor colorWithRed:0.3f green:0.2f blue:0.1f alpha:0.8f],
-                                             [UIColor colorWithRed:0.1f green:0.2f blue:0.3f alpha:0.8f]];
+    NSArray<UIColor*>* playbackDirectionColors = @[[UIColor colorWithRed:0.3f green:0.2f blue:0.1f alpha:0.7f],
+                                             [UIColor colorWithRed:0.1f green:0.2f blue:0.3f alpha:0.7f]];
     
     
     NSMutableArray* drumPads = [[NSMutableArray alloc] init];
     NSMutableArray* velocitySliders = [[NSMutableArray alloc] init];
     NSMutableArray* drumPadModeButtons = [[NSMutableArray alloc] init];
     NSMutableArray* playbackDirectionButtons = [[NSMutableArray alloc] init];
+    NSMutableArray* loadAudioFileButtons = [[NSMutableArray alloc] init];
     for (int i=0; i < kNumSources; i++) {
         TWDrumPad* drumPad = [[TWDrumPad alloc] init];
         [drumPad setTag:i];
@@ -99,10 +100,10 @@
         [self.view addSubview:drumPad];
         [drumPads addObject:drumPad];
         
-        TWSlider* velocitySlider = [[TWSlider alloc] init];
+        TWFillSlider* velocitySlider = [[TWFillSlider alloc] init];
         [velocitySlider setTag:i];
         [velocitySlider addTarget:self action:@selector(velocitySliderValueChanged:) forControlEvents:UIControlEventValueChanged];
-        [velocitySlider setOnTrackColor:[UIColor colorWithRed:0.2 green:0.6 blue:0.2 alpha:0.5]];
+        [velocitySlider setOnTrackColor:[UIColor colorWithRed:0.2 green:0.5 blue:0.2 alpha:0.5]];
         [velocitySlider setHidden:YES];
         [self.view addSubview:velocitySlider];
         [velocitySliders addObject:velocitySlider];
@@ -128,11 +129,23 @@
         [playbackDirectionButton setHidden:YES];
         [self.view addSubview:playbackDirectionButton];
         [playbackDirectionButtons addObject:playbackDirectionButton];
+        
+        UIButton* loadAudioFileButton = [[UIButton alloc] init];
+        [loadAudioFileButton setTag:i];
+        [loadAudioFileButton setTitleColor:[UIColor colorWithWhite:0.06f alpha:1.0f] forState:UIControlStateNormal];
+        [[loadAudioFileButton titleLabel] setFont:[UIFont systemFontOfSize:11.0f]];
+        [loadAudioFileButton setTitle:[NSString stringWithFormat:@"%d", i] forState:UIControlStateNormal];
+        [loadAudioFileButton setBackgroundColor:[UIColor colorWithRed:0.4 green:0.2f blue:0.6f alpha:0.6f]];
+        [loadAudioFileButton addTarget:self action:@selector(loadAudioFileButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+        [loadAudioFileButton setHidden:YES];
+        [self.view addSubview:loadAudioFileButton];
+        [loadAudioFileButtons addObject:loadAudioFileButton];
     }
     _drumPads = [[NSArray alloc] initWithArray:drumPads];
     _velocitySliders = [[NSArray alloc] initWithArray:velocitySliders];
     _drumPadModeButtons = [[NSArray alloc] initWithArray:drumPadModeButtons];
     _playbackDirectionButtons = [[NSArray alloc] initWithArray:playbackDirectionButtons];
+    _loadAudioFileButtons = [[NSArray alloc] initWithArray:loadAudioFileButtons];
     
     
     _toggleVelocityButton = [[UIButton alloc] init];
@@ -163,7 +176,7 @@
     [self.view addSubview:_togglePlaybackDirectionButton];
     
     _toggleLoadAudioFileButton = [[UIButton alloc] init];
-    [_toggleLoadAudioFileButton setTitle:@"Direction" forState:UIControlStateNormal];
+    [_toggleLoadAudioFileButton setTitle:@"Load File" forState:UIControlStateNormal];
     [_toggleLoadAudioFileButton setBackgroundColor:[UIColor colorWithWhite:0.08 alpha:1.0f]];
     [_toggleLoadAudioFileButton setTitleColor:[UIColor colorWithWhite:0.3f alpha:0.8f] forState:UIControlStateNormal];
     [[_toggleLoadAudioFileButton titleLabel] setFont:[UIFont systemFontOfSize:12.0f]];
@@ -181,7 +194,7 @@
     [self.view addSubview:_editingAllButton];
     _editingAllToggle = NO;
     
-    [[TWAudioController sharedController] setPlaybackDidEndBlock:^(int sourceIdx, int status) {
+    [[TWAudioController sharedController] setPlaybackFinishedBlock:^(int sourceIdx, int status) {
         dispatch_sync(dispatch_get_main_queue(), ^{
             TWDrumPad* drumPad = [self->_drumPads objectAtIndex:sourceIdx];
             [drumPad playbackStopped:status];
@@ -201,7 +214,7 @@
         TWDrumPad* drumPad = (TWDrumPad*)[_drumPads objectAtIndex:i];
         [drumPad viewWillAppear];
         
-        TWSlider* velocitySlider = (TWSlider*)[_velocitySliders objectAtIndex:i];
+        TWFillSlider* velocitySlider = (TWFillSlider*)[_velocitySliders objectAtIndex:i];
         [velocitySlider setValue:[[TWAudioController sharedController] getPlaybackParameter:kPlaybackParam_MaxVolume atSourceIdx:i]];
         
         TWCycleStateButton* drumPadModeButton = (TWCycleStateButton*)[_drumPadModeButtons objectAtIndex:i];
@@ -215,6 +228,20 @@
     }
     
     [self updateIOButtonState:[[TWAudioController sharedController] isRunning]];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    for (TWDrumPad* drumPad in _drumPads) {
+        [drumPad viewDidAppear];
+    }
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    for (TWDrumPad* drumPad in _drumPads) {
+        [drumPad viewWillDisappear];
+    }
 }
 
 - (void)viewDidLayoutSubviews {
@@ -267,7 +294,7 @@
         TWDrumPad* pad = [_drumPads objectAtIndex:i];
         [pad setFrame:CGRectMake(xPos, yPos, padSize, padSize)];
         
-        TWSlider* velocitySlider = (TWSlider*)[_velocitySliders objectAtIndex:i];
+        TWFillSlider* velocitySlider = (TWFillSlider*)[_velocitySliders objectAtIndex:i];
         [velocitySlider setFrame:CGRectMake(xPos, yPos, padSize, padSize)];
         
         TWCycleStateButton* drumPadModeButton = (TWCycleStateButton*)[_drumPadModeButtons objectAtIndex:i];
@@ -275,6 +302,9 @@
         
         TWCycleStateButton* playbackDirectionButton = (TWCycleStateButton*)[_playbackDirectionButtons objectAtIndex:i];
         [playbackDirectionButton setFrame:CGRectMake(xPos, yPos, padSize, padSize)];
+        
+        UIButton* loadAudioFileButton = (UIButton*)[_loadAudioFileButtons objectAtIndex:i];
+        [loadAudioFileButton setFrame:CGRectMake(xPos, yPos, padSize, padSize)];
         
         xPos += padSize + padPad;
         if (column == 3) {
@@ -306,6 +336,9 @@
         yPos += padPad + optionsButtonHeight;
         [_togglePlaybackDirectionButton setFrame:CGRectMake(xPos, yPos, optionsButtonWidth, optionsButtonHeight)];
         
+        yPos += padPad + optionsButtonHeight;
+        [_toggleLoadAudioFileButton setFrame:CGRectMake(xPos, yPos, optionsButtonWidth, optionsButtonHeight)];
+        
         xPos += padPad + optionsButtonWidth;
         yPos = yMargin + componentHeight + padPad;
         [_editingAllButton setFrame:CGRectMake(xPos, yPos, optionsButtonWidth, optionsButtonHeight)];
@@ -326,6 +359,9 @@
         
         xPos += optionsButtonWidth + padPad;
         [_togglePlaybackDirectionButton setFrame:CGRectMake(xPos, yPos, optionsButtonWidth, optionsButtonHeight)];
+        
+        xPos += optionsButtonWidth + padPad;
+        [_toggleLoadAudioFileButton setFrame:CGRectMake(xPos, yPos, optionsButtonWidth, optionsButtonHeight)];
         
         xPos = xMargin + padPad;
         yPos += padPad + optionsButtonHeight;
@@ -373,9 +409,9 @@
 
 //===== Velocity =====//
 
-- (void)velocitySliderValueChanged:(TWSlider*)sender {
+- (void)velocitySliderValueChanged:(TWFillSlider*)sender {
     if (_editingAllToggle) {
-        for (TWSlider* velocitySlider in _velocitySliders) {
+        for (TWFillSlider* velocitySlider in _velocitySliders) {
             if (velocitySlider != sender) {
                 [velocitySlider setValue:sender.value];
                 [[TWAudioController sharedController] setPlaybackParameter:kPlaybackParam_MaxVolume withValue:sender.value atSourceIdx:(int)velocitySlider.tag inTime:0.0f];
@@ -386,14 +422,14 @@
 }
 
 - (void)toggleVelocityButtonDown:(UIButton*)sender {
-    for (TWSlider* velocitySlider in _velocitySliders) {
+    for (TWFillSlider* velocitySlider in _velocitySliders) {
         [velocitySlider setHidden:NO];
     }
     [sender setBackgroundColor:[UIColor colorWithWhite:0.2 alpha:1.0]];
 }
 
 - (void)toggleVelocityButtonUp:(UIButton*)sender {
-    for (TWSlider* velocitySlider in _velocitySliders) {
+    for (TWFillSlider* velocitySlider in _velocitySliders) {
         [velocitySlider setHidden:YES];
     }
     [sender setBackgroundColor:[UIColor colorWithWhite:0.08 alpha:1.0f]];
@@ -462,28 +498,43 @@
     NSUInteger currentState = [sender currentState];
     
     [[TWAudioController sharedController] setPlaybackParameter:kPlaybackParam_PlaybackDirection withValue:(float)currentState atSourceIdx:(int)sender.tag inTime:0.0f];
+    TWDrumPad* drumPad = (TWDrumPad*)[_drumPads objectAtIndex:(int)sender.tag];
+    [drumPad setPlaybackDirection:(TWPlaybackDirection)currentState];
     
     if (_editingAllToggle) {
         for (TWCycleStateButton* playbackDirectionButton in _playbackDirectionButtons) {
             if (playbackDirectionButton != sender) {
                 [playbackDirectionButton setCurrentState:currentState];
                 [[TWAudioController sharedController] setPlaybackParameter:kPlaybackParam_PlaybackDirection withValue:(float)currentState atSourceIdx:(int)playbackDirectionButton.tag inTime:0.0f];
+                
+                TWDrumPad* pad = (TWDrumPad*)[_drumPads objectAtIndex:(int)playbackDirectionButton.tag];
+                [pad setPlaybackDirection:(TWPlaybackDirection)currentState];
             }
         }
     }
 }
 
 
+
+//----- Load Audio File -----//
+
 - (void)toggleLoadAudioFileDown:(UIButton*)sender {
-    
+    for (UIButton* loadAudioFileButton in _loadAudioFileButtons) {
+        [loadAudioFileButton setHidden:NO];
+    }
     [sender setBackgroundColor:[UIColor colorWithWhite:0.2 alpha:1.0]];
 }
 
 - (void)toggleLoadAudioFileUp:(UIButton*)sender {
-    
+    for (UIButton* loadAudioFileButton in _loadAudioFileButtons) {
+        [loadAudioFileButton setHidden:YES];
+    }
     [sender setBackgroundColor:[UIColor colorWithWhite:0.08 alpha:1.0]];
 }
 
+- (void)loadAudioFileButtonTapped:(UIButton*)sender {
+    
+}
 
 //===== All Button =====//
 - (void)editingAllButtonTouchDown:(UIButton*)sender {
@@ -528,6 +579,9 @@
     }
     
     _debugCount = (_debugCount + 1) % 3;
+    
+    TWDrumPad* drumPad = (TWDrumPad*)[_drumPads objectAtIndex:0];
+    [drumPad setLengthInSeconds:[[TWAudioController sharedController] getPlaybackParameter:kPlaybackParam_LengthInSeconds atSourceIdx:0]];
     
 //    NSString* sampleURL1 = [[NSBundle mainBundle] pathForResource:@"Embryo Synth" ofType:@"wav"];
 //    NSString* outSampleURL1 = [sampleURL1 stringByReplacingOccurrencesOfString:@" " withString:@"%20"];

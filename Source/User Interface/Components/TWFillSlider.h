@@ -1,5 +1,5 @@
 //
-//  TWSlider.h
+//  TWFillSlider.h
 //  Travelling Waves
 //
 //  Created by Govinda Pingali on 2/17/16.
@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface TWSlider : UIControl
+@interface TWFillSlider : UIControl
 
 @property (nonatomic, assign) bool isHorizontal;
 

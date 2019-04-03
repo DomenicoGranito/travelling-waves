@@ -108,7 +108,7 @@ public:
     void stopPlaybackAtSourceIdx(int sourceIdx, float fadeOut_ms);
     void setPlaybackParameterAtSourceIdx(int sourceIdx, int paramID, float value, float rampTime_ms);
     float getPlaybackParameterAtSourceIdx(int sourceIdx, int paramID);
-    void setFinishedPlaybackProc(std::function<void(int,int)>finishedPlaybackProc);
+    void setPlaybackFinishedProc(std::function<void(int,int)>finishedPlaybackProc);
     
     
 private:

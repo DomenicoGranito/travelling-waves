@@ -30,7 +30,7 @@
     [_testButton addTarget:self action:@selector(testButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_testButton];
     
-    [[TWAudioController sharedController] setPlaybackDidEndBlock:^(int sourceIdx, int status) {
+    [[TWAudioController sharedController] setPlaybackFinishedBlock:^(int sourceIdx, int status) {
         NSLog(@"Dayumn! [%d], [%d]", sourceIdx, status);
     }];
     

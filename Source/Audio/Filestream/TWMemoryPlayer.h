@@ -40,7 +40,7 @@ public:
     
     int loadAudioFile(std::string filepath);
     
-    void setFinishedPlaybackProc(std::function<void(int,int)>finishedPlaybackProc);
+    void setPlaybackFinishedProc(std::function<void(int,int)>playbackFinishedProc);
     
     
     //--- Transport Methods ---//
@@ -48,6 +48,7 @@ public:
     void stop(uint32_t fadeOutSamples);
     TWPlaybackStatus getPlaybackStatus();
     float getNormalizedPlaybackProgress();
+    float getLengthInSeconds();
     
     
     //--- Playback Property Methods ---//
@@ -94,7 +95,7 @@ private:
     bool                    _shouldFadeOut;
     
     
-    std::function<void(int,int)>   _finishedPlaybackProc;
+    std::function<void(int,int)>   _playbackFinishedProc;
     
     dispatch_queue_t        _notificationQueue;
     
