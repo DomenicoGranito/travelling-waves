@@ -95,7 +95,7 @@
         TWDrumPad* drumPad = [[TWDrumPad alloc] init];
         [drumPad setTag:i];
         [drumPad setBackgroundColor:[UIColor colorWithWhite:0.2 alpha:1.0]];
-        [drumPad setTitleText:[NSString stringWithFormat:@"%i", i]];
+        [drumPad setTitleText:[NSString stringWithFormat:@"%i", i+1]];
         [drumPad setOnColor:[UIColor colorWithRed:0.2 green:0.2 blue:0.9f alpha:0.9f]];
         [self.view addSubview:drumPad];
         [drumPads addObject:drumPad];
@@ -134,8 +134,7 @@
         [loadAudioFileButton setTag:i];
         [loadAudioFileButton setTitleColor:[UIColor colorWithWhite:0.06f alpha:1.0f] forState:UIControlStateNormal];
         [[loadAudioFileButton titleLabel] setFont:[UIFont systemFontOfSize:11.0f]];
-        [loadAudioFileButton setTitle:[NSString stringWithFormat:@"%d", i] forState:UIControlStateNormal];
-        [loadAudioFileButton setBackgroundColor:[UIColor colorWithRed:0.4 green:0.2f blue:0.6f alpha:0.6f]];
+        [loadAudioFileButton setBackgroundColor:[UIColor colorWithRed:0.4 green:0.2f blue:0.6f alpha:0.4f]];
         [loadAudioFileButton addTarget:self action:@selector(loadAudioFileButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
         [loadAudioFileButton setHidden:YES];
         [self.view addSubview:loadAudioFileButton];
@@ -284,7 +283,7 @@
     }
     
     padPad = padPadRatio * padSize;
-    yPos += padPad;
+    yPos = yMargin + componentHeight + (4.0f * padPad) + (3.0f * padSize);
     xPos = xMargin + padPad;
     
     for (int i=0; i < kNumSources; i++) {
@@ -308,7 +307,7 @@
         
         xPos += padSize + padPad;
         if (column == 3) {
-            yPos += padSize + padPad;
+            yPos -= padSize + padPad;
             xPos = xMargin + padPad;
         }
     }
@@ -551,61 +550,71 @@
 
 - (void)testInit {
     
-    NSString* string;
+//    NSString* string;
+//
+//    switch (_debugCount) {
+//        case 0:
+//            string = @"Embryo Synth";
+//            break;
+//
+//        case 1:
+//            string = @"LRTest";
+//            break;
+//
+//        case 2:
+//            string = @"TestKick";
+//            break;
+//
+//        default:
+//            break;
+//    }
+//
+//    NSString* sampleURL = [[NSBundle mainBundle] pathForResource:string ofType:@"wav"];
+//    NSString* outSampleURL = [sampleURL stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
+//    if (sampleURL != nil) {
+//        [[TWAudioController sharedController] loadAudioFile:outSampleURL atSourceIdx:0];
+//    } else {
+//        NSLog(@"Error! SampleURL is nil!");
+//    }
+//
+//    _debugCount = (_debugCount + 1) % 3;
     
-    switch (_debugCount) {
-        case 0:
-            string = @"Embryo Synth";
-            break;
-            
-        case 1:
-            string = @"LRTest";
-            break;
-            
-        case 2:
-            string = @"TestKick";
-            break;
-            
-        default:
-            break;
-    }
-   
-    NSString* sampleURL = [[NSBundle mainBundle] pathForResource:string ofType:@"wav"];
-    NSString* outSampleURL = [sampleURL stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
-    if (sampleURL != nil) {
-        [[TWAudioController sharedController] loadAudioFile:outSampleURL atSourceIdx:0];
+//    TWDrumPad* drumPad = (TWDrumPad*)[_drumPads objectAtIndex:0];
+//    [drumPad setLengthInSeconds:[[TWAudioController sharedController] getPlaybackParameter:kPlaybackParam_LengthInSeconds atSourceIdx:0]];
+    
+    
+    
+    
+    NSString* sampleURL1 = [[NSBundle mainBundle] pathForResource:@"Embryo Synth" ofType:@"wav"];
+    NSString* outSampleURL1 = [sampleURL1 stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
+    if (sampleURL1 != nil) {
+        [[TWAudioController sharedController] loadAudioFile:outSampleURL1 atSourceIdx:0];
     } else {
         NSLog(@"Error! SampleURL is nil!");
     }
-    
-    _debugCount = (_debugCount + 1) % 3;
-    
     TWDrumPad* drumPad = (TWDrumPad*)[_drumPads objectAtIndex:0];
     [drumPad setLengthInSeconds:[[TWAudioController sharedController] getPlaybackParameter:kPlaybackParam_LengthInSeconds atSourceIdx:0]];
-    
-//    NSString* sampleURL1 = [[NSBundle mainBundle] pathForResource:@"Embryo Synth" ofType:@"wav"];
-//    NSString* outSampleURL1 = [sampleURL1 stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
-//    if (sampleURL1 != nil) {
-//        [[TWAudioController sharedController] loadAudioFile:outSampleURL1 atSourceIdx:0];
-//    } else {
-//        NSLog(@"Error! SampleURL is nil!");
-//    }
-//
-//    NSString* sampleURL2 = [[NSBundle mainBundle] pathForResource:@"LRTest" ofType:@"wav"];
-//    NSString* outSampleURL2 = [sampleURL2 stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
-//    if (sampleURL2 != nil) {
-//        [[TWAudioController sharedController] loadAudioFile:outSampleURL2 atSourceIdx:1];
-//    } else {
-//        NSLog(@"Error! SampleURL is nil!");
-//    }
-//
-//    NSString* sampleURL3 = [[NSBundle mainBundle] pathForResource:@"TestKick" ofType:@"wav"];
-//    NSString* outSampleURL3 = [sampleURL3 stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
-//    if (sampleURL3 != nil) {
-//        [[TWAudioController sharedController] loadAudioFile:outSampleURL3 atSourceIdx:2];
-//    } else {
-//        NSLog(@"Error! SampleURL is nil!");
-//    }
+
+
+    NSString* sampleURL2 = [[NSBundle mainBundle] pathForResource:@"LRTest" ofType:@"wav"];
+    NSString* outSampleURL2 = [sampleURL2 stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
+    if (sampleURL2 != nil) {
+        [[TWAudioController sharedController] loadAudioFile:outSampleURL2 atSourceIdx:1];
+    } else {
+        NSLog(@"Error! SampleURL is nil!");
+    }
+    drumPad = (TWDrumPad*)[_drumPads objectAtIndex:1];
+    [drumPad setLengthInSeconds:[[TWAudioController sharedController] getPlaybackParameter:kPlaybackParam_LengthInSeconds atSourceIdx:1]];
+
+    NSString* sampleURL3 = [[NSBundle mainBundle] pathForResource:@"TestKick" ofType:@"wav"];
+    NSString* outSampleURL3 = [sampleURL3 stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
+    if (sampleURL3 != nil) {
+        [[TWAudioController sharedController] loadAudioFile:outSampleURL3 atSourceIdx:2];
+    } else {
+        NSLog(@"Error! SampleURL is nil!");
+    }
+    drumPad = (TWDrumPad*)[_drumPads objectAtIndex:2];
+    [drumPad setLengthInSeconds:[[TWAudioController sharedController] getPlaybackParameter:kPlaybackParam_LengthInSeconds atSourceIdx:2]];
 }
 
 

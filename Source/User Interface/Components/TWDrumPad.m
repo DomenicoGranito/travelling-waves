@@ -11,8 +11,9 @@
 #import <QuartzCore/QuartzCore.h>
 
 
-static const CGFloat kHitViewAreaInset  = 0.05f;
-static const CGFloat kTickViewWidth     = 2.0f;
+static const CGFloat kHitViewAreaInset          = 0.05f;
+static const CGFloat kTickViewWidth             = 2.0f;
+static const CGFloat kTitleLabelSizeFraction    = 0.2f; // Fraction of frame
 
 
 @implementation TWHitView
@@ -106,14 +107,6 @@ static const CGFloat kTickViewWidth     = 2.0f;
     
     _initTime   = YES;
     
-    _titleLabel = [[UILabel alloc] init];
-    [_titleLabel setTextAlignment:NSTextAlignmentCenter];
-    [_titleLabel setFont:[UIFont systemFontOfSize:11.0f]];
-    [_titleLabel setTextColor:[UIColor colorWithWhite:0.2f alpha:0.5f]];
-    [_titleLabel setBackgroundColor:[UIColor clearColor]];
-    [_titleLabel setUserInteractionEnabled:NO];
-    [self addSubview:_titleLabel];
-    
     _touchView = [[UIView alloc] init];
     [_touchView setUserInteractionEnabled:NO];
     [_touchView setBackgroundColor:[UIColor colorWithWhite:0.5f alpha:1.0f]];
@@ -131,6 +124,14 @@ static const CGFloat kTickViewWidth     = 2.0f;
     [_errorView setBackgroundColor:[UIColor colorWithRed:1.0f green:0.1f blue:0.1f alpha:1.0f]];
     [_errorView setAlpha:0.0f];
     [self addSubview:_errorView];
+    
+    _titleLabel = [[UILabel alloc] init];
+    [_titleLabel setTextAlignment:NSTextAlignmentCenter];
+    [_titleLabel setFont:[UIFont systemFontOfSize:11.0f]];
+    [_titleLabel setTextColor:[UIColor colorWithWhite:0.45f alpha:0.5f]];
+    [_titleLabel setBackgroundColor:[UIColor clearColor]];
+    [_titleLabel setUserInteractionEnabled:NO];
+    [self addSubview:_titleLabel];
     
     _hitView = [[TWHitView alloc] init];
     [_hitView setUserInteractionEnabled:NO];
@@ -164,7 +165,13 @@ static const CGFloat kTickViewWidth     = 2.0f;
 - (void)setFrame:(CGRect)frame {
     [super setFrame:frame];
     
-    [_titleLabel setFrame:CGRectMake(0.0f, 0.0, frame.size.width, frame.size.height)];
+    CGFloat titleLabelWidth = frame.size.width * kTitleLabelSizeFraction;
+    CGFloat titleLabelHeight = frame.size.height * kTitleLabelSizeFraction;
+    CGFloat titleLabelXPos = frame.size.width - titleLabelWidth;
+    CGFloat titleLabelYPos = 0.0f;
+    [_titleLabel setFrame:CGRectMake(titleLabelXPos, titleLabelYPos, titleLabelWidth, titleLabelHeight)];
+    
+    
     [_touchView setFrame:CGRectMake(0.0f, 0.0f, frame.size.width, frame.size.height)];
     [_errorView setFrame:CGRectMake(0.0f, 0.0f, frame.size.width, frame.size.height)];
     [_hitView setFrame:CGRectMake(0.0f, 0.0f, frame.size.width, frame.size.height)];
@@ -179,16 +186,21 @@ static const CGFloat kTickViewWidth     = 2.0f;
     _touchDownCount = 0;
     _touchState = TWTouchState_Up;
     
+    _drumPadMode = (TWDrumPadMode)[[TWAudioController sharedController] getPlaybackParameter:kPlaybackParam_DrumPadMode atSourceIdx:(int)self.tag];
+    
     _playbackDirection = (TWPlaybackDirection)[[TWAudioController sharedController] getPlaybackParameter:kPlaybackParam_PlaybackDirection atSourceIdx:(int)self.tag];
     
     _playbackStatus = [[TWAudioController sharedController] getPlaybackParameter:kPlaybackParam_PlaybackStatus atSourceIdx:(int)self.tag];
     if (_playbackStatus == TWPlaybackStatus_Playing) {
         [_touchView setAlpha:1.0f];
-        [_tickView setAlpha:1.0f];
+        if (_drumPadMode == TWDrumPadMode_Toggle) {
+            _toggleState = YES;
+        }
     } else {
         [_touchView setAlpha:0.0f];
-        [_tickView setAlpha:0.0f];
     }
+    
+    _lengthInSeconds = [[TWAudioController sharedController] getPlaybackParameter:kPlaybackParam_LengthInSeconds atSourceIdx:(int)self.tag];
     
     [self stopProgressAnimation];
 }
@@ -268,13 +280,11 @@ static const CGFloat kTickViewWidth     = 2.0f;
             if (_toggleState) {
                 [[TWAudioController sharedController] startPlaybackAtSourceIdx:(int)self.tag atSampleTime:0];
                 [_touchView setAlpha:1.0f];
-                [_tickView setAlpha:1.0f];
                 _playbackStatus = TWPlaybackStatus_Playing;
                 [self startProgressAnimation];
             } else {
                 [[TWAudioController sharedController] stopPlaybackAtSourceIdx:(int)self.tag fadeOutTime:kAudioFilePlaybackFadeOutTime_ms];
                 [_touchView setAlpha:0.0f];
-                [_tickView setAlpha:0.0f];
                 _playbackStatus = TWPlaybackStatus_Stopped;
                 [self stopProgressAnimation];
             }
@@ -285,7 +295,6 @@ static const CGFloat kTickViewWidth     = 2.0f;
         case TWDrumPadMode_Momentary:
             [[TWAudioController sharedController] startPlaybackAtSourceIdx:(int)self.tag atSampleTime:0];
             [_touchView setAlpha:1.0f];
-            [_tickView setAlpha:1.0f];
             _playbackStatus = TWPlaybackStatus_Playing;
             [self startProgressAnimation];
             break;
@@ -342,7 +351,6 @@ static const CGFloat kTickViewWidth     = 2.0f;
         case TWDrumPadMode_Momentary:
             [[TWAudioController sharedController] stopPlaybackAtSourceIdx:(int)self.tag fadeOutTime:kAudioFilePlaybackFadeOutTime_ms];
             [_touchView setAlpha:0.0f];
-            [_tickView setAlpha:0.0f];
             _playbackStatus = TWPlaybackStatus_Stopped;
             [self stopProgressAnimation];
             break;
@@ -371,7 +379,6 @@ static const CGFloat kTickViewWidth     = 2.0f;
     
     if (_drumPadMode == TWDrumPadMode_OneShot) {
         [_touchView setAlpha:0.0f];
-        [_tickView setAlpha:0.0f];
         _playbackStatus = TWPlaybackStatus_Stopped;
         [self stopProgressAnimation];
         _touchesMovedIgnore = YES;
@@ -398,7 +405,6 @@ static const CGFloat kTickViewWidth     = 2.0f;
     
     if (!success) {
         [_touchView setAlpha:0.0f];
-        [_tickView setAlpha:0.0f];
         [_errorView setAlpha:1.0f];
         _playbackStatus = TWPlaybackStatus_Uninitialized;
         [self stopProgressAnimation];
@@ -428,6 +434,8 @@ static const CGFloat kTickViewWidth     = 2.0f;
         return;
     }
     
+    [_tickView setAlpha:1.0f];
+    
     CABasicAnimation* rotationAnimation;
     rotationAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
     
@@ -445,7 +453,7 @@ static const CGFloat kTickViewWidth     = 2.0f;
             
         case TWPlaybackDirection_Reverse:
             fromValue = [NSNumber numberWithFloat:(2.0f * M_PI * normalizedProgress)];
-            toValue = [NSNumber numberWithFloat:(2.0f * M_PI) * (1.0f - normalizedProgress)];
+            toValue = [NSNumber numberWithFloat:(-2.0f * M_PI * (1 - normalizedProgress))];
             break;
             
         default:
@@ -461,6 +469,8 @@ static const CGFloat kTickViewWidth     = 2.0f;
             break;
     }
     
+//    NSLog(@"startProgressAnimation : from(%f), to(%f), duration(%f), repeat(%f)", [fromValue floatValue], [toValue floatValue], _lengthInSeconds, repeatCount);
+    
     rotationAnimation.fromValue = fromValue;
     rotationAnimation.toValue = toValue;
     rotationAnimation.duration = _lengthInSeconds;
@@ -472,6 +482,7 @@ static const CGFloat kTickViewWidth     = 2.0f;
 
 - (void)stopProgressAnimation {
     [_tickView.layer removeAllAnimations];
+    [_tickView setAlpha:0.0f];
 }
 
 @end
