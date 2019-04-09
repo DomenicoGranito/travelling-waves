@@ -9,7 +9,7 @@
 #import "TWHomeViewController.h"
 #import "TWOscView.h"
 #import "TWMixerView.h"
-#import "TWPitchRatioControlView.h"
+#import "TWFrequencyRatioControlView.h"
 #import "TWMasterController.h"
 #import "TWAudioController.h"
 #import "TWHeader.h"
@@ -34,7 +34,7 @@
     
     TWOscView*                  _oscView;
     
-    TWPitchRatioControlView*    _pitchRatioControlView;
+    TWFrequencyRatioControlView*    _pitchRatioControlView;
     
     UIButton*                   _loadFreqChartButton;
     UIButton*                   _saveProjectButton;
@@ -99,7 +99,7 @@
     
     // Enter Vertical Scroll View
     
-     _pitchRatioControlView = [[TWPitchRatioControlView alloc] init];
+     _pitchRatioControlView = [[TWFrequencyRatioControlView alloc] init];
     [_verticalScrollView addSubview:_pitchRatioControlView];
     
     _oscView = [[TWOscView alloc] init];

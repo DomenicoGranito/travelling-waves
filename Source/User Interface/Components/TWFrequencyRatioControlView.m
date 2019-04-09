@@ -1,12 +1,12 @@
 //
-//  TWPitchRatioControlView.m
+//  TWFrequencyRatioControlView.m
 //  Travelling Waves
 //
 //  Created by Govinda Ram Pingali on 9/20/18.
 //  Copyright © 2018 Govinda Ram Pingali. All rights reserved.
 //
 
-#import "TWPitchRatioControlView.h"
+#import "TWFrequencyRatioControlView.h"
 #import "TWMasterController.h"
 #import "TWHeader.h"
 #import "TWKeyboardAccessoryView.h"
@@ -14,15 +14,21 @@
 
 #define kLocalTitleLabelWidth      40.0f
 
-@interface TWPitchRatioControlView() <UITextFieldDelegate, TWKeyboardAccessoryViewDelegate>
+@interface TWFrequencyRatioControlView() <UITextFieldDelegate, TWKeyboardAccessoryViewDelegate>
 {
-    UILabel*                    _rfLabel;
+    UILabel*                    _rootFreqLabel;
     UISlider*                   _rootFreqSlider;
     UITextField*                _rootFreqField;
     
-    UILabel*                    _rTLabel;
+    UILabel*                    _rampTimeLabel;
     UISlider*                   _rampTimeSlider;
     UITextField*                _rampTimeField;
+    
+    UILabel*                    _rootTempoLabel;
+    UISlider*                   _rootTempoSlider;
+    UITextField*                _rootTempoField;
+    UIButton*                   _tapTempoButton;
+    
     
     NSArray*                    _textFields;
     
@@ -39,7 +45,7 @@
 
 
 
-@implementation TWPitchRatioControlView
+@implementation TWFrequencyRatioControlView
 
 - (id)init {
     if (self = [super init]) {
@@ -57,12 +63,12 @@
     UIColor* textFieldBackground = [UIColor clearColor];
     
     
-    _rfLabel = [[UILabel alloc] init];
-    [_rfLabel setTextColor:[UIColor colorWithWhite:0.8f alpha:1.0f]];
-    [_rfLabel setText:@"Root F:"];
-    [_rfLabel setFont:[UIFont systemFontOfSize:10.0f]];
-    [_rfLabel setTextAlignment:NSTextAlignmentLeft];
-    [self addSubview:_rfLabel];
+    _rootFreqLabel = [[UILabel alloc] init];
+    [_rootFreqLabel setTextColor:[UIColor colorWithWhite:0.8f alpha:1.0f]];
+    [_rootFreqLabel setText:@"Root F:"];
+    [_rootFreqLabel setFont:[UIFont systemFontOfSize:10.0f]];
+    [_rootFreqLabel setTextAlignment:NSTextAlignmentLeft];
+    [self addSubview:_rootFreqLabel];
     
     _rootFreqSlider = [[UISlider alloc] init];
     [_rootFreqSlider setMinimumValue:20.0f];
@@ -84,12 +90,12 @@
     [_rootFreqField setDelegate:self];
     [self addSubview:_rootFreqField];
     
-    _rTLabel = [[UILabel alloc] init];
-    [_rTLabel setTextColor:[UIColor colorWithWhite:0.8f alpha:1.0f]];
-    [_rTLabel setText:@"Ramp:"];
-    [_rTLabel setFont:[UIFont systemFontOfSize:10.0f]];
-    [_rTLabel setTextAlignment:NSTextAlignmentLeft];
-    [self addSubview:_rTLabel];
+    _rampTimeLabel = [[UILabel alloc] init];
+    [_rampTimeLabel setTextColor:[UIColor colorWithWhite:0.8f alpha:1.0f]];
+    [_rampTimeLabel setText:@"Ramp:"];
+    [_rampTimeLabel setFont:[UIFont systemFontOfSize:10.0f]];
+    [_rampTimeLabel setTextAlignment:NSTextAlignmentLeft];
+    [self addSubview:_rampTimeLabel];
     
     
     _rampTimeSlider = [[UISlider alloc] init];
@@ -111,6 +117,47 @@
     [_rampTimeField setBackgroundColor:textFieldBackground];
     [_rampTimeField setDelegate:self];
     [self addSubview:_rampTimeField];
+    
+    
+    
+    _rootTempoLabel = [[UILabel alloc] init];
+    [_rootTempoLabel setTextColor:[UIColor colorWithWhite:0.8f alpha:1.0f]];
+    [_rootTempoLabel setText:@"Tempo:"];
+    [_rootTempoLabel setFont:[UIFont systemFontOfSize:10.0f]];
+    [_rootTempoLabel setTextAlignment:NSTextAlignmentLeft];
+    [self addSubview:_rootTempoLabel];
+    
+    _rootTempoSlider = [[UISlider alloc] init];
+    [_rootTempoSlider setMinimumValue:20.0f];
+    [_rootTempoSlider setMaximumValue:400.0f];
+    [_rootTempoSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_rootTempoSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.25f alpha:1.0f]];
+    [_rootTempoSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_rootTempoSlider addTarget:self action:@selector(rootFreqSliderChanged) forControlEvents:UIControlEventValueChanged];
+    [self addSubview:_rootTempoSlider];
+    
+    _rootTempoField = [[UITextField alloc] init];
+    [_rootTempoField setTextColor:[UIColor colorWithWhite:0.8f alpha:1.0f]];
+    [_rootTempoField setFont:[UIFont systemFontOfSize:10.0f]];
+    [_rootTempoField setTextAlignment:NSTextAlignmentCenter];
+    [_rootTempoField setKeyboardType:UIKeyboardTypeDecimalPad];
+    [_rootTempoField setKeyboardAppearance:UIKeyboardAppearanceDark];
+    [_rootTempoField setInputAccessoryView:accView];
+    [_rootTempoField setBackgroundColor:textFieldBackground];
+    [_rootTempoField setDelegate:self];
+    [self addSubview:_rootTempoField];
+    
+    
+    _tapTempoButton = [[UIButton alloc] init];
+    [_tapTempoButton setTitle:@"Tap Tempo" forState:UIControlStateNormal];
+    [_tapTempoButton setBackgroundColor:[UIColor colorWithWhite:0.24 alpha:0.8]];
+    [_tapTempoButton setTitleColor:[UIColor colorWithWhite:0.6f alpha:1.0f] forState:UIControlStateNormal];
+    [[_tapTempoButton titleLabel] setFont:[UIFont systemFontOfSize:11.0f]];
+    [_tapTempoButton addTarget:self action:@selector(tapTempoButtonDown:) forControlEvents:UIControlEventTouchDown];
+    [_tapTempoButton addTarget:self action:@selector(tapTempoButtonUp:) forControlEvents:UIControlEventTouchUpInside];
+    [self addSubview:_tapTempoButton];
+
+    
     
     
     
@@ -242,6 +289,10 @@
     [_rampTimeSlider setValue:rampTime_ms animated:animated];
     [_rampTimeField setText:[NSString stringWithFormat:@"%d", rampTime_ms]];
     
+    float tempo = [[TWMasterController sharedController] rootTempo];
+    [_rootTempoSlider setValue:tempo animated:animated];
+    [_rootTempoField setText:[NSString stringWithFormat:@"%.2f", tempo]];
+    
     for (int idx=0; idx < kNumSources; idx++) {
         int numerator = [[TWMasterController sharedController] getNumeratorRatioAt:idx];
         UITextField* numTextField = (UITextField*)_textFields[kNumerator][idx];
@@ -269,7 +320,7 @@
     CGFloat sliderWidth = (frame.size.width - (2.0f * (kLocalTitleLabelWidth + kValueLabelWidth))) / 2.0f;
     
     
-    [_rfLabel setFrame:CGRectMake(xPos, yPos, kLocalTitleLabelWidth, componentHeight)];
+    [_rootFreqLabel setFrame:CGRectMake(xPos, yPos, kLocalTitleLabelWidth, componentHeight)];
     
     xPos += kLocalTitleLabelWidth;
     [_rootFreqSlider setFrame:CGRectMake(xPos, yPos, sliderWidth, componentHeight)];
@@ -278,13 +329,29 @@
     [_rootFreqField setFrame:CGRectMake(xPos, yPos, kValueLabelWidth, componentHeight)];
     
     xPos += _rootFreqField.frame.size.width;
-    [_rTLabel setFrame:CGRectMake(xPos, yPos, kLocalTitleLabelWidth, componentHeight)];
+    [_rampTimeLabel setFrame:CGRectMake(xPos, yPos, kLocalTitleLabelWidth, componentHeight)];
     
     xPos += kLocalTitleLabelWidth;
     [_rampTimeSlider setFrame:CGRectMake(xPos, yPos, sliderWidth, componentHeight)];
     
     xPos += _rampTimeSlider.frame.size.width;
     [_rampTimeField setFrame:CGRectMake(xPos, yPos, kValueLabelWidth, componentHeight)];
+    
+    
+    
+    yPos += componentHeight;
+    xPos = 0.0f;
+    [_rootTempoLabel setFrame:CGRectMake(xPos, yPos, kLocalTitleLabelWidth, componentHeight)];
+    
+    xPos += kLocalTitleLabelWidth;
+    [_rootTempoSlider setFrame:CGRectMake(xPos, yPos, sliderWidth, componentHeight)];
+    
+    xPos += sliderWidth;
+    [_rootTempoField setFrame:CGRectMake(xPos, yPos, kValueLabelWidth, componentHeight)];
+    
+    xPos += _rootTempoField.frame.size.width;
+    CGFloat tapTempoButtonWidth = frame.size.width - xPos;
+    [_tapTempoButton setFrame:CGRectMake(xPos, yPos + kButtonYMargin, tapTempoButtonWidth, componentHeight - (2.0f * kButtonYMargin))];
     
     
     
@@ -469,6 +536,13 @@
 }
 
 
+- (void)tapTempoButtonDown:(UIButton*)sender {
+    [_tapTempoButton setBackgroundColor:[UIColor colorWithWhite:0.14 alpha:0.9]];
+}
+
+- (void)tapTempoButtonUp:(UIButton*)sender {
+    [_tapTempoButton setBackgroundColor:[UIColor colorWithWhite:0.24 alpha:0.8]];
+}
 
 #pragma - UITextFieldDelegate
 
