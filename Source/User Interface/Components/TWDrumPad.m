@@ -11,10 +11,11 @@
 #import <QuartzCore/QuartzCore.h>
 
 
-static const CGFloat kHitViewAreaInset          = 0.05f;
-static const CGFloat kTickViewWidth             = 2.0f;
-static const CGFloat kTitleLabelSizeFraction    = 0.2f; // Fraction of frame
-
+static const CGFloat kHitViewAreaInset                  = 0.05f;
+static const CGFloat kTickViewWidth                     = 2.0f;
+static const CGFloat kSourceIdxLabelSizeFraction        = 0.2f; // Fraction of frame
+static const CGFloat kFileTitleLabelWidthFraction       = 1.0f; // Fraction of width
+static const CGFloat kFileTitleLabelHeightFraction      = 0.2f; // Fraction of height
 
 @implementation TWHitView
 
@@ -70,7 +71,8 @@ static const CGFloat kTitleLabelSizeFraction    = 0.2f; // Fraction of frame
 {
     BOOL                            _forceTouchAvailable;
     
-    UILabel*                        _titleLabel;
+    UILabel*                        _sourceIdxLabel;
+    UILabel*                        _fileTitleLabel;
     
     UIView*                         _touchView;
     UIView*                         _errorView;
@@ -125,13 +127,21 @@ static const CGFloat kTitleLabelSizeFraction    = 0.2f; // Fraction of frame
     [_errorView setAlpha:0.0f];
     [self addSubview:_errorView];
     
-    _titleLabel = [[UILabel alloc] init];
-    [_titleLabel setTextAlignment:NSTextAlignmentCenter];
-    [_titleLabel setFont:[UIFont systemFontOfSize:11.0f]];
-    [_titleLabel setTextColor:[UIColor colorWithWhite:0.45f alpha:0.5f]];
-    [_titleLabel setBackgroundColor:[UIColor clearColor]];
-    [_titleLabel setUserInteractionEnabled:NO];
-    [self addSubview:_titleLabel];
+    _sourceIdxLabel = [[UILabel alloc] init];
+    [_sourceIdxLabel setTextAlignment:NSTextAlignmentCenter];
+    [_sourceIdxLabel setFont:[UIFont systemFontOfSize:10.0f]];
+    [_sourceIdxLabel setTextColor:[UIColor colorWithWhite:0.1f alpha:0.5f]];
+    [_sourceIdxLabel setBackgroundColor:[UIColor clearColor]];
+    [_sourceIdxLabel setUserInteractionEnabled:NO];
+    [self addSubview:_sourceIdxLabel];
+    
+    _fileTitleLabel = [[UILabel alloc] init];
+    [_fileTitleLabel setTextAlignment:NSTextAlignmentLeft];
+    [_fileTitleLabel setFont:[UIFont systemFontOfSize:8.0f]];
+    [_fileTitleLabel setTextColor:[UIColor colorWithWhite:0.1f alpha:0.45f]];
+    [_fileTitleLabel setBackgroundColor:[UIColor clearColor]];
+    [_fileTitleLabel setUserInteractionEnabled:NO];
+    [self addSubview:_fileTitleLabel];
     
     _hitView = [[TWHitView alloc] init];
     [_hitView setUserInteractionEnabled:NO];
@@ -165,12 +175,17 @@ static const CGFloat kTitleLabelSizeFraction    = 0.2f; // Fraction of frame
 - (void)setFrame:(CGRect)frame {
     [super setFrame:frame];
     
-    CGFloat titleLabelWidth = frame.size.width * kTitleLabelSizeFraction;
-    CGFloat titleLabelHeight = frame.size.height * kTitleLabelSizeFraction;
-    CGFloat titleLabelXPos = frame.size.width - titleLabelWidth;
-    CGFloat titleLabelYPos = 0.0f;
-    [_titleLabel setFrame:CGRectMake(titleLabelXPos, titleLabelYPos, titleLabelWidth, titleLabelHeight)];
+    CGFloat sourceIdxLabelWidth = frame.size.width * kSourceIdxLabelSizeFraction;
+    CGFloat sourceIdxLabelHeight = frame.size.height * kSourceIdxLabelSizeFraction;
+    CGFloat sourceIdxLabelXPos = frame.size.width - sourceIdxLabelWidth;
+    CGFloat sourceIdxLabelYPos = 0.0f;
+    [_sourceIdxLabel setFrame:CGRectMake(sourceIdxLabelXPos, sourceIdxLabelYPos, sourceIdxLabelWidth, sourceIdxLabelHeight)];
     
+    CGFloat fileTitleLabelWidth = frame.size.width * kFileTitleLabelWidthFraction;
+    CGFloat fileTitleLabelHeight = frame.size.height * kFileTitleLabelHeightFraction;
+    CGFloat fileTitleLabelXPos = 4.0f;
+    CGFloat fileTitleLabelYPos = frame.size.height - fileTitleLabelHeight;
+    [_fileTitleLabel setFrame:CGRectMake(fileTitleLabelXPos, fileTitleLabelYPos, fileTitleLabelWidth, fileTitleLabelHeight)];
     
     [_touchView setFrame:CGRectMake(0.0f, 0.0f, frame.size.width, frame.size.height)];
     [_errorView setFrame:CGRectMake(0.0f, 0.0f, frame.size.width, frame.size.height)];
@@ -217,9 +232,14 @@ static const CGFloat kTitleLabelSizeFraction    = 0.2f; // Fraction of frame
     [self stopProgressAnimation];
 }
 
-- (void)setTitleText:(NSString *)titleText {
-    _titleText = titleText;
-    [_titleLabel setText:_titleText];
+- (void)setFileTitleText:(NSString *)fileTitleText {
+    _fileTitleText = fileTitleText;
+    [_fileTitleLabel setText:_fileTitleText];
+}
+
+- (void)setTag:(NSInteger)tag {
+    [super setTag:tag];
+    [_sourceIdxLabel setText:[NSString stringWithFormat:@"%d", (int)tag+1]];
 }
 
 

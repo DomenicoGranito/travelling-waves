@@ -76,6 +76,7 @@ typedef void (^TWAudioControllerPlaybackFinishedBlock)(int sourceIdx, int status
 - (void)stopPlaybackAtSourceIdx:(int)sourceIdx fadeOutTime:(float)fadeOut_ms;
 - (void)setPlaybackParameter:(int)paramID withValue:(float)value atSourceIdx:(int)sourceIdx inTime:(float)rampTime_ms;
 - (float)getPlaybackParameter:(int)paramID atSourceIdx:(int)sourceIdx;
+- (NSString*)getAudioFileTitleAtSourceIdx:(int)sourceIdx;
 @property(nonatomic, copy) TWAudioControllerPlaybackFinishedBlock playbackFinishedBlock;
 
 @end

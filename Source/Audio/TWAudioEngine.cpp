@@ -734,7 +734,10 @@ void TWAudioEngine::setPlaybackFinishedProc(std::function<void(int,int)> finishe
     }
 }
 
-
+std::string TWAudioEngine::getAudioFileTitleAtSourceIdx(int sourceIdx)
+{
+    return _memoryPlayers[sourceIdx].getAudioFileTitle();
+}
 
 
 

@@ -213,6 +213,7 @@ int TWMemoryPlayer::loadAudioFile(std::string filepath)
     }
     
     _setPlaybackStatus(TWPlaybackStatus_Stopped);
+    _updateFileTitleFromFilepath(filepath);
     
     return 0;
 }
@@ -224,6 +225,10 @@ void TWMemoryPlayer::setPlaybackFinishedProc(std::function<void(int,int)>playbac
 }
 
 
+std::string TWMemoryPlayer::getAudioFileTitle()
+{
+    return _fileTitle;
+}
 
 //============================================================================================================
 // Transport Methods
@@ -489,6 +494,7 @@ void TWMemoryPlayer::_reset()
     }
     _audioFile = NULL;
     
+    _fileTitle.erase();
     
     UInt32 byteDepth = 4;
     UInt32 bytesPerFrame = kNumChannels * byteDepth;
@@ -499,6 +505,24 @@ void TWMemoryPlayer::_reset()
 }
 
 
+void TWMemoryPlayer::_updateFileTitleFromFilepath(std::string filepath)
+{
+    _fileTitle.erase();
+    
+    std::size_t startPosition = filepath.find_last_of("/") + 1;
+    std::size_t endPosition = filepath.length() - startPosition - 4;
+    std::string substring = filepath.substr(startPosition, endPosition);
+    
+    // Replace %20s with spaces
+    // TODO: Loop for multiple occurences.
+    std::size_t spaceStart = substring.find_first_of("%20");
+    if (spaceStart < substring.length()) {
+        substring.replace(spaceStart, 3, " ");
+    }
+    _fileTitle = substring;
+   
+//    printf("\n\nFile Title [%d] : %s. Size(%lu)\n\n", _sourceIdx, _fileTitle.c_str(), _fileTitle.length());
+}
 
 //----- Status Utils -----//
 

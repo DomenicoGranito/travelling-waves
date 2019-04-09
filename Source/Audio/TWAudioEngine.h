@@ -109,6 +109,7 @@ public:
     void setPlaybackParameterAtSourceIdx(int sourceIdx, int paramID, float value, float rampTime_ms);
     float getPlaybackParameterAtSourceIdx(int sourceIdx, int paramID);
     void setPlaybackFinishedProc(std::function<void(int,int)>finishedPlaybackProc);
+    std::string getAudioFileTitleAtSourceIdx(int sourceIdx);
     
     
 private:

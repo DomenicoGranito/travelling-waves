@@ -18,12 +18,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)isAudioRunning;
 
-@property (nonatomic, weak)NSArray<TWOscView*>* oscViews;
-@property (nonatomic, weak)TWOscView* currentOscView;
-@property (nonatomic, weak)TWMixerView* mixerView;
+@property (nonatomic, weak) NSArray<TWOscView*>* oscViews;
+@property (nonatomic, weak) TWOscView* currentOscView;
+@property (nonatomic, weak) TWMixerView* mixerView;
 
-@property (nonatomic, assign)float rootFrequency;
-@property (nonatomic, assign)int   rampTime_ms;
+@property (nonatomic, assign) float rootFrequency;
+@property (nonatomic, assign) float rootTempo;
+@property (nonatomic, assign) int   rampTime_ms;
 
 - (int)incNumeratorRatioAt:(int)idx;
 - (int)decNumeratorRatioAt:(int)idx;

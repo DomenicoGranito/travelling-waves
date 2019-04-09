@@ -29,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) TWPlaybackDirection playbackDirection;
 @property (nonatomic, assign) float lengthInSeconds;
 
-@property (nonatomic, retain) NSString* titleText;
+@property (nonatomic, retain) NSString* fileTitleText;
 
 @property (nonatomic, retain) UIColor* onColor;
 

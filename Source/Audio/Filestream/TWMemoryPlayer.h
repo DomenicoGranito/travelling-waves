@@ -39,6 +39,7 @@ public:
     void setNotificationQueue(dispatch_queue_t notificationQueue);
     
     int loadAudioFile(std::string filepath);
+    std::string getAudioFileTitle();
     
     void setPlaybackFinishedProc(std::function<void(int,int)>playbackFinishedProc);
     
@@ -94,6 +95,7 @@ private:
     uint32_t                _fadeOutNumSamples;
     bool                    _shouldFadeOut;
     
+    std::string             _fileTitle;
     
     std::function<void(int,int)>   _playbackFinishedProc;
     
@@ -118,6 +120,8 @@ private:
     
     void _setReadIdx(int32_t newReadIdx);
     void _setFadeOutTime(float fadeOutTime_ms);
+    
+    void _updateFileTitleFromFilepath(std::string filepath);
     
     //--- On IO Proc ---//
     void _stoppingTick();

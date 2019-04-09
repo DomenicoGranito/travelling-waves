@@ -95,7 +95,6 @@
         TWDrumPad* drumPad = [[TWDrumPad alloc] init];
         [drumPad setTag:i];
         [drumPad setBackgroundColor:[UIColor colorWithWhite:0.2 alpha:1.0]];
-        [drumPad setTitleText:[NSString stringWithFormat:@"%i", i+1]];
         [drumPad setOnColor:[UIColor colorWithRed:0.2 green:0.2 blue:0.9f alpha:0.9f]];
         [self.view addSubview:drumPad];
         [drumPads addObject:drumPad];
@@ -212,6 +211,7 @@
     for (int i=0; i < kNumSources; i++) {
         TWDrumPad* drumPad = (TWDrumPad*)[_drumPads objectAtIndex:i];
         [drumPad viewWillAppear];
+        [drumPad setFileTitleText:[[TWAudioController sharedController] getAudioFileTitleAtSourceIdx:i]];
         
         TWFillSlider* velocitySlider = (TWFillSlider*)[_velocitySliders objectAtIndex:i];
         [velocitySlider setValue:[[TWAudioController sharedController] getPlaybackParameter:kPlaybackParam_MaxVolume atSourceIdx:i]];
@@ -594,6 +594,7 @@
     }
     TWDrumPad* drumPad = (TWDrumPad*)[_drumPads objectAtIndex:0];
     [drumPad setLengthInSeconds:[[TWAudioController sharedController] getPlaybackParameter:kPlaybackParam_LengthInSeconds atSourceIdx:0]];
+    [drumPad setFileTitleText:[[TWAudioController sharedController] getAudioFileTitleAtSourceIdx:0]];
 
 
     NSString* sampleURL2 = [[NSBundle mainBundle] pathForResource:@"LRTest" ofType:@"wav"];
@@ -605,7 +606,9 @@
     }
     drumPad = (TWDrumPad*)[_drumPads objectAtIndex:1];
     [drumPad setLengthInSeconds:[[TWAudioController sharedController] getPlaybackParameter:kPlaybackParam_LengthInSeconds atSourceIdx:1]];
+    [drumPad setFileTitleText:[[TWAudioController sharedController] getAudioFileTitleAtSourceIdx:1]];
 
+    
     NSString* sampleURL3 = [[NSBundle mainBundle] pathForResource:@"TestKick" ofType:@"wav"];
     NSString* outSampleURL3 = [sampleURL3 stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
     if (sampleURL3 != nil) {
@@ -615,6 +618,7 @@
     }
     drumPad = (TWDrumPad*)[_drumPads objectAtIndex:2];
     [drumPad setLengthInSeconds:[[TWAudioController sharedController] getPlaybackParameter:kPlaybackParam_LengthInSeconds atSourceIdx:2]];
+    [drumPad setFileTitleText:[[TWAudioController sharedController] getAudioFileTitleAtSourceIdx:2]];
 }
 
 

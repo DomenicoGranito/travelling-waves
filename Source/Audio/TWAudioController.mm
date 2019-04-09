@@ -502,4 +502,8 @@ static void enginePlaybackFinishedProc(int sourceIdx, int status) {
     return _engine->getPlaybackParameterAtSourceIdx(sourceIdx, paramID);
 }
 
+- (NSString*)getAudioFileTitleAtSourceIdx:(int)sourceIdx {
+    return [NSString stringWithUTF8String:_engine->getAudioFileTitleAtSourceIdx(sourceIdx).c_str()];
+}
+
 @end

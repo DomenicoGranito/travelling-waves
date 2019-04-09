@@ -12,7 +12,6 @@
 
 @interface TWMasterController()
 {
-    float       _rootFrequency;
     int         _tuningRatios[2][kNumSources];
 }
 @end
@@ -152,6 +151,11 @@
 
 - (int)getDenominatorRatioAt:(int)idx {
     return _tuningRatios[kDenominator][idx];
+}
+
+
+- (void)setRootTempo:(float)rootTempo {
+    _rootTempo = rootTempo;
 }
 
 
