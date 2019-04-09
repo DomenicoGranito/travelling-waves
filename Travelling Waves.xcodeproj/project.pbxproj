@@ -11,7 +11,7 @@
 		FC0D2E6A2254945A00A68D58 /* TWSeqNoteButton.m in Sources */ = {isa = PBXBuildFile; fileRef = FC0D2E542254945A00A68D58 /* TWSeqNoteButton.m */; };
 		FC0D2E6B2254945A00A68D58 /* TWCycleStateButton.m in Sources */ = {isa = PBXBuildFile; fileRef = FC0D2E582254945A00A68D58 /* TWCycleStateButton.m */; };
 		FC0D2E6C2254945A00A68D58 /* TWOscView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC0D2E5A2254945A00A68D58 /* TWOscView.m */; };
-		FC0D2E6D2254945A00A68D58 /* TWPitchRatioControlView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC0D2E5D2254945A00A68D58 /* TWPitchRatioControlView.m */; };
+		FC0D2E6D2254945A00A68D58 /* TWFrequencyRatioControlView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC0D2E5D2254945A00A68D58 /* TWFrequencyRatioControlView.m */; };
 		FC0D2E6E2254945A00A68D58 /* TWKeyboardAccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC0D2E5F2254945A00A68D58 /* TWKeyboardAccessoryView.m */; };
 		FC0D2E6F2254945A00A68D58 /* TWEnvelopeView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC0D2E602254945A00A68D58 /* TWEnvelopeView.m */; };
 		FC0D2E702254945A00A68D58 /* TWLevelMeterView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC0D2E632254945A00A68D58 /* TWLevelMeterView.m */; };
@@ -81,7 +81,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		FC0D2E512254945A00A68D58 /* TWPitchRatioControlView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWPitchRatioControlView.h; sourceTree = "<group>"; };
+		FC0D2E512254945A00A68D58 /* TWFrequencyRatioControlView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWFrequencyRatioControlView.h; sourceTree = "<group>"; };
 		FC0D2E522254945A00A68D58 /* TWFillSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWFillSlider.m; sourceTree = "<group>"; };
 		FC0D2E532254945A00A68D58 /* TWEnvelopeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWEnvelopeView.h; sourceTree = "<group>"; };
 		FC0D2E542254945A00A68D58 /* TWSeqNoteButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWSeqNoteButton.m; sourceTree = "<group>"; };
@@ -93,7 +93,7 @@
 		FC0D2E5A2254945A00A68D58 /* TWOscView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWOscView.m; sourceTree = "<group>"; };
 		FC0D2E5B2254945A00A68D58 /* TWForceButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWForceButton.h; sourceTree = "<group>"; };
 		FC0D2E5C2254945A00A68D58 /* TWFillSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWFillSlider.h; sourceTree = "<group>"; };
-		FC0D2E5D2254945A00A68D58 /* TWPitchRatioControlView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWPitchRatioControlView.m; sourceTree = "<group>"; };
+		FC0D2E5D2254945A00A68D58 /* TWFrequencyRatioControlView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWFrequencyRatioControlView.m; sourceTree = "<group>"; };
 		FC0D2E5F2254945A00A68D58 /* TWKeyboardAccessoryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWKeyboardAccessoryView.m; sourceTree = "<group>"; };
 		FC0D2E602254945A00A68D58 /* TWEnvelopeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWEnvelopeView.m; sourceTree = "<group>"; };
 		FC0D2E612254945A00A68D58 /* TWSeqNoteButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWSeqNoteButton.h; sourceTree = "<group>"; };
@@ -236,8 +236,8 @@
 				FC0D2E662254945A00A68D58 /* TWMixerView.m */,
 				FC0D2E622254945A00A68D58 /* TWOscView.h */,
 				FC0D2E5A2254945A00A68D58 /* TWOscView.m */,
-				FC0D2E512254945A00A68D58 /* TWPitchRatioControlView.h */,
-				FC0D2E5D2254945A00A68D58 /* TWPitchRatioControlView.m */,
+				FC0D2E512254945A00A68D58 /* TWFrequencyRatioControlView.h */,
+				FC0D2E5D2254945A00A68D58 /* TWFrequencyRatioControlView.m */,
 				FC0D2E542254945A00A68D58 /* TWSeqNoteButton.m */,
 				FC0D2E612254945A00A68D58 /* TWSeqNoteButton.h */,
 			);
@@ -626,7 +626,7 @@
 				FCBDC345218463A700E7695C /* AppDelegate.m in Sources */,
 				FC0D2E712254945A00A68D58 /* TWDrumPad.m in Sources */,
 				FCBDC344218463A700E7695C /* main.m in Sources */,
-				FC0D2E6D2254945A00A68D58 /* TWPitchRatioControlView.m in Sources */,
+				FC0D2E6D2254945A00A68D58 /* TWFrequencyRatioControlView.m in Sources */,
 				FC356C722223D80200B93F5C /* TWUtils.m in Sources */,
 				FC0D2E732254945A00A68D58 /* TWForceButton.m in Sources */,
 				FC356C4E2223D0F500B93F5C /* TWOscillator.cpp in Sources */,
