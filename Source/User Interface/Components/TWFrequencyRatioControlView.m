@@ -11,6 +11,7 @@
 #import "TWHeader.h"
 #import "TWKeyboardAccessoryView.h"
 #import "TWClock.h"
+#import "TWUtils.h"
 
 #import <QuartzCore/QuartzCore.h>
 
@@ -79,8 +80,8 @@
     [self addSubview:_rootFreqLabel];
     
     _rootFreqSlider = [[UISlider alloc] init];
-    [_rootFreqSlider setMinimumValue:20.0f];
-    [_rootFreqSlider setMaximumValue:2000.0f];
+    [_rootFreqSlider setMinimumValue:0.0f];
+    [_rootFreqSlider setMaximumValue:1.0f];
     [_rootFreqSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
     [_rootFreqSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.25f alpha:1.0f]];
     [_rootFreqSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
@@ -301,7 +302,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     float frequency = [[TWMasterController sharedController] rootFrequency];
-    [_rootFreqSlider setValue:frequency animated:animated];
+    [self setRootFrequencySlider:frequency];
     [_rootFreqField setText:[NSString stringWithFormat:@"%.2f", frequency]];
     
     int rampTime_ms = [[TWMasterController sharedController] rampTime_ms];
@@ -510,9 +511,9 @@
 */
 
 - (void)rootFreqSliderChanged {
-    float frequency = _rootFreqSlider.value;
-    [[TWMasterController sharedController] setRootFrequency:frequency];
-    [_rootFreqField setText:[NSString stringWithFormat:@"%.2f", frequency]];
+    float value = [TWUtils logScaleFromLinear:_rootFreqSlider.value outMin:kCutoffFrequencyMin outMax:kCutoffFrequencyMax];
+    [[TWMasterController sharedController] setRootFrequency:value];
+    [_rootFreqField setText:[NSString stringWithFormat:@"%.2f", value]];
     [_oscView refreshParametersWithAnimation:YES];
 }
 
@@ -587,7 +588,7 @@
     if (currentResponder == _rootFreqField) {
         float frequency = [[_rootFreqField text] floatValue];
         [[TWMasterController sharedController] setRootFrequency:frequency];
-        [_rootFreqSlider setValue:frequency animated:YES];
+        [self setRootFrequencySlider:frequency];
         [_oscView refreshParametersWithAnimation:YES];
     }
     
@@ -635,7 +636,7 @@
     UITextField* currentResponder = [[TWKeyboardAccessoryView sharedView] currentResponder];
     
     if (currentResponder == _rootFreqField) {
-        float frequency = [_rootFreqSlider value];
+        float frequency = [TWUtils logScaleFromLinear:_rootFreqSlider.value outMin:kCutoffFrequencyMin outMax:kCutoffFrequencyMax];
         [_rootFreqField setText:[NSString stringWithFormat:@"%.2f", frequency]];
     }
     
@@ -778,6 +779,11 @@
         [_tempoField setText:[NSString stringWithFormat:@"%.2f", _movingAverageTempo]];
         [_oscView refreshParametersWithAnimation:YES];
     }
+}
+
+
+- (void)setRootFrequencySlider:(float)value {
+    [_rootFreqSlider setValue:[TWUtils linearScaleFromLog:value inMin:kCutoffFrequencyMin inMax:kCutoffFrequencyMax] animated:YES];
 }
 
 @end

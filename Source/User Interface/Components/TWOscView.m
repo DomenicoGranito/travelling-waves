@@ -10,10 +10,8 @@
 #import "TWHeader.h"
 #import "TWAudioController.h"
 #import "TWKeyboardAccessoryView.h"
+#import "TWUtils.h"
 
-
-static const float kCutoffFrequencyMin = 20.0f;
-static const float kCutoffFrequencyMax = 20000.0f;
 
 @interface TWOscView() <UITextFieldDelegate, TWKeyboardAccessoryViewDelegate>
 {
@@ -259,8 +257,8 @@ static const float kCutoffFrequencyMax = 20000.0f;
     [self addSubview:_fcLabel];
     
     _cutoffFreqSlider = [[UISlider alloc] init];
-    [_cutoffFreqSlider setMinimumValue:kCutoffFrequencyMin];
-    [_cutoffFreqSlider setMaximumValue:kCutoffFrequencyMax];
+    [_cutoffFreqSlider setMinimumValue:0.0f];
+    [_cutoffFreqSlider setMaximumValue:1.0f];
     [_cutoffFreqSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
     [_cutoffFreqSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.25f alpha:1.0f]];
     [_cutoffFreqSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
@@ -358,7 +356,7 @@ static const float kCutoffFrequencyMax = 20000.0f;
     
     _lfoRangeSlider = [[UISlider alloc] init];
     [_lfoRangeSlider setMinimumValue:0.0f];
-    [_lfoRangeSlider setMaximumValue:400.0f];
+    [_lfoRangeSlider setMaximumValue:1.0f];
     [_lfoRangeSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
     [_lfoRangeSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.25f alpha:1.0f]];
     [_lfoRangeSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
@@ -685,7 +683,7 @@ static const float kCutoffFrequencyMax = 20000.0f;
 */
 
 - (void)updateBaseFrequencyUIWithValue:(float)frequency {
-    [_baseFreqSlider setValue:frequency animated:YES];
+    [self setOscBaseFrequencySlider:frequency];
     [_baseFreqField setText:[NSString stringWithFormat:@"%.2f", frequency]];
 }
 
@@ -703,7 +701,7 @@ static const float kCutoffFrequencyMax = 20000.0f;
 #pragma mark - UISliders
 
 - (void)baseFreqSliderChanged {
-    float value = _baseFreqSlider.value;
+    float value = [TWUtils logScaleFromLinear:_baseFreqSlider.value outMin:kCutoffFrequencyMin outMax:kCutoffFrequencyMax];
     [[TWAudioController sharedController] setOscParameter:kOscParam_OscBaseFrequency withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
     [_baseFreqField setText:[NSString stringWithFormat:@"%.2f", value]];
 }
@@ -749,7 +747,9 @@ static const float kCutoffFrequencyMax = 20000.0f;
 }
 
 - (void)cutoffFreqSliderChanged {
-    [self setCutoffFrequencyParameter:_cutoffFreqSlider.value];
+    float frequency = [TWUtils logScaleFromLinear:_cutoffFreqSlider.value outMin:kCutoffFrequencyMin outMax:kCutoffFrequencyMax];
+    [[TWAudioController sharedController] setOscParameter:kOscParam_FilterCutoff withValue:frequency atSourceIdx:_oscID inTime:_rampTimeSlider.value];
+    [_cutoffFreqField setText:[NSString stringWithFormat:@"%.2f", frequency]];
 }
 
 - (void)lfoEnableSwitchChanged {
@@ -775,7 +775,7 @@ static const float kCutoffFrequencyMax = 20000.0f;
 }
 
 - (void)lfoRangeSliderChanged {
-    float value = _lfoRangeSlider.value;
+    float value = [TWUtils logScaleFromLinear:_lfoRangeSlider.value outMin:kCutoffFrequencyMin outMax:kCutoffFrequencyMax];
     [[TWAudioController sharedController] setOscParameter:kOscParam_LFORange withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
     [_lfoRangeField setText:[NSString stringWithFormat:@"%.1f", value]];
 }
@@ -816,7 +816,7 @@ static const float kCutoffFrequencyMax = 20000.0f;
     if (currentResponder == _baseFreqField) {
         float value = [[_baseFreqField text] floatValue];
         [[TWAudioController sharedController] setOscParameter:kOscParam_OscBaseFrequency withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
-        [_baseFreqSlider setValue:value animated:YES];
+        [self setOscBaseFrequencySlider:value];
     }
     
     else if (currentResponder == _beatFreqField) {
@@ -876,7 +876,7 @@ static const float kCutoffFrequencyMax = 20000.0f;
     else if (currentResponder == _lfoRangeField) {
         float value = [[_lfoRangeField text] floatValue];
         [[TWAudioController sharedController] setOscParameter:kOscParam_LFORange withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
-        [_lfoRangeSlider setValue:value animated:YES];
+        [self setFilterLFORangeSlider:value];
     }
     
     else if (currentResponder == _rampTimeField) {
@@ -907,7 +907,7 @@ static const float kCutoffFrequencyMax = 20000.0f;
     UITextField* currentResponder = [[TWKeyboardAccessoryView sharedView] currentResponder];
     
     if (currentResponder == _baseFreqField) {
-        float frequency = [_baseFreqSlider value];
+        float frequency = [TWUtils logScaleFromLinear:_baseFreqSlider.value outMin:kCutoffFrequencyMin outMax:kCutoffFrequencyMax];
         [_baseFreqField setText:[NSString stringWithFormat:@"%.2f", frequency]];
     }
 
@@ -957,7 +957,7 @@ static const float kCutoffFrequencyMax = 20000.0f;
     }
 
     else if (currentResponder == _lfoRangeField) {
-        float range = [_lfoRangeSlider value];
+        float range = [TWUtils logScaleFromLinear:_lfoRangeSlider.value outMin:kCutoffFrequencyMin outMax:kCutoffFrequencyMax];
         [_lfoRangeField setText:[NSString stringWithFormat:@"%.2f", range]];
     }
 
@@ -1102,7 +1102,7 @@ static const float kCutoffFrequencyMax = 20000.0f;
     [_resonanceField setText:[NSString stringWithFormat:@"%.2f", res]];
     
     float range = [[TWAudioController sharedController] getOscParameter:kOscParam_LFORange atSourceIdx:_oscID];
-    [_lfoRangeSlider setValue:range animated:animated];
+    [self setFilterLFORangeSlider:range];
     [_lfoRangeField setText:[NSString stringWithFormat:@"%.1f", range]];
     
     float lfoFreq = [[TWAudioController sharedController] getOscParameter:kOscParam_LFOFrequency atSourceIdx:_oscID];
@@ -1147,24 +1147,18 @@ static const float kCutoffFrequencyMax = 20000.0f;
 }
 
 
-- (void)setCutoffFrequencyParameter:(float)sliderValue {
-    // y = a * exp(b*x);
-    // if x1 = 0.5, y1 = 0.1; 0.1 = a * exp(0.5b); a = 0.1 / exp(0.5b);
-    // if x2 = 1.0, y2 = 1.0; 1.0 = a * exp(b); exp(b) = 1 / a;
-    // b = log(y1/y2) / (x1-x2). b = 2;
-    // a = 0.1 / exp(0.5b); a = 0.1 / exp(1). a = 0.01;
-//    float value = 0.01 * powf(10.0f, 2.0f * sliderValue);
-//    float frequency = (value * (kCutoffFrequencyMax - kCutoffFrequencyMin)) + kCutoffFrequencyMin;
-//    printf("\n\nIn: %f. Out: %f. Freq: %f\n", sliderValue, value, frequency);
-    
-//    float frequency = 0.0f;
-    float frequency = sliderValue;
-    [[TWAudioController sharedController] setOscParameter:kOscParam_FilterCutoff withValue:frequency atSourceIdx:_oscID inTime:_rampTimeSlider.value];
-    [_cutoffFreqField setText:[NSString stringWithFormat:@"%.2f", frequency]];
+#pragma mark - Parameter Scaling
+
+- (void)setOscBaseFrequencySlider:(float)value {
+    [_baseFreqSlider setValue:[TWUtils linearScaleFromLog:value inMin:kCutoffFrequencyMin inMax:kCutoffFrequencyMax] animated:YES];
 }
 
-- (void)setCutoffFrequencySlider:(float)cutoff {
-    [_cutoffFreqSlider setValue:cutoff animated:YES];
+- (void)setCutoffFrequencySlider:(float)value {
+    [_cutoffFreqSlider setValue:[TWUtils linearScaleFromLog:value inMin:kCutoffFrequencyMin inMax:kCutoffFrequencyMax] animated:YES];
+}
+
+- (void)setFilterLFORangeSlider:(float)value {
+    [_lfoRangeSlider setValue:[TWUtils linearScaleFromLog:value inMin:kCutoffFrequencyMin inMax:kCutoffFrequencyMax] animated:YES];
 }
     
 @end

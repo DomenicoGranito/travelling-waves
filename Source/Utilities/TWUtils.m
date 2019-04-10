@@ -7,6 +7,7 @@
 //
 
 #import "TWUtils.h"
+#include <math.h>
 
 @implementation TWUtils
 
@@ -18,6 +19,15 @@
         return NO;
     }
     return YES;
+}
+
+
++ (float)logScaleFromLinear:(float)inValue outMin:(float)outMin outMax:(float)outMax {
+    return expf(logf(outMin) + (inValue * (logf(outMax) - logf(outMin))));
+}
+
++ (float)linearScaleFromLog:(float)inValue inMin:(float)inMin inMax:(float)inMax {
+    return (logf(inValue) - logf(inMin)) / (logf(inMax) - logf(inMin));
 }
 
 @end

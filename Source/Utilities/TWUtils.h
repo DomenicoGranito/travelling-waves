@@ -14,6 +14,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (BOOL)checkOSStatus:(OSStatus)status inContext:(NSString*)context;
 
++ (float)logScaleFromLinear:(float)inValue outMin:(float)outMin outMax:(float)outMax;
++ (float)linearScaleFromLog:(float)inValue inMin:(float)inMin inMax:(float)inMax;
+
 @end
 
 NS_ASSUME_NONNULL_END

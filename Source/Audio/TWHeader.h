@@ -9,60 +9,65 @@
 #ifndef TWHeader_h
 #define TWHeader_h
 
-#define kDefaultSampleRate                      48000.0f
 
 #define kNumSources                             16
 #if (kNumSources % 2 == 1)
     #error Only even number of sources are supported
 #endif
 
-#define kNumChannels                            2
+static const float kDefaultSampleRate                       = 48000.0f;
+static const int kNumChannels                               = 2;
 
-#define kOutputBus                              0
-#define kInputBus                               1
+static const int kOutputBus                                 = 0;
+static const int kInputBus                                  = 1;
 
-#define kLeftChannel                            0
-#define kRightChannel                           1
+static const int kLeftChannel                               = 0;
+static const int kRightChannel                              = 1;
 
-#define kNumerator                              0
-#define kDenominator                            1
+static const int kNumerator                                 = 0;
+static const int kDenominator                               = 1;
+
 
 /* Circular Sequencer */
-#define kNumIntervals                           32
+#define kNumIntervals                                       32
 
 
 /* User Interface */
-#define kPortraitComponentHeight                40.0f
-#define kLandscapePadComponentHeight            50.0f
-#define kLandscapePhoneComponentHeight          35.0f
-#define kTitleLabelWidth                        30.0f
-#define kValueLabelWidth                        44.0f
-#define kSliderOnWhiteColor                     0.6f
-#define kButtonXMargin                          2.0f
-#define kButtonYMargin                          3.0f
-#define kKeyboardAccessoryHeightPad             50.0f
-#define kKeyboardAccessoryPortraitHeightPhone   40.0f
-#define kKeyboardAccessoryLandscapeHeightPhone  35.0f
-#define kHitFlashTime_s                         0.15f
+static const float kPortraitComponentHeight                 = 40.0f;
+static const float kLandscapePadComponentHeight             = 50.0f;
+static const float kLandscapePhoneComponentHeight           = 35.0f;
+static const float kTitleLabelWidth                         = 30.0f;
+static const float kValueLabelWidth                         = 44.0f;
+static const float kSliderOnWhiteColor                      = 0.6f;
+static const float kButtonXMargin                           = 2.0f;
+static const float kButtonYMargin                           = 3.0f;
+static const float kKeyboardAccessoryHeightPad              = 50.0f;
+static const float kKeyboardAccessoryPortraitHeightPhone    = 40.0f;
+static const float kKeyboardAccessoryLandscapeHeightPhone   = 35.0f;
+static const float kHitFlashTime_s                          = 0.15f;
 
 
 /* Defaults */
-#define kDefaultRampTime_ms                     200.0f
-#define kDefaultFrequency                       256.0f
-#define kDefaultAmplitude                       0.5
-#define kDefaultTempo                           60.0       // BPM
+static const float kDefaultRampTime_ms                      = 200.0f;
+static const float kDefaultFrequency                        = 256.0f;
+static const float kDefaultAmplitude                        = 0.5;
+static const float kDefaultTempo                            = 60.0;       // BPM
 
-#define kSoloRampTime_ms                        100.0f
-#define kSeqEnableCrossfadeTime_ms              500.0f
+static const float kSoloRampTime_ms                         = 100.0f;
+static const float kSeqEnableCrossfadeTime_ms               = 500.0f;
 
-#define kDefaultSeqDuration_ms                  2000.0f
-#define kDefaultEnvAttackTime_ms                10.0f
-#define kDefaultEnvSustainTime_ms               0.0f
-#define kDefaultEnvReleaseTime_ms               100.0f
-#define kDefaultFltAttackTime_ms                100.0f
-#define kDefaultFltSustainTime_ms               100.0f
-#define kDefaultFltReleaseTime_ms               200.0f
-#define kDefaultRMSLevelWindow_ms               40.0f
+static const float kDefaultSeqDuration_ms                   = 2000.0f;
+static const float kDefaultEnvAttackTime_ms                 = 10.0f;
+static const float kDefaultEnvSustainTime_ms                = 0.0f;
+static const float kDefaultEnvReleaseTime_ms                = 100.0f;
+static const float kDefaultFltAttackTime_ms                 = 100.0f;
+static const float kDefaultFltSustainTime_ms                = 100.0f;
+static const float kDefaultFltReleaseTime_ms                = 200.0f;
+static const float kDefaultRMSLevelWindow_ms                = 40.0f;
+
+static const float kCutoffFrequencyMin                      = 20.0f;
+static const float kCutoffFrequencyMax                      = 20000.0f;
+
 
 //#define kShouldUpdateOscViewOnTouch     1
 
