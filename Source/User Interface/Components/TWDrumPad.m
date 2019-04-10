@@ -17,6 +17,10 @@ static const CGFloat kSourceIdxLabelSizeFraction        = 0.2f; // Fraction of f
 static const CGFloat kFileTitleLabelWidthFraction       = 1.0f; // Fraction of width
 static const CGFloat kFileTitleLabelHeightFraction      = 0.2f; // Fraction of height
 
+
+@interface TWHitView : UIView
+@end
+
 @implementation TWHitView
 
 - (void)drawRect:(CGRect)rect {
@@ -54,6 +58,9 @@ static const CGFloat kFileTitleLabelHeightFraction      = 0.2f; // Fraction of h
 @end
 
 
+
+@interface TWTickView : UIView
+@end
 
 @implementation TWTickView
 

@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "TWOscView.h"
 #import "TWMixerView.h"
+#import "TWHeader.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -23,18 +24,18 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak) TWMixerView* mixerView;
 
 @property (nonatomic, assign) float rootFrequency;
-@property (nonatomic, assign) float rootTempo;
+@property (nonatomic, assign) float tempo;
 @property (nonatomic, assign) int   rampTime_ms;
 
-- (int)incNumeratorRatioAt:(int)idx;
-- (int)decNumeratorRatioAt:(int)idx;
-- (int)incDenominatorRatioAt:(int)idx;
-- (int)decDenominatorRatioAt:(int)idx;
+- (int)incNumeratorRatioForControl:(TWTimeRatioControl)control atSourceIdx:(int)idx;
+- (int)decNumeratorRatioForControl:(TWTimeRatioControl)control atSourceIdx:(int)idx;
+- (int)incDenominatorRatioForControl:(TWTimeRatioControl)control atSourceIdx:(int)idx;
+- (int)decDenominatorRatioForControl:(TWTimeRatioControl)control atSourceIdx:(int)idx;
 
-- (void)setNumeratorRatio:(int)ratio at:(int)idx;
-- (void)setDenominatorRatio:(int)ratio at:(int)idx;
-- (int)getNumeratorRatioAt:(int)idx;
-- (int)getDenominatorRatioAt:(int)idx;
+- (void)setNumeratorRatioForControl:(TWTimeRatioControl)control withValue:(int)numerator atSourceIdx:(int)idx;
+- (void)setDenominatorRatioForControl:(TWTimeRatioControl)control withValue:(int)denominator atSourceIdx:(int)idx;
+- (int)getNumeratorRatioForControl:(TWTimeRatioControl)control atSourceIdx:(int)idx;
+- (int)getDenominatorRatioForControl:(TWTimeRatioControl)control atSourceIdx:(int)idx;
 
 
 - (BOOL)saveProjectWithFilename:(NSString*)filename;

@@ -59,6 +59,7 @@
 		FCD6046A2223E4F2004164AC /* Some Moving Fifths.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604642223E4F2004164AC /* Some Moving Fifths.json */; };
 		FCD6046B2223E4F2004164AC /* Triplet Fifths.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604652223E4F2004164AC /* Triplet Fifths.json */; };
 		FCD6046C2223E4F2004164AC /* Test Movement.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604662223E4F2004164AC /* Test Movement.json */; };
+		FCD9DB06225D3F200062F1ED /* TWClock.m in Sources */ = {isa = PBXBuildFile; fileRef = FCD9DB05225D3F200062F1ED /* TWClock.m */; };
 		FCDE36E92244D0790066DA95 /* TWDrumPadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FCDE36E82244D0790066DA95 /* TWDrumPadViewController.m */; };
 		FCFB52CF22538CEB007C3BB5 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCFB52CE22538CEB007C3BB5 /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
@@ -179,6 +180,8 @@
 		FCD604642223E4F2004164AC /* Some Moving Fifths.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "Some Moving Fifths.json"; sourceTree = "<group>"; };
 		FCD604652223E4F2004164AC /* Triplet Fifths.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "Triplet Fifths.json"; sourceTree = "<group>"; };
 		FCD604662223E4F2004164AC /* Test Movement.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "Test Movement.json"; sourceTree = "<group>"; };
+		FCD9DB04225D3F200062F1ED /* TWClock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TWClock.h; sourceTree = "<group>"; };
+		FCD9DB05225D3F200062F1ED /* TWClock.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TWClock.m; sourceTree = "<group>"; };
 		FCDE36E72244D0790066DA95 /* TWDrumPadViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TWDrumPadViewController.h; sourceTree = "<group>"; };
 		FCDE36E82244D0790066DA95 /* TWDrumPadViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TWDrumPadViewController.m; sourceTree = "<group>"; };
 		FCE3BA9222498F4300D28B60 /* TWFileStream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TWFileStream.cpp; sourceTree = "<group>"; };
@@ -268,6 +271,8 @@
 			children = (
 				FC356C702223D80200B93F5C /* TWUtils.h */,
 				FC356C712223D80200B93F5C /* TWUtils.m */,
+				FCD9DB04225D3F200062F1ED /* TWClock.h */,
+				FCD9DB05225D3F200062F1ED /* TWClock.m */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -615,6 +620,7 @@
 				FC356C4C2223D0F500B93F5C /* TWBinauralBiquad.cpp in Sources */,
 				FC0D2E6C2254945A00A68D58 /* TWOscView.m in Sources */,
 				FC356C932223D8C400B93F5C /* TWHomeViewController.m in Sources */,
+				FCD9DB06225D3F200062F1ED /* TWClock.m in Sources */,
 				FC356C912223D8C400B93F5C /* TWFrequencyChartViewController.m in Sources */,
 				FC0D2E6A2254945A00A68D58 /* TWSeqNoteButton.m in Sources */,
 				FC356C512223D0F500B93F5C /* TWTremolo.cpp in Sources */,

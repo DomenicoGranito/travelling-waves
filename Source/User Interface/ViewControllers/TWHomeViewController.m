@@ -21,33 +21,56 @@
 #import "TWLevelMeterView.h"
 
 
+
+@interface TWHomeScrollView : UIScrollView
+@end
+
+@implementation TWHomeScrollView
+
+- (instancetype)init {
+    if (self = [super init]) {
+        [self setDelaysContentTouches:NO];
+        [self setCanCancelContentTouches:YES];
+    }
+    return self;
+}
+
+- (BOOL)touchesShouldCancelInContentView:(UIView *)view {
+    return YES;
+}
+
+@end
+
+
+
+
 @interface TWHomeViewController () <UITextFieldDelegate, TWKeyboardAccessoryViewDelegate>
 {
-    UIButton*                   _ioButton;
-    UIButton*                   _viewSequencerButton;
-    UIButton*                   _viewDrumPadButton;
-    UIButton*                   _resetPhaseButton;
+    UIButton*                       _ioButton;
+    UIButton*                       _viewSequencerButton;
+    UIButton*                       _viewDrumPadButton;
+    UIButton*                       _resetPhaseButton;
     
-    TWMixerView*                _mixerView;
+    TWMixerView*                    _mixerView;
     
-    UIScrollView*               _verticalScrollView;
+    TWHomeScrollView*               _verticalScrollView;
     
-    TWOscView*                  _oscView;
+    TWOscView*                      _oscView;
     
     TWFrequencyRatioControlView*    _pitchRatioControlView;
     
-    UIButton*                   _loadFreqChartButton;
-    UIButton*                   _saveProjectButton;
-    UIButton*                   _loadProjectButton;
+    UIButton*                       _loadFreqChartButton;
+    UIButton*                       _saveProjectButton;
+    UIButton*                       _loadProjectButton;
     
-    UISlider*                   _masterLeftSlider;
-    UITextField*                _masterLeftField;
-    UISlider*                   _masterRightSlider;
-    UITextField*                _masterRightField;
+    UISlider*                       _masterLeftSlider;
+    UITextField*                    _masterLeftField;
+    UISlider*                       _masterRightSlider;
+    UITextField*                    _masterRightField;
     
-    NSTimer*                    _levelMeterTimer;
-    TWLevelMeterView*           _leftLevelMeterView;
-    TWLevelMeterView*           _rightLevelMeterView;
+    NSTimer*                        _levelMeterTimer;
+    TWLevelMeterView*               _leftLevelMeterView;
+    TWLevelMeterView*               _rightLevelMeterView;
 }
 
 @end
@@ -88,11 +111,11 @@
     
     
     
-    _verticalScrollView = [[UIScrollView alloc] init];
+    _verticalScrollView = [[TWHomeScrollView alloc] init];
     [_verticalScrollView setScrollsToTop:NO];
     [_verticalScrollView setBounces:YES];
     [_verticalScrollView setShowsVerticalScrollIndicator:NO];
-    [_verticalScrollView setDelaysContentTouches:YES];
+//    [_verticalScrollView setDelaysContentTouches:YES];
     [_verticalScrollView setBackgroundColor:[UIColor colorWithWhite:0.26f alpha:1.0f]];
     [self.view addSubview:_verticalScrollView];
     
@@ -254,14 +277,13 @@
     CGFloat scrollViewHeight = screenHeight - yPos - componentHeight;
     [_verticalScrollView setFrame:CGRectMake(xMargin, yPos, screenWidth, scrollViewHeight)];
     
-    CGFloat scrollViewContentHeight = isLandscape ? (3.0f * kButtonYMargin) + (((kNumSources / 4.0f) + 12.0f) * componentHeight) :
-                                                    (4.0f * kButtonYMargin) + (((kNumSources / 2.0f) + 12.0f) * componentHeight);
+    CGFloat scrollViewContentHeight = isLandscape ? (3.0f * kButtonYMargin) + (((kNumSources / 4.0f) + 14.0f) * componentHeight) : (4.0f * kButtonYMargin) + (((kNumSources / 2.0f) + 14.0f) * componentHeight);
     [_verticalScrollView setContentSize:CGSizeMake(screenWidth, scrollViewContentHeight)];
     
     
     // Enter Vertical Scroll View
     yPos = 0.0f;
-    CGFloat pitchRatioControlViewHeight = isLandscape ? ((3.0f * kButtonYMargin) + (componentHeight * ((kNumSources / 4.0f) + 1))) : ((4.0f * kButtonYMargin) + (componentHeight * ((kNumSources / 2.0f) + 1)));
+    CGFloat pitchRatioControlViewHeight = isLandscape ? ((3.0f * kButtonYMargin) + (componentHeight * ((kNumSources / 4.0f) + 3))) : ((4.0f * kButtonYMargin) + (componentHeight * ((kNumSources / 2.0f) + 3)));
     [_pitchRatioControlView setFrame:CGRectMake(0.0f, yPos, screenWidth, pitchRatioControlViewHeight)];
     
     yPos += _pitchRatioControlView.frame.size.height;

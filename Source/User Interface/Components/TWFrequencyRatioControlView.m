@@ -10,6 +10,8 @@
 #import "TWMasterController.h"
 #import "TWHeader.h"
 #import "TWKeyboardAccessoryView.h"
+#import "TWClock.h"
+
 #import <QuartzCore/QuartzCore.h>
 
 #define kLocalTitleLabelWidth      40.0f
@@ -24,11 +26,17 @@
     UISlider*                   _rampTimeSlider;
     UITextField*                _rampTimeField;
     
-    UILabel*                    _rootTempoLabel;
-    UISlider*                   _rootTempoSlider;
-    UITextField*                _rootTempoField;
-    UIButton*                   _tapTempoButton;
+    UILabel*                    _tempoLabel;
+    UISlider*                   _tempoSlider;
+    UITextField*                _tempoField;
     
+    UIButton*                   _tapTempoButton;
+    int                         _tapTempoCount;
+    NSTimeInterval              _tapTempoCurrentTime;
+    double                      _movingAverageTempo;
+    
+    UISegmentedControl*         _segmentedControl;
+    TWTimeRatioControl          _currentControl;
     
     NSArray*                    _textFields;
     
@@ -120,32 +128,32 @@
     
     
     
-    _rootTempoLabel = [[UILabel alloc] init];
-    [_rootTempoLabel setTextColor:[UIColor colorWithWhite:0.8f alpha:1.0f]];
-    [_rootTempoLabel setText:@"Tempo:"];
-    [_rootTempoLabel setFont:[UIFont systemFontOfSize:10.0f]];
-    [_rootTempoLabel setTextAlignment:NSTextAlignmentLeft];
-    [self addSubview:_rootTempoLabel];
+    _tempoLabel = [[UILabel alloc] init];
+    [_tempoLabel setTextColor:[UIColor colorWithWhite:0.8f alpha:1.0f]];
+    [_tempoLabel setText:@"Tempo:"];
+    [_tempoLabel setFont:[UIFont systemFontOfSize:10.0f]];
+    [_tempoLabel setTextAlignment:NSTextAlignmentLeft];
+    [self addSubview:_tempoLabel];
     
-    _rootTempoSlider = [[UISlider alloc] init];
-    [_rootTempoSlider setMinimumValue:20.0f];
-    [_rootTempoSlider setMaximumValue:400.0f];
-    [_rootTempoSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_rootTempoSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.25f alpha:1.0f]];
-    [_rootTempoSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_rootTempoSlider addTarget:self action:@selector(rootFreqSliderChanged) forControlEvents:UIControlEventValueChanged];
-    [self addSubview:_rootTempoSlider];
+    _tempoSlider = [[UISlider alloc] init];
+    [_tempoSlider setMinimumValue:20.0f];
+    [_tempoSlider setMaximumValue:400.0f];
+    [_tempoSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_tempoSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.25f alpha:1.0f]];
+    [_tempoSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_tempoSlider addTarget:self action:@selector(tempoSliderChanged) forControlEvents:UIControlEventValueChanged];
+    [self addSubview:_tempoSlider];
     
-    _rootTempoField = [[UITextField alloc] init];
-    [_rootTempoField setTextColor:[UIColor colorWithWhite:0.8f alpha:1.0f]];
-    [_rootTempoField setFont:[UIFont systemFontOfSize:10.0f]];
-    [_rootTempoField setTextAlignment:NSTextAlignmentCenter];
-    [_rootTempoField setKeyboardType:UIKeyboardTypeDecimalPad];
-    [_rootTempoField setKeyboardAppearance:UIKeyboardAppearanceDark];
-    [_rootTempoField setInputAccessoryView:accView];
-    [_rootTempoField setBackgroundColor:textFieldBackground];
-    [_rootTempoField setDelegate:self];
-    [self addSubview:_rootTempoField];
+    _tempoField = [[UITextField alloc] init];
+    [_tempoField setTextColor:[UIColor colorWithWhite:0.8f alpha:1.0f]];
+    [_tempoField setFont:[UIFont systemFontOfSize:10.0f]];
+    [_tempoField setTextAlignment:NSTextAlignmentCenter];
+    [_tempoField setKeyboardType:UIKeyboardTypeDecimalPad];
+    [_tempoField setKeyboardAppearance:UIKeyboardAppearanceDark];
+    [_tempoField setInputAccessoryView:accView];
+    [_tempoField setBackgroundColor:textFieldBackground];
+    [_tempoField setDelegate:self];
+    [self addSubview:_tempoField];
     
     
     _tapTempoButton = [[UIButton alloc] init];
@@ -153,10 +161,23 @@
     [_tapTempoButton setBackgroundColor:[UIColor colorWithWhite:0.24 alpha:0.8]];
     [_tapTempoButton setTitleColor:[UIColor colorWithWhite:0.6f alpha:1.0f] forState:UIControlStateNormal];
     [[_tapTempoButton titleLabel] setFont:[UIFont systemFontOfSize:11.0f]];
+    [_tapTempoButton setTag:999];
     [_tapTempoButton addTarget:self action:@selector(tapTempoButtonDown:) forControlEvents:UIControlEventTouchDown];
     [_tapTempoButton addTarget:self action:@selector(tapTempoButtonUp:) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:_tapTempoButton];
 
+    
+    
+    NSDictionary* attribute = [NSDictionary dictionaryWithObject:[UIFont systemFontOfSize:10.0f] forKey:NSFontAttributeName];
+    NSArray* segments = @[@"Base", @"Beat", @"Tremolo", @"Filter LFO"];
+    _segmentedControl = [[UISegmentedControl alloc] initWithItems:segments];
+    [_segmentedControl setBackgroundColor:[UIColor colorWithWhite:0.2f alpha:1.0f]];
+    [_segmentedControl setSelectedSegmentIndex:0];
+    [_segmentedControl setTitleTextAttributes:attribute forState:UIControlStateNormal];
+    [_segmentedControl setTintColor:[UIColor colorWithWhite:0.5f alpha:1.0f]];
+    [_segmentedControl addTarget:self action:@selector(segmentValueChanged:) forControlEvents:UIControlEventValueChanged];
+    [self addSubview:_segmentedControl];
+    
     
     
     
@@ -274,8 +295,6 @@
     _denDecButtons  = [[NSArray alloc] initWithArray:denDecButtons];
     _denBorders     = [[NSArray alloc] initWithArray:denBorders];
     
-    
-    
     [self setBackgroundColor:[UIColor colorWithWhite:0.16f alpha:1.0f]];
 }
 
@@ -289,20 +308,18 @@
     [_rampTimeSlider setValue:rampTime_ms animated:animated];
     [_rampTimeField setText:[NSString stringWithFormat:@"%d", rampTime_ms]];
     
-    float tempo = [[TWMasterController sharedController] rootTempo];
-    [_rootTempoSlider setValue:tempo animated:animated];
-    [_rootTempoField setText:[NSString stringWithFormat:@"%.2f", tempo]];
+    float tempo = [[TWMasterController sharedController] tempo];
+    [_tempoSlider setValue:tempo animated:animated];
+    [_tempoField setText:[NSString stringWithFormat:@"%.2f", tempo]];
     
-    for (int idx=0; idx < kNumSources; idx++) {
-        int numerator = [[TWMasterController sharedController] getNumeratorRatioAt:idx];
-        UITextField* numTextField = (UITextField*)_textFields[kNumerator][idx];
-        [numTextField setText:[NSString stringWithFormat:@"%d", numerator]];
-        
-        int denominator = [[TWMasterController sharedController] getDenominatorRatioAt:idx];
-        UITextField* denTextField = (UITextField*)_textFields[kDenominator][idx];
-        [denTextField setText:[NSString stringWithFormat:@"%d", denominator]];
-    }
-
+    [_segmentedControl setSelectedSegmentIndex:0];
+    _currentControl = TWTimeRatioControl_BaseFrequency;
+    
+    [self refreshControlUI];
+    
+    _tapTempoCount          = 0;
+    _tapTempoCurrentTime    = 0.0f;
+    _movingAverageTempo     = tempo;
 }
 
 
@@ -341,18 +358,22 @@
     
     yPos += componentHeight;
     xPos = 0.0f;
-    [_rootTempoLabel setFrame:CGRectMake(xPos, yPos, kLocalTitleLabelWidth, componentHeight)];
+    [_tempoLabel setFrame:CGRectMake(xPos, yPos, kLocalTitleLabelWidth, componentHeight)];
     
     xPos += kLocalTitleLabelWidth;
-    [_rootTempoSlider setFrame:CGRectMake(xPos, yPos, sliderWidth, componentHeight)];
+    [_tempoSlider setFrame:CGRectMake(xPos, yPos, sliderWidth, componentHeight)];
     
     xPos += sliderWidth;
-    [_rootTempoField setFrame:CGRectMake(xPos, yPos, kValueLabelWidth, componentHeight)];
+    [_tempoField setFrame:CGRectMake(xPos, yPos, kValueLabelWidth, componentHeight)];
     
-    xPos += _rootTempoField.frame.size.width;
+    xPos += _tempoField.frame.size.width;
     CGFloat tapTempoButtonWidth = frame.size.width - xPos;
-    [_tapTempoButton setFrame:CGRectMake(xPos, yPos + kButtonYMargin, tapTempoButtonWidth, componentHeight - (2.0f * kButtonYMargin))];
+    [_tapTempoButton setFrame:CGRectMake(xPos, yPos + kButtonYMargin, tapTempoButtonWidth - 5.0f, componentHeight - (2.0f * kButtonYMargin))];
     
+    
+    yPos += componentHeight;
+    xPos = 0.0f;
+    [_segmentedControl setFrame:CGRectMake(xPos, yPos + 5.0f, frame.size.width, componentHeight - 10.0f)];
     
     
     yPos += componentHeight;
@@ -502,10 +523,17 @@
     [_oscView refreshParametersWithAnimation:YES];
 }
 
+- (void)tempoSliderChanged {
+    float tempo = _tempoSlider.value;
+    [[TWMasterController sharedController] setTempo:tempo];
+    [_tempoField setText:[NSString stringWithFormat:@"%.2f", tempo]];
+    [_oscView refreshParametersWithAnimation:YES];
+}
+
 
 - (void)incNumButtonTapped:(UIButton*)sender {
     int sourceIdx = (int)sender.tag;
-    int newRatio = [[TWMasterController sharedController] incNumeratorRatioAt:sourceIdx];
+    int newRatio = [[TWMasterController sharedController] incNumeratorRatioForControl:_currentControl atSourceIdx:sourceIdx];
     UITextField* textField = (UITextField*)_textFields[kNumerator][sourceIdx];
     [textField setText:[NSString stringWithFormat:@"%d", newRatio]];
     [self updateOscView:sourceIdx];
@@ -513,7 +541,7 @@
 
 - (void)decNumButtonTapped:(UIButton*)sender {
     int sourceIdx = (int)sender.tag;
-    int newRatio = [[TWMasterController sharedController] decNumeratorRatioAt:sourceIdx];
+    int newRatio = [[TWMasterController sharedController] decNumeratorRatioForControl:_currentControl atSourceIdx:sourceIdx];
     UITextField* textField = (UITextField*)_textFields[kNumerator][sourceIdx];
     [textField setText:[NSString stringWithFormat:@"%d", newRatio]];
     [self updateOscView:sourceIdx];
@@ -521,7 +549,7 @@
 
 - (void)incDenButtonTapped:(UIButton*)sender {
     int sourceIdx = (int)sender.tag;
-    int newRatio = [[TWMasterController sharedController] incDenominatorRatioAt:sourceIdx];
+    int newRatio = [[TWMasterController sharedController] incDenominatorRatioForControl:_currentControl atSourceIdx:sourceIdx];
     UITextField* textField = (UITextField*)_textFields[kDenominator][sourceIdx];
     [textField setText:[NSString stringWithFormat:@"%d", newRatio]];
     [self updateOscView:sourceIdx];
@@ -529,7 +557,7 @@
 
 - (void)decDenButtonTapped:(UIButton*)sender {
     int sourceIdx = (int)sender.tag;
-    int newRatio = [[TWMasterController sharedController] decDenominatorRatioAt:sourceIdx];
+    int newRatio = [[TWMasterController sharedController] decDenominatorRatioForControl:_currentControl atSourceIdx:sourceIdx];
     UITextField* textField = (UITextField*)_textFields[kDenominator][sourceIdx];
     [textField setText:[NSString stringWithFormat:@"%d", newRatio]];
     [self updateOscView:sourceIdx];
@@ -537,11 +565,17 @@
 
 
 - (void)tapTempoButtonDown:(UIButton*)sender {
+    [self tapTempo];
     [_tapTempoButton setBackgroundColor:[UIColor colorWithWhite:0.14 alpha:0.9]];
 }
 
 - (void)tapTempoButtonUp:(UIButton*)sender {
     [_tapTempoButton setBackgroundColor:[UIColor colorWithWhite:0.24 alpha:0.8]];
+}
+
+- (void)segmentValueChanged:(UISegmentedControl*)sender {
+    _currentControl = (TWTimeRatioControl)sender.selectedSegmentIndex;
+    [self refreshControlUI];
 }
 
 #pragma - UITextFieldDelegate
@@ -564,12 +598,19 @@
         [_oscView refreshParametersWithAnimation:YES];
     }
     
+    else if (currentResponder == _tempoField) {
+        float tempo = [[_tempoField text] floatValue];
+        [[TWMasterController sharedController] setTempo:tempo];
+        [_tempoSlider setValue:tempo animated:YES];
+        [_oscView refreshParametersWithAnimation:YES];
+    }
+    
     else {
         for (UITextField* numTextField in _textFields[kNumerator]) {
             if (numTextField == currentResponder) {
                 int sourceIdx = (int)(currentResponder.tag / 2.0f);
                 int ratio = [[currentResponder text] intValue];
-                [[TWMasterController sharedController] setNumeratorRatio:ratio at:sourceIdx];
+                [[TWMasterController sharedController] setNumeratorRatioForControl:_currentControl withValue:ratio atSourceIdx:sourceIdx];
                 [self updateOscView:sourceIdx];
                 break;
             }
@@ -578,7 +619,7 @@
             if (denTextField == currentResponder) {
                 int sourceIdx = (int)(currentResponder.tag / 2.0f);
                 int ratio = [[currentResponder text] intValue];
-                [[TWMasterController sharedController] setDenominatorRatio:ratio at:sourceIdx];
+                [[TWMasterController sharedController] setDenominatorRatioForControl:_currentControl withValue:ratio atSourceIdx:sourceIdx];
                 [self updateOscView:sourceIdx];
                 break;
             }
@@ -603,11 +644,16 @@
         [_rampTimeField setText:[NSString stringWithFormat:@"%d", rampTime_ms]];
     }
     
+    else if (currentResponder == _tempoField) {
+        float tempo = [_tempoSlider value];
+        [_tempoField setText:[NSString stringWithFormat:@"%.2f", tempo]];
+    }
+    
     else {
         for (UITextField* numTextField in _textFields[kNumerator]) {
             if (numTextField == currentResponder) {
                 int sourceIdx = (int)(currentResponder.tag / 2.0f);
-                int ratio = [[TWMasterController sharedController] getNumeratorRatioAt:sourceIdx];
+                int ratio = [[TWMasterController sharedController] getNumeratorRatioForControl:_currentControl atSourceIdx:sourceIdx];
                 [currentResponder setText:[NSString stringWithFormat:@"%d", ratio]];
                 [self updateOscView:sourceIdx];
                 break;
@@ -616,7 +662,7 @@
         for (UITextField* denTextField in _textFields[kDenominator]) {
             if (denTextField == currentResponder) {
                 int sourceIdx = (int)(currentResponder.tag / 2.0f);
-                int ratio = [[TWMasterController sharedController] getDenominatorRatioAt:sourceIdx];
+                int ratio = [[TWMasterController sharedController] getDenominatorRatioForControl:_currentControl atSourceIdx:sourceIdx];
                 [currentResponder setText:[NSString stringWithFormat:@"%d", ratio]];
                 [self updateOscView:sourceIdx];
                 break;
@@ -635,6 +681,8 @@
         titleText = @"Root Freq: ";
     } else if (textField == _rampTimeField) {
         titleText = @"Ramp Time: ";
+    } else if (textField == _tempoField) {
+        titleText = @"Tempo: ";
     } else {
         int tag = (int)textField.tag;
         int oscID = (int)tag / 2.0f;
@@ -690,6 +738,45 @@
 - (void)updateOscView:(int)sourceIdx {
     if ([_oscView respondsToSelector:@selector(setOscID:)]) {
         [_oscView setOscID:sourceIdx];
+    }
+}
+
+
+
+- (void)refreshControlUI {
+    for (int idx=0; idx < kNumSources; idx++) {
+        int numerator = [[TWMasterController sharedController] getNumeratorRatioForControl:_currentControl atSourceIdx:idx];
+        UITextField* numTextField = (UITextField*)_textFields[kNumerator][idx];
+        [numTextField setText:[NSString stringWithFormat:@"%d", numerator]];
+        
+        int denominator = [[TWMasterController sharedController] getDenominatorRatioForControl:_currentControl atSourceIdx:idx];
+        UITextField* denTextField = (UITextField*)_textFields[kDenominator][idx];
+        [denTextField setText:[NSString stringWithFormat:@"%d", denominator]];
+    }
+}
+
+- (void)tapTempo {
+    NSTimeInterval currentTime = [[TWClock sharedClock] getCurrentTime];
+    NSTimeInterval elapsedTime = currentTime - _tapTempoCurrentTime;
+//    NSLog(@"CurrentTime: %f. ElapsedTime: %f", currentTime, elapsedTime);
+    
+    if (elapsedTime > 3.0f) {
+        _tapTempoCount = 0;
+        _movingAverageTempo = [[TWMasterController sharedController] tempo];
+    } else {
+        _movingAverageTempo = (_movingAverageTempo + (60.0f / elapsedTime)) / 2.0f;
+    }
+    
+//    NSLog(@"Moving Average Tempo: %f", _movingAverageTempo);
+    
+    _tapTempoCount++;
+    _tapTempoCurrentTime = currentTime;
+    
+    if (_tapTempoCount >= 3) {
+        [[TWMasterController sharedController] setTempo:_movingAverageTempo];
+        [_tempoSlider setValue:_movingAverageTempo animated:YES];
+        [_tempoField setText:[NSString stringWithFormat:@"%.2f", _movingAverageTempo]];
+        [_oscView refreshParametersWithAnimation:YES];
     }
 }
 

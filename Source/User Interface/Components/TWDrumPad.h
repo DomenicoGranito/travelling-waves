@@ -12,17 +12,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 
-
-@interface TWHitView : UIView
-@end
-
-
-
-@interface TWTickView : UIView
-@end
-
-
-
 @interface TWDrumPad : UIView
 
 @property (nonatomic, assign) TWDrumPadMode drumPadMode;

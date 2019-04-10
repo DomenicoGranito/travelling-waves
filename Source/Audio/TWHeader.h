@@ -50,6 +50,7 @@
 #define kDefaultRampTime_ms                     200.0f
 #define kDefaultFrequency                       256.0f
 #define kDefaultAmplitude                       0.5
+#define kDefaultTempo                           60.0       // BPM
 
 #define kSoloRampTime_ms                        100.0f
 #define kSeqEnableCrossfadeTime_ms              500.0f
@@ -156,5 +157,15 @@ typedef enum {
     TWPlaybackFinishedStatus_Uninitialized      = 1,
     TWPlaybackFinishedStatus_NoIORunning        = 2
 } TWPlaybackFinishedStatus;
+
+
+typedef enum {
+    TWTimeRatioControl_BaseFrequency            = 0,
+    TWTimeRatioControl_BeatFrequency            = 1,
+    TWTimeRatioControl_TremFrequency            = 2,
+    TWTimeRatioControl_FilterLFOFrequency       = 3
+} TWTimeRatioControl;
+
+#define kNumTimeRatioControls                   4
 
 #endif /* TWHeader_h */
