@@ -72,7 +72,12 @@
     
     for (int idx=0; idx < kNumSources; idx++) {
         for (int control = 0; control < kNumTimeRatioControls; control++) {
-            _timeControlRatios[control][kNumerator][idx]      = 1;
+            
+            int defaultNumerator = 1;
+            if (control == TWTimeRatioControl_BeatFrequency) {
+                defaultNumerator = 0;
+            }
+            _timeControlRatios[control][kNumerator][idx]      = defaultNumerator;
             _timeControlRatios[control][kDenominator][idx]    = 1;
             
             [self setValueForTimeControl:(TWTimeRatioControl)control atSourceIdx:idx];
@@ -129,8 +134,12 @@
 }
 
 - (int)decNumeratorRatioForControl:(TWTimeRatioControl)control atSourceIdx:(int)idx {
-    if (--_timeControlRatios[control][kNumerator][idx] <= 1) {
-        _timeControlRatios[control][kNumerator][idx] = 1;
+    int minValue = 1;
+    if (control == TWTimeRatioControl_BeatFrequency) {
+        minValue = 0;
+    }
+    if (--_timeControlRatios[control][kNumerator][idx] <= minValue) {
+        _timeControlRatios[control][kNumerator][idx] = minValue;
     }
     [self setValueForTimeControl:control atSourceIdx:idx];
     return _timeControlRatios[control][kNumerator][idx];
