@@ -9,6 +9,7 @@
 #import "TWFrequencyChartViewController.h"
 #import "TWHeader.h"
 #import "TWMasterController.h"
+#import "UIColor+Additions.h"
 
 #define kNumNotes                       88
 #define kEqualTemperamentFreqRef        440.0f
@@ -51,7 +52,7 @@ typedef enum : NSUInteger {
     [self.view addSubview:_backButton];
     
     _chartSelector = [[UISegmentedControl alloc] initWithItems:@[@"Oster Curve", @"Equal Temperament"]];
-    [_chartSelector setBackgroundColor:[UIColor colorWithWhite:0.2f alpha:1.0f]];
+    [_chartSelector setBackgroundColor:[UIColor segmentedControlColor]];
     [_chartSelector setSelectedSegmentIndex:0];
     [_chartSelector setTintColor:[UIColor colorWithWhite:0.5f alpha:1.0f]];
     [_chartSelector addTarget:self action:@selector(chartSelectorChanged:) forControlEvents:UIControlEventValueChanged];

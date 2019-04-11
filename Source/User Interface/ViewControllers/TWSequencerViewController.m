@@ -13,7 +13,7 @@
 #import "TWEnvelopeView.h"
 #import "TWKeyboardAccessoryView.h"
 #import "TWForceButton.h"
-
+#import "UIColor+Additions.h"
 #import <QuartzCore/QuartzCore.h>
 
 
@@ -92,7 +92,7 @@ static const CGFloat kProgressBarUpdateInterval    = 0.1f;  // 50ms
     [self.view addSubview:_ioButton];
 
     _durationTextField = [[UITextField alloc] init];
-    [_durationTextField setTextColor:[UIColor colorWithWhite:0.4f alpha:1.0f]];
+    [_durationTextField setTextColor:[UIColor valueTextDarkWhiteColor]];
     [_durationTextField setFont:[UIFont systemFontOfSize:11.0f]];
     [_durationTextField setTextAlignment:NSTextAlignmentCenter];
     [_durationTextField setKeyboardType:UIKeyboardTypeDecimalPad];

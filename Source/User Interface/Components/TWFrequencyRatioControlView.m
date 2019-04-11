@@ -9,27 +9,28 @@
 #import "TWFrequencyRatioControlView.h"
 #import "TWMasterController.h"
 #import "TWHeader.h"
-#import "TWKeyboardAccessoryView.h"
 #import "TWClock.h"
 #import "TWUtils.h"
+#import "TWKeypad.h"
+#import "UIColor+Additions.h"
 
 #import <QuartzCore/QuartzCore.h>
 
 #define kLocalTitleLabelWidth      40.0f
 
-@interface TWFrequencyRatioControlView() <UITextFieldDelegate, TWKeyboardAccessoryViewDelegate>
+@interface TWFrequencyRatioControlView() <TWKeypadDelegate>
 {
     UILabel*                    _rootFreqLabel;
     UISlider*                   _rootFreqSlider;
-    UITextField*                _rootFreqField;
+    UIButton*                   _rootFreqField;
     
     UILabel*                    _rampTimeLabel;
     UISlider*                   _rampTimeSlider;
-    UITextField*                _rampTimeField;
+    UIButton*                   _rampTimeField;
     
     UILabel*                    _tempoLabel;
     UISlider*                   _tempoSlider;
-    UITextField*                _tempoField;
+    UIButton*                   _tempoField;
     
     UIButton*                   _tapTempoButton;
     int                         _tapTempoCount;
@@ -65,11 +66,7 @@
 
 - (void)initialize {
 
-    TWKeyboardAccessoryView* accView = [TWKeyboardAccessoryView sharedView];
-    [accView addToDelegates:self];
-    
-//    UIColor* textFieldBackground = [UIColor colorWithWhite:0.5f alpha:0.1f];
-    UIColor* textFieldBackground = [UIColor clearColor];
+    [[TWKeypad sharedKeypad] addToDelegates:self];
     
     
     _rootFreqLabel = [[UILabel alloc] init];
@@ -82,22 +79,20 @@
     _rootFreqSlider = [[UISlider alloc] init];
     [_rootFreqSlider setMinimumValue:0.0f];
     [_rootFreqSlider setMaximumValue:1.0f];
-    [_rootFreqSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_rootFreqSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.25f alpha:1.0f]];
-    [_rootFreqSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_rootFreqSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
+    [_rootFreqSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
+    [_rootFreqSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_rootFreqSlider addTarget:self action:@selector(rootFreqSliderChanged) forControlEvents:UIControlEventValueChanged];
     [self addSubview:_rootFreqSlider];
     
-    _rootFreqField = [[UITextField alloc] init];
-    [_rootFreqField setTextColor:[UIColor colorWithWhite:0.8f alpha:1.0f]];
-    [_rootFreqField setFont:[UIFont systemFontOfSize:10.0f]];
-    [_rootFreqField setTextAlignment:NSTextAlignmentCenter];
-    [_rootFreqField setKeyboardType:UIKeyboardTypeDecimalPad];
-    [_rootFreqField setKeyboardAppearance:UIKeyboardAppearanceDark];
-    [_rootFreqField setInputAccessoryView:accView];
-    [_rootFreqField setBackgroundColor:textFieldBackground];
-    [_rootFreqField setDelegate:self];
+    _rootFreqField = [[UIButton alloc] init];
+    [_rootFreqField setTitleColor:[UIColor valueTextLightWhiteColor] forState:UIControlStateNormal];
+    [_rootFreqField.titleLabel setFont:[UIFont systemFontOfSize:10.0f]];
+    [_rootFreqField setBackgroundColor:[UIColor clearColor]];
+    [_rootFreqField addTarget:self action:@selector(rootFreqFieldTapped) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:_rootFreqField];
+    
+    
     
     _rampTimeLabel = [[UILabel alloc] init];
     [_rampTimeLabel setTextColor:[UIColor colorWithWhite:0.8f alpha:1.0f]];
@@ -106,25 +101,20 @@
     [_rampTimeLabel setTextAlignment:NSTextAlignmentLeft];
     [self addSubview:_rampTimeLabel];
     
-    
     _rampTimeSlider = [[UISlider alloc] init];
     [_rampTimeSlider setMinimumValue:0];
     [_rampTimeSlider setMaximumValue:16000];
-    [_rampTimeSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_rampTimeSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.25f alpha:1.0f]];
-    [_rampTimeSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_rampTimeSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
+    [_rampTimeSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
+    [_rampTimeSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_rampTimeSlider addTarget:self action:@selector(rampTimeSliderChanged) forControlEvents:UIControlEventValueChanged];
     [self addSubview:_rampTimeSlider];
     
-    _rampTimeField = [[UITextField alloc] init];
-    [_rampTimeField setTextColor:[UIColor colorWithWhite:0.8f alpha:1.0f]];
-    [_rampTimeField setFont:[UIFont systemFontOfSize:10.0f]];
-    [_rampTimeField setTextAlignment:NSTextAlignmentCenter];
-    [_rampTimeField setKeyboardType:UIKeyboardTypeDecimalPad];
-    [_rampTimeField setKeyboardAppearance:UIKeyboardAppearanceDark];
-    [_rampTimeField setInputAccessoryView:accView];
-    [_rampTimeField setBackgroundColor:textFieldBackground];
-    [_rampTimeField setDelegate:self];
+    _rampTimeField = [[UIButton alloc] init];
+    [_rampTimeField setTitleColor:[UIColor valueTextLightWhiteColor] forState:UIControlStateNormal];
+    [_rampTimeField.titleLabel setFont:[UIFont systemFontOfSize:10.0f]];
+    [_rampTimeField setBackgroundColor:[UIColor clearColor]];
+    [_rampTimeField addTarget:self action:@selector(rampTimeFieldTapped) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:_rampTimeField];
     
     
@@ -139,22 +129,19 @@
     _tempoSlider = [[UISlider alloc] init];
     [_tempoSlider setMinimumValue:20.0f];
     [_tempoSlider setMaximumValue:400.0f];
-    [_tempoSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_tempoSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.25f alpha:1.0f]];
-    [_tempoSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_tempoSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
+    [_tempoSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
+    [_tempoSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_tempoSlider addTarget:self action:@selector(tempoSliderChanged) forControlEvents:UIControlEventValueChanged];
     [self addSubview:_tempoSlider];
     
-    _tempoField = [[UITextField alloc] init];
-    [_tempoField setTextColor:[UIColor colorWithWhite:0.8f alpha:1.0f]];
-    [_tempoField setFont:[UIFont systemFontOfSize:10.0f]];
-    [_tempoField setTextAlignment:NSTextAlignmentCenter];
-    [_tempoField setKeyboardType:UIKeyboardTypeDecimalPad];
-    [_tempoField setKeyboardAppearance:UIKeyboardAppearanceDark];
-    [_tempoField setInputAccessoryView:accView];
-    [_tempoField setBackgroundColor:textFieldBackground];
-    [_tempoField setDelegate:self];
+    _tempoField = [[UIButton alloc] init];
+    [_tempoField setTitleColor:[UIColor valueTextLightWhiteColor] forState:UIControlStateNormal];
+    [_tempoField.titleLabel setFont:[UIFont systemFontOfSize:10.0f]];
+    [_tempoField setBackgroundColor:[UIColor clearColor]];
+    [_tempoField addTarget:self action:@selector(tempoFieldTapped) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:_tempoField];
+
     
     
     _tapTempoButton = [[UIButton alloc] init];
@@ -172,7 +159,7 @@
     NSDictionary* attribute = [NSDictionary dictionaryWithObject:[UIFont systemFontOfSize:10.0f] forKey:NSFontAttributeName];
     NSArray* segments = @[@"Base", @"Beat", @"Tremolo", @"Filter LFO"];
     _segmentedControl = [[UISegmentedControl alloc] initWithItems:segments];
-    [_segmentedControl setBackgroundColor:[UIColor colorWithWhite:0.2f alpha:1.0f]];
+    [_segmentedControl setBackgroundColor:[UIColor segmentedControlColor]];
     [_segmentedControl setSelectedSegmentIndex:0];
     [_segmentedControl setTitleTextAttributes:attribute forState:UIControlStateNormal];
     [_segmentedControl setTintColor:[UIColor colorWithWhite:0.5f alpha:1.0f]];
@@ -205,6 +192,8 @@
         [self addSubview:idLabel];
         [idLabels addObject:idLabel];
         
+        
+        
         UIButton* numIncButton = [[UIButton alloc] initWithFrame:CGRectZero];
         [numIncButton setTitle:@"NI" forState:UIControlStateNormal];
         [numIncButton addTarget:self action:@selector(incNumButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
@@ -215,16 +204,12 @@
         [self addSubview:numIncButton];
         [numIncButtons addObject:numIncButton];
         
-        UITextField* numTextField = [[UITextField alloc] initWithFrame:CGRectZero];
-        [numTextField setTextColor:[UIColor colorWithWhite:0.7f alpha:1.0f]];
-        [numTextField setFont:[UIFont systemFontOfSize:12.0f]];
-        [numTextField setTextAlignment:NSTextAlignmentCenter];
-        [numTextField setKeyboardType:UIKeyboardTypeDecimalPad];
-        [numTextField setKeyboardAppearance:UIKeyboardAppearanceDark];
-        [numTextField setInputAccessoryView:accView];
-        [numTextField setBackgroundColor:textFieldBackground];
+        UIButton* numTextField = [[UIButton alloc] initWithFrame:CGRectZero];
+        [numTextField setTitleColor:[UIColor colorWithWhite:0.7f alpha:1.0f] forState:UIControlStateNormal];
+        [numTextField.titleLabel setFont:[UIFont systemFontOfSize:12.0f]];
+        [numTextField setBackgroundColor:[UIColor clearColor]];
         [numTextField setTag:(idx * 2)];
-        [numTextField setDelegate:self];
+        [numTextField addTarget:self action:@selector(ratioFieldTapped:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:numTextField];
         [numTextFields addObject:numTextField];
         
@@ -238,6 +223,8 @@
         [self addSubview:numDecButton];
         [numDecButtons addObject:numDecButton];
         
+        
+        
         UIButton* denIncButton = [[UIButton alloc] initWithFrame:CGRectZero];
         [denIncButton setTitle:@"DI" forState:UIControlStateNormal];
         [denIncButton addTarget:self action:@selector(incDenButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
@@ -248,16 +235,12 @@
         [self addSubview:denIncButton];
         [denIncButtons addObject:denIncButton];
         
-        UITextField* denTextField = [[UITextField alloc] initWithFrame:CGRectZero];
-        [denTextField setTextColor:[UIColor colorWithWhite:0.7f alpha:1.0f]];
-        [denTextField setFont:[UIFont systemFontOfSize:12.0f]];
-        [denTextField setTextAlignment:NSTextAlignmentCenter];
-        [denTextField setKeyboardType:UIKeyboardTypeDecimalPad];
-        [denTextField setKeyboardAppearance:UIKeyboardAppearanceDark];
-        [denTextField setInputAccessoryView:accView];
-        [denTextField setBackgroundColor:textFieldBackground];
+        UIButton* denTextField = [[UIButton alloc] initWithFrame:CGRectZero];
+        [denTextField setTitleColor:[UIColor colorWithWhite:0.7f alpha:1.0f] forState:UIControlStateNormal];
+        [denTextField.titleLabel setFont:[UIFont systemFontOfSize:12.0f]];
+        [denTextField setBackgroundColor:[UIColor clearColor]];
         [denTextField setTag:(idx * 2) + 1];
-        [denTextField setDelegate:self];
+        [denTextField addTarget:self action:@selector(ratioFieldTapped:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:denTextField];
         [denTextFields addObject:denTextField];
         
@@ -270,6 +253,8 @@
         [denDecButton setTag:idx];
         [self addSubview:denDecButton];
         [denDecButtons addObject:denDecButton];
+        
+        
         
         UIView *numBorderView = [[UIView alloc] init];
         [numBorderView setUserInteractionEnabled:NO];
@@ -303,15 +288,15 @@
 - (void)viewWillAppear:(BOOL)animated {
     float frequency = [[TWMasterController sharedController] rootFrequency];
     [self setRootFrequencySlider:frequency];
-    [_rootFreqField setText:[NSString stringWithFormat:@"%.2f", frequency]];
+    [_rootFreqField setTitle:[NSString stringWithFormat:@"%.2f", frequency] forState:UIControlStateNormal];
     
     int rampTime_ms = [[TWMasterController sharedController] rampTime_ms];
     [_rampTimeSlider setValue:rampTime_ms animated:animated];
-    [_rampTimeField setText:[NSString stringWithFormat:@"%d", rampTime_ms]];
+    [_rampTimeField setTitle:[NSString stringWithFormat:@"%d", rampTime_ms] forState:UIControlStateNormal];
     
     float tempo = [[TWMasterController sharedController] tempo];
     [_tempoSlider setValue:tempo animated:animated];
-    [_tempoField setText:[NSString stringWithFormat:@"%.2f", tempo]];
+    [_tempoField setTitle:[NSString stringWithFormat:@"%.2f", tempo] forState:UIControlStateNormal];
     
     [_segmentedControl setSelectedSegmentIndex:0];
     _currentControl = TWTimeRatioControl_BaseFrequency;
@@ -511,23 +496,23 @@
 */
 
 - (void)rootFreqSliderChanged {
-    float value = [TWUtils logScaleFromLinear:_rootFreqSlider.value outMin:kCutoffFrequencyMin outMax:kCutoffFrequencyMax];
+    float value = [TWUtils logScaleFromLinear:_rootFreqSlider.value outMin:kFrequencyMin outMax:kFrequencyMax];
     [[TWMasterController sharedController] setRootFrequency:value];
-    [_rootFreqField setText:[NSString stringWithFormat:@"%.2f", value]];
+    [_rootFreqField setTitle:[NSString stringWithFormat:@"%.2f", value] forState:UIControlStateNormal];
     [_oscView refreshParametersWithAnimation:YES];
 }
 
 - (void)rampTimeSliderChanged {
     int rampTime_ms = _rampTimeSlider.value;
     [[TWMasterController sharedController] setRampTime_ms:rampTime_ms];
-    [_rampTimeField setText:[NSString stringWithFormat:@"%d", rampTime_ms]];
+    [_rampTimeField setTitle:[NSString stringWithFormat:@"%d", rampTime_ms] forState:UIControlStateNormal];
     [_oscView refreshParametersWithAnimation:YES];
 }
 
 - (void)tempoSliderChanged {
     float tempo = _tempoSlider.value;
     [[TWMasterController sharedController] setTempo:tempo];
-    [_tempoField setText:[NSString stringWithFormat:@"%.2f", tempo]];
+    [_tempoField setTitle:[NSString stringWithFormat:@"%.2f", tempo] forState:UIControlStateNormal];
     [_oscView refreshParametersWithAnimation:YES];
 }
 
@@ -535,32 +520,32 @@
 - (void)incNumButtonTapped:(UIButton*)sender {
     int sourceIdx = (int)sender.tag;
     int newRatio = [[TWMasterController sharedController] incNumeratorRatioForControl:_currentControl atSourceIdx:sourceIdx];
-    UITextField* textField = (UITextField*)_textFields[kNumerator][sourceIdx];
-    [textField setText:[NSString stringWithFormat:@"%d", newRatio]];
+    UIButton* field = (UIButton*)_textFields[kNumerator][sourceIdx];
+    [field setTitle:[NSString stringWithFormat:@"%d", newRatio] forState:UIControlStateNormal];
     [self updateOscView:sourceIdx];
 }
 
 - (void)decNumButtonTapped:(UIButton*)sender {
     int sourceIdx = (int)sender.tag;
     int newRatio = [[TWMasterController sharedController] decNumeratorRatioForControl:_currentControl atSourceIdx:sourceIdx];
-    UITextField* textField = (UITextField*)_textFields[kNumerator][sourceIdx];
-    [textField setText:[NSString stringWithFormat:@"%d", newRatio]];
+    UIButton* field = (UIButton*)_textFields[kNumerator][sourceIdx];
+    [field setTitle:[NSString stringWithFormat:@"%d", newRatio] forState:UIControlStateNormal];
     [self updateOscView:sourceIdx];
 }
 
 - (void)incDenButtonTapped:(UIButton*)sender {
     int sourceIdx = (int)sender.tag;
     int newRatio = [[TWMasterController sharedController] incDenominatorRatioForControl:_currentControl atSourceIdx:sourceIdx];
-    UITextField* textField = (UITextField*)_textFields[kDenominator][sourceIdx];
-    [textField setText:[NSString stringWithFormat:@"%d", newRatio]];
+    UIButton* field = (UIButton*)_textFields[kDenominator][sourceIdx];
+    [field setTitle:[NSString stringWithFormat:@"%d", newRatio] forState:UIControlStateNormal];
     [self updateOscView:sourceIdx];
 }
 
 - (void)decDenButtonTapped:(UIButton*)sender {
     int sourceIdx = (int)sender.tag;
     int newRatio = [[TWMasterController sharedController] decDenominatorRatioForControl:_currentControl atSourceIdx:sourceIdx];
-    UITextField* textField = (UITextField*)_textFields[kDenominator][sourceIdx];
-    [textField setText:[NSString stringWithFormat:@"%d", newRatio]];
+    UIButton* field = (UIButton*)_textFields[kDenominator][sourceIdx];
+    [field setTitle:[NSString stringWithFormat:@"%d", newRatio] forState:UIControlStateNormal];
     [self updateOscView:sourceIdx];
 }
 
@@ -578,151 +563,6 @@
     _currentControl = (TWTimeRatioControl)sender.selectedSegmentIndex;
     [self refreshControlUI];
 }
-
-#pragma - UITextFieldDelegate
-
-- (void)keyboardDoneButtonTapped:(id)sender {
-    
-    UITextField* currentResponder = [[TWKeyboardAccessoryView sharedView] currentResponder];
-    
-    if (currentResponder == _rootFreqField) {
-        float frequency = [[_rootFreqField text] floatValue];
-        [[TWMasterController sharedController] setRootFrequency:frequency];
-        [self setRootFrequencySlider:frequency];
-        [_oscView refreshParametersWithAnimation:YES];
-    }
-    
-    else if (currentResponder == _rampTimeField) {
-        int rampTime_ms = [[_rampTimeField text] intValue];
-        [[TWMasterController sharedController] setRampTime_ms:rampTime_ms];
-        [_rampTimeSlider setValue:rampTime_ms animated:YES];
-        [_oscView refreshParametersWithAnimation:YES];
-    }
-    
-    else if (currentResponder == _tempoField) {
-        float tempo = [[_tempoField text] floatValue];
-        [[TWMasterController sharedController] setTempo:tempo];
-        [_tempoSlider setValue:tempo animated:YES];
-        [_oscView refreshParametersWithAnimation:YES];
-    }
-    
-    else {
-        for (UITextField* numTextField in _textFields[kNumerator]) {
-            if (numTextField == currentResponder) {
-                int sourceIdx = (int)(currentResponder.tag / 2.0f);
-                int ratio = [[currentResponder text] intValue];
-                [[TWMasterController sharedController] setNumeratorRatioForControl:_currentControl withValue:ratio atSourceIdx:sourceIdx];
-                [self updateOscView:sourceIdx];
-                break;
-            }
-        }
-        for (UITextField* denTextField in _textFields[kDenominator]) {
-            if (denTextField == currentResponder) {
-                int sourceIdx = (int)(currentResponder.tag / 2.0f);
-                int ratio = [[currentResponder text] intValue];
-                [[TWMasterController sharedController] setDenominatorRatioForControl:_currentControl withValue:ratio atSourceIdx:sourceIdx];
-                [self updateOscView:sourceIdx];
-                break;
-            }
-        }
-    }
-    
-    [currentResponder resignFirstResponder];
-}
-
-
-- (void)keyboardCancelButtonTapped:(id)sender {
-    
-    UITextField* currentResponder = [[TWKeyboardAccessoryView sharedView] currentResponder];
-    
-    if (currentResponder == _rootFreqField) {
-        float frequency = [TWUtils logScaleFromLinear:_rootFreqSlider.value outMin:kCutoffFrequencyMin outMax:kCutoffFrequencyMax];
-        [_rootFreqField setText:[NSString stringWithFormat:@"%.2f", frequency]];
-    }
-    
-    else if (currentResponder == _rampTimeField) {
-        int rampTime_ms = (int)[_rampTimeSlider value];
-        [_rampTimeField setText:[NSString stringWithFormat:@"%d", rampTime_ms]];
-    }
-    
-    else if (currentResponder == _tempoField) {
-        float tempo = [_tempoSlider value];
-        [_tempoField setText:[NSString stringWithFormat:@"%.2f", tempo]];
-    }
-    
-    else {
-        for (UITextField* numTextField in _textFields[kNumerator]) {
-            if (numTextField == currentResponder) {
-                int sourceIdx = (int)(currentResponder.tag / 2.0f);
-                int ratio = [[TWMasterController sharedController] getNumeratorRatioForControl:_currentControl atSourceIdx:sourceIdx];
-                [currentResponder setText:[NSString stringWithFormat:@"%d", ratio]];
-                [self updateOscView:sourceIdx];
-                break;
-            }
-        }
-        for (UITextField* denTextField in _textFields[kDenominator]) {
-            if (denTextField == currentResponder) {
-                int sourceIdx = (int)(currentResponder.tag / 2.0f);
-                int ratio = [[TWMasterController sharedController] getDenominatorRatioForControl:_currentControl atSourceIdx:sourceIdx];
-                [currentResponder setText:[NSString stringWithFormat:@"%d", ratio]];
-                [self updateOscView:sourceIdx];
-                break;
-            }
-        }
-    }
-    
-    [currentResponder resignFirstResponder];
-}
-
-
-- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
-    [[TWKeyboardAccessoryView sharedView] setValueText:[textField text]];
-    NSString* titleText;
-    if (textField == _rootFreqField) {
-        titleText = @"Root Freq: ";
-    } else if (textField == _rampTimeField) {
-        titleText = @"Ramp Time: ";
-    } else if (textField == _tempoField) {
-        titleText = @"Tempo: ";
-    } else {
-        int tag = (int)textField.tag;
-        int oscID = (int)tag / 2.0f;
-        int denOrNum = tag % 2;
-        titleText = denOrNum ? [NSString stringWithFormat:@"Osc[%d]. Den: ", oscID+1] : [NSString stringWithFormat:@"Osc[%d]. Num: ", oscID+1];
-    }
-    [[TWKeyboardAccessoryView sharedView] setTitleText:titleText];
-    return YES;
-}
-
-- (void)textFieldDidBeginEditing:(UITextField *)textField {
-    [textField selectAll:nil];
-    [[TWKeyboardAccessoryView sharedView] setCurrentResponder:textField];
-}
-
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
-    [[TWKeyboardAccessoryView sharedView] setValueText:[[textField text] stringByReplacingCharactersInRange:range withString:string]];
-    return YES;
-}
-
-- (BOOL)textFieldShouldEndEditing:(UITextField *)textField {
-    return YES;
-}
-
-- (void)textFieldDidEndEditing:(UITextField *)textField {
-    [textField resignFirstResponder];
-}
-
-
-
-- (BOOL)textFieldShouldClear:(UITextField *)textField {
-    return YES;
-}
-
-- (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    return YES;
-}
-
-
 
 
 
@@ -747,12 +587,12 @@
 - (void)refreshControlUI {
     for (int idx=0; idx < kNumSources; idx++) {
         int numerator = [[TWMasterController sharedController] getNumeratorRatioForControl:_currentControl atSourceIdx:idx];
-        UITextField* numTextField = (UITextField*)_textFields[kNumerator][idx];
-        [numTextField setText:[NSString stringWithFormat:@"%d", numerator]];
+        UIButton* numTextField = (UIButton*)_textFields[kNumerator][idx];
+        [numTextField setTitle:[NSString stringWithFormat:@"%d", numerator] forState:UIControlStateNormal];
         
         int denominator = [[TWMasterController sharedController] getDenominatorRatioForControl:_currentControl atSourceIdx:idx];
-        UITextField* denTextField = (UITextField*)_textFields[kDenominator][idx];
-        [denTextField setText:[NSString stringWithFormat:@"%d", denominator]];
+        UIButton* denTextField = (UIButton*)_textFields[kDenominator][idx];
+        [denTextField setTitle:[NSString stringWithFormat:@"%d", denominator] forState:UIControlStateNormal];
     }
 }
 
@@ -776,14 +616,174 @@
     if (_tapTempoCount >= 3) {
         [[TWMasterController sharedController] setTempo:_movingAverageTempo];
         [_tempoSlider setValue:_movingAverageTempo animated:YES];
-        [_tempoField setText:[NSString stringWithFormat:@"%.2f", _movingAverageTempo]];
+        [_tempoField setTitle:[NSString stringWithFormat:@"%.2f", _movingAverageTempo] forState:UIControlStateNormal];
         [_oscView refreshParametersWithAnimation:YES];
     }
 }
 
 
 - (void)setRootFrequencySlider:(float)value {
-    [_rootFreqSlider setValue:[TWUtils linearScaleFromLog:value inMin:kCutoffFrequencyMin inMax:kCutoffFrequencyMax] animated:YES];
+    [_rootFreqSlider setValue:[TWUtils linearScaleFromLog:value inMin:kFrequencyMin inMax:kFrequencyMax] animated:YES];
+}
+
+
+#pragma mark - TWKeypadDelegate
+
+- (void)keypadDoneButtonTapped:(UIButton *)responder withValue:(NSString *)value {
+    
+    if (responder == _rootFreqField) {
+        float frequency = [value floatValue];
+        [[TWMasterController sharedController] setRootFrequency:frequency];
+        [_rootFreqField setTitle:[NSString stringWithFormat:@"%.2f", frequency] forState:UIControlStateNormal];
+        [self setRootFrequencySlider:frequency];
+    }
+    
+    else if (responder == _rampTimeField) {
+        int rampTime_ms = [value intValue];
+        [[TWMasterController sharedController] setRampTime_ms:rampTime_ms];
+        [_rampTimeField setTitle:[NSString stringWithFormat:@"%d", rampTime_ms] forState:UIControlStateNormal];
+        [_rampTimeSlider setValue:rampTime_ms animated:YES];
+    }
+    
+    else if (responder == _tempoField) {
+        float tempo = [value floatValue];
+        [[TWMasterController sharedController] setTempo:tempo];
+        [_tempoField setTitle:[NSString stringWithFormat:@"%.2f", tempo] forState:UIControlStateNormal];
+        [_tempoSlider setValue:tempo animated:YES];
+    }
+    
+    else {
+        for (UIButton* numField in _textFields[kNumerator]) {
+            if (responder == numField) {
+                int sourceIdx = (int)(numField.tag / 2.0f);
+                int ratio = [[[TWKeypad sharedKeypad] value] intValue];
+                [[TWMasterController sharedController] setNumeratorRatioForControl:_currentControl withValue:ratio atSourceIdx:sourceIdx];
+                [numField setTitle:[NSString stringWithFormat:@"%d", ratio] forState:UIControlStateNormal];
+                [self updateOscView:sourceIdx];
+                break;
+            }
+        }
+        for (UIButton* denField in _textFields[kDenominator]) {
+            if (responder == denField) {
+                int sourceIdx = (int)(denField.tag / 2.0f);
+                int ratio = [[[TWKeypad sharedKeypad] value] intValue];
+                [[TWMasterController sharedController] setDenominatorRatioForControl:_currentControl withValue:ratio atSourceIdx:sourceIdx];
+                [denField setTitle:[NSString stringWithFormat:@"%d", ratio] forState:UIControlStateNormal];
+                [self updateOscView:sourceIdx];
+                break;
+            }
+        }
+    }
+}
+
+- (void)keypadCancelButtonTapped:(UIButton *)responder {
+    
+    if (responder == _rootFreqField) {
+        float frequency = [[TWMasterController sharedController] rootFrequency];
+        [_rootFreqField setTitle:[NSString stringWithFormat:@"%.2f", frequency] forState:UIControlStateNormal];
+    }
+    
+    else if (responder == _rampTimeField) {
+        int rampTime_ms = [[TWMasterController sharedController] rampTime_ms];
+        [_rampTimeField setTitle:[NSString stringWithFormat:@"%d", rampTime_ms] forState:UIControlStateNormal];
+    }
+    
+    else if (responder == _tempoField) {
+        float tempo = [[TWMasterController sharedController] tempo];
+        [_tempoField setTitle:[NSString stringWithFormat:@"%.2f", tempo] forState:UIControlStateNormal];
+    }
+    
+    else {
+        for (UIButton* numField in _textFields[kNumerator]) {
+            if (responder == numField) {
+                int sourceIdx = (int)(responder.tag / 2.0f);
+                int ratio = [[TWMasterController sharedController] getNumeratorRatioForControl:_currentControl atSourceIdx:sourceIdx];
+                [numField setTitle:[NSString stringWithFormat:@"%d", ratio] forState:UIControlStateNormal];
+                [self updateOscView:sourceIdx];
+                break;
+            }
+        }
+        for (UIButton* denField in _textFields[kDenominator]) {
+            if (responder == denField) {
+                int sourceIdx = (int)(responder.tag / 2.0f);
+                int ratio = [[TWMasterController sharedController] getDenominatorRatioForControl:_currentControl atSourceIdx:sourceIdx];
+                [denField setTitle:[NSString stringWithFormat:@"%d", ratio] forState:UIControlStateNormal];
+                [self updateOscView:sourceIdx];
+                break;
+            }
+        }
+    }
+}
+
+
+
+- (void)rootFreqFieldTapped {
+    TWKeypad* keypad = [TWKeypad sharedKeypad];
+    [keypad setTitle:@"Root Frequency (Hz): "];
+    [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWMasterController sharedController] rootFrequency]]];
+    [keypad setCurrentResponder:_rootFreqField];
+}
+
+- (void)rampTimeFieldTapped {
+    TWKeypad* keypad = [TWKeypad sharedKeypad];
+    [keypad setTitle:@"Ramp Time (ms): "];
+    [keypad setValue:[NSString stringWithFormat:@"%d", [[TWMasterController sharedController] rampTime_ms]]];
+    [keypad setCurrentResponder:_rampTimeField];
+}
+
+- (void)tempoFieldTapped {
+    TWKeypad* keypad = [TWKeypad sharedKeypad];
+    [keypad setTitle:@"Tempo: "];
+    [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWMasterController sharedController] tempo]]];
+    [keypad setCurrentResponder:_tempoField];
+}
+
+- (void)ratioFieldTapped:(UIButton*)sender {
+    
+    TWKeypad* keypad = [TWKeypad sharedKeypad];
+    
+    int tag = (int)sender.tag;
+    int oscID = (int)tag / 2.0f;
+    int denOrNum = tag % 2;
+    
+    
+    NSString* titleText;
+    
+    switch (_currentControl) {
+            
+        case TWTimeRatioControl_BaseFrequency:
+            titleText = denOrNum ? [NSString stringWithFormat:@"Osc[%d] Den: ", oscID+1] : [NSString stringWithFormat:@"Osc[%d] Num: ", oscID+1];
+            break;
+            
+        case TWTimeRatioControl_BeatFrequency:
+            titleText = denOrNum ? [NSString stringWithFormat:@"Beat[%d] Den: ", oscID+1] : [NSString stringWithFormat:@"Beat[%d] Num: ", oscID+1];
+            break;
+            
+        case TWTimeRatioControl_TremFrequency:
+            titleText = denOrNum ? [NSString stringWithFormat:@"Tremolo[%d] Den: ", oscID+1] : [NSString stringWithFormat:@"Tremolo[%d] Num: ", oscID+1];
+            break;
+            
+        case TWTimeRatioControl_FilterLFOFrequency:
+            titleText = denOrNum ? [NSString stringWithFormat:@"Filter LFO[%d] Den: ", oscID+1] : [NSString stringWithFormat:@"Filter LFO[%d] Num: ", oscID+1];
+            break;
+            
+        default:
+            break;
+    }
+    
+    [keypad setTitle:titleText];
+    
+    
+    int value = 0;
+    if (denOrNum) {
+        value = [[TWMasterController sharedController] getDenominatorRatioForControl:_currentControl atSourceIdx:oscID];
+    } else {
+        value = [[TWMasterController sharedController] getNumeratorRatioForControl:_currentControl atSourceIdx:oscID];
+    }
+    
+    [keypad setValue:[NSString stringWithFormat:@"%d", value]];
+    
+    [keypad setCurrentResponder:sender];
 }
 
 @end

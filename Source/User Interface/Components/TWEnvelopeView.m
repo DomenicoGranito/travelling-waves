@@ -10,7 +10,7 @@
 #import "TWAudioController.h"
 #import "TWHeader.h"
 #import "TWKeyboardAccessoryView.h"
-
+#import "UIColor+Additions.h"
 
 @interface TWEnvelopeView() <UITextFieldDelegate, TWKeyboardAccessoryViewDelegate>
 {
@@ -89,13 +89,13 @@
     [_ampAttackTimeSlider setMinimumValue:1.0f];
     [_ampAttackTimeSlider setMaximumValue:500.0f];
     [_ampAttackTimeSlider addTarget:self action:@selector(ampAttackTimeSliderValueChanged) forControlEvents:UIControlEventValueChanged];
-    [_ampAttackTimeSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_ampAttackTimeSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.2f alpha:1.0f]];
-    [_ampAttackTimeSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_ampAttackTimeSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
+    [_ampAttackTimeSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
+    [_ampAttackTimeSlider setThumbTintColor:[UIColor sliderOnColor]];
     [self addSubview:_ampAttackTimeSlider];
     
     _ampAttackTimeTextField = [[UITextField alloc] init];
-    [_ampAttackTimeTextField setTextColor:[UIColor colorWithWhite:0.4f alpha:1.0f]];
+    [_ampAttackTimeTextField setTextColor:[UIColor valueTextDarkWhiteColor]];
     [_ampAttackTimeTextField setBackgroundColor:[UIColor colorWithWhite:0.1f alpha:1.0f]];
     [_ampAttackTimeTextField setFont:[UIFont systemFontOfSize:11.0f]];
     [_ampAttackTimeTextField setTextAlignment:NSTextAlignmentCenter];
@@ -118,13 +118,13 @@
     [_ampSustainTimeSlider setMinimumValue:1.0f];
     [_ampSustainTimeSlider setMaximumValue:2000.0f];
     [_ampSustainTimeSlider addTarget:self action:@selector(ampSustainTimeSliderValueChanged) forControlEvents:UIControlEventValueChanged];
-    [_ampSustainTimeSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_ampSustainTimeSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.2f alpha:1.0f]];
-    [_ampSustainTimeSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_ampSustainTimeSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
+    [_ampSustainTimeSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
+    [_ampSustainTimeSlider setThumbTintColor:[UIColor sliderOnColor]];
     [self addSubview:_ampSustainTimeSlider];
     
     _ampSustainTimeTextField = [[UITextField alloc] init];
-    [_ampSustainTimeTextField setTextColor:[UIColor colorWithWhite:0.4f alpha:1.0f]];
+    [_ampSustainTimeTextField setTextColor:[UIColor valueTextDarkWhiteColor]];
     [_ampSustainTimeTextField setBackgroundColor:[UIColor colorWithWhite:0.1f alpha:1.0f]];
     [_ampSustainTimeTextField setFont:[UIFont systemFontOfSize:11.0f]];
     [_ampSustainTimeTextField setTextAlignment:NSTextAlignmentCenter];
@@ -146,13 +146,13 @@
     [_ampReleaseTimeSlider setMinimumValue:1.0f];
     [_ampReleaseTimeSlider setMaximumValue:4000.0f];
     [_ampReleaseTimeSlider addTarget:self action:@selector(ampReleaseTimeSliderValueChanged) forControlEvents:UIControlEventValueChanged];
-    [_ampReleaseTimeSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_ampReleaseTimeSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.2f alpha:1.0f]];
-    [_ampReleaseTimeSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_ampReleaseTimeSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
+    [_ampReleaseTimeSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
+    [_ampReleaseTimeSlider setThumbTintColor:[UIColor sliderOnColor]];
     [self addSubview:_ampReleaseTimeSlider];
     
     _ampReleaseTimeTextField = [[UITextField alloc] init];
-    [_ampReleaseTimeTextField setTextColor:[UIColor colorWithWhite:0.4f alpha:1.0f]];
+    [_ampReleaseTimeTextField setTextColor:[UIColor valueTextDarkWhiteColor]];
     [_ampReleaseTimeTextField setBackgroundColor:[UIColor colorWithWhite:0.1f alpha:1.0f]];
     [_ampReleaseTimeTextField setFont:[UIFont systemFontOfSize:11.0f]];
     [_ampReleaseTimeTextField setTextAlignment:NSTextAlignmentCenter];
@@ -169,31 +169,31 @@
     // Filter Envelope
     
     _filterEnableSwitch = [[UISwitch alloc] initWithFrame:CGRectZero];
-    [_filterEnableSwitch setOnTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor-0.25f alpha:1.0f]];
-    [_filterEnableSwitch setTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_filterEnableSwitch setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_filterEnableSwitch setOnTintColor:[UIColor switchOnColor]];
+    [_filterEnableSwitch setTintColor:[UIColor sliderOnColor]];
+    [_filterEnableSwitch setThumbTintColor:[UIColor sliderOnColor]];
     [_filterEnableSwitch addTarget:self action:@selector(filterEnableSwitchChanged) forControlEvents:UIControlEventValueChanged];
     [self addSubview:_filterEnableSwitch];
     
     NSDictionary* attribute = [NSDictionary dictionaryWithObject:[UIFont systemFontOfSize:10.0f] forKey:NSFontAttributeName];
     _filterSelector = [[UISegmentedControl alloc] initWithItems:@[@"LPF", @"HPF", @"BPF1", @"BPF2", @"Ntch"]];
     [_filterSelector setTitleTextAttributes:attribute forState:UIControlStateNormal];
-    [_filterSelector setTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_filterSelector setBackgroundColor:[UIColor colorWithWhite:0.2f alpha:1.0f]];
+    [_filterSelector setTintColor:[UIColor sliderOnColor]];
+    [_filterSelector setBackgroundColor:[UIColor sliderOffColor]];
     [_filterSelector addTarget:self action:@selector(filterTypeChanged) forControlEvents:UIControlEventValueChanged];
     [self addSubview:_filterSelector];
     
     _resonanceSlider = [[UISlider alloc] init];
     [_resonanceSlider setMinimumValue:0.0f];
     [_resonanceSlider setMaximumValue:6.0f];
-    [_resonanceSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_resonanceSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.25f alpha:1.0f]];
-    [_resonanceSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_resonanceSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
+    [_resonanceSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
+    [_resonanceSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_resonanceSlider addTarget:self action:@selector(resonanceSliderChanged) forControlEvents:UIControlEventValueChanged];
     [self addSubview:_resonanceSlider];
     
     _resonanceField = [[UITextField alloc] init];
-    [_resonanceField setTextColor:[UIColor colorWithWhite:0.4f alpha:1.0f]];
+    [_resonanceField setTextColor:[UIColor valueTextDarkWhiteColor]];
     [_resonanceField setBackgroundColor:[UIColor colorWithWhite:0.1f alpha:1.0f]];
     [_resonanceField setFont:[UIFont systemFontOfSize:11.0f]];
     [_resonanceField setTextAlignment:NSTextAlignmentCenter];
@@ -208,13 +208,13 @@
     [_fromCutoffFreqSlider setMinimumValue:1.0f];
     [_fromCutoffFreqSlider setMaximumValue:600.0f];
     [_fromCutoffFreqSlider addTarget:self action:@selector(fromCuttoffSliderValueChanged) forControlEvents:UIControlEventValueChanged];
-    [_fromCutoffFreqSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_fromCutoffFreqSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.2f alpha:1.0f]];
-    [_fromCutoffFreqSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_fromCutoffFreqSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
+    [_fromCutoffFreqSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
+    [_fromCutoffFreqSlider setThumbTintColor:[UIColor sliderOnColor]];
     [self addSubview:_fromCutoffFreqSlider];
     
     _fromCutoffFreqField = [[UITextField alloc] init];
-    [_fromCutoffFreqField setTextColor:[UIColor colorWithWhite:0.4f alpha:1.0f]];
+    [_fromCutoffFreqField setTextColor:[UIColor valueTextDarkWhiteColor]];
     [_fromCutoffFreqField setBackgroundColor:[UIColor colorWithWhite:0.1f alpha:1.0f]];
     [_fromCutoffFreqField setFont:[UIFont systemFontOfSize:11.0f]];
     [_fromCutoffFreqField setTextAlignment:NSTextAlignmentCenter];
@@ -229,13 +229,13 @@
     [_toCutoffFreqSlider setMinimumValue:1.0f];
     [_toCutoffFreqSlider setMaximumValue:4000.0f];
     [_toCutoffFreqSlider addTarget:self action:@selector(toCuttoffSliderValueChanged) forControlEvents:UIControlEventValueChanged];
-    [_toCutoffFreqSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_toCutoffFreqSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.2f alpha:1.0f]];
-    [_toCutoffFreqSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_toCutoffFreqSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
+    [_toCutoffFreqSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
+    [_toCutoffFreqSlider setThumbTintColor:[UIColor sliderOnColor]];
     [self addSubview:_toCutoffFreqSlider];
     
     _toCutoffFreqField = [[UITextField alloc] init];
-    [_toCutoffFreqField setTextColor:[UIColor colorWithWhite:0.4f alpha:1.0f]];
+    [_toCutoffFreqField setTextColor:[UIColor valueTextDarkWhiteColor]];
     [_toCutoffFreqField setBackgroundColor:[UIColor colorWithWhite:0.1f alpha:1.0f]];
     [_toCutoffFreqField setFont:[UIFont systemFontOfSize:11.0f]];
     [_toCutoffFreqField setTextAlignment:NSTextAlignmentCenter];
@@ -257,13 +257,13 @@
     [_fltAttackTimeSlider setMinimumValue:1.0f];
     [_fltAttackTimeSlider setMaximumValue:500.0f];
     [_fltAttackTimeSlider addTarget:self action:@selector(fltAttackTimeSliderValueChanged) forControlEvents:UIControlEventValueChanged];
-    [_fltAttackTimeSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_fltAttackTimeSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.2f alpha:1.0f]];
-    [_fltAttackTimeSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_fltAttackTimeSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
+    [_fltAttackTimeSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
+    [_fltAttackTimeSlider setThumbTintColor:[UIColor sliderOnColor]];
     [self addSubview:_fltAttackTimeSlider];
     
     _fltAttackTimeTextField = [[UITextField alloc] init];
-    [_fltAttackTimeTextField setTextColor:[UIColor colorWithWhite:0.4f alpha:1.0f]];
+    [_fltAttackTimeTextField setTextColor:[UIColor valueTextDarkWhiteColor]];
     [_fltAttackTimeTextField setBackgroundColor:[UIColor colorWithWhite:0.1f alpha:1.0f]];
     [_fltAttackTimeTextField setFont:[UIFont systemFontOfSize:11.0f]];
     [_fltAttackTimeTextField setTextAlignment:NSTextAlignmentCenter];
@@ -286,13 +286,13 @@
     [_fltSustainTimeSlider setMinimumValue:1.0f];
     [_fltSustainTimeSlider setMaximumValue:2000.0f];
     [_fltSustainTimeSlider addTarget:self action:@selector(fltSustainTimeSliderValueChanged) forControlEvents:UIControlEventValueChanged];
-    [_fltSustainTimeSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_fltSustainTimeSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.2f alpha:1.0f]];
-    [_fltSustainTimeSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_fltSustainTimeSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
+    [_fltSustainTimeSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
+    [_fltSustainTimeSlider setThumbTintColor:[UIColor sliderOnColor]];
     [self addSubview:_fltSustainTimeSlider];
     
     _fltSustainTimeTextField = [[UITextField alloc] init];
-    [_fltSustainTimeTextField setTextColor:[UIColor colorWithWhite:0.4f alpha:1.0f]];
+    [_fltSustainTimeTextField setTextColor:[UIColor valueTextDarkWhiteColor]];
     [_fltSustainTimeTextField setBackgroundColor:[UIColor colorWithWhite:0.1f alpha:1.0f]];
     [_fltSustainTimeTextField setFont:[UIFont systemFontOfSize:11.0f]];
     [_fltSustainTimeTextField setTextAlignment:NSTextAlignmentCenter];
@@ -314,13 +314,13 @@
     [_fltReleaseTimeSlider setMinimumValue:1.0f];
     [_fltReleaseTimeSlider setMaximumValue:4000.0f];
     [_fltReleaseTimeSlider addTarget:self action:@selector(fltReleaseTimeSliderValueChanged) forControlEvents:UIControlEventValueChanged];
-    [_fltReleaseTimeSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_fltReleaseTimeSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.2f alpha:1.0f]];
-    [_fltReleaseTimeSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_fltReleaseTimeSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
+    [_fltReleaseTimeSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
+    [_fltReleaseTimeSlider setThumbTintColor:[UIColor sliderOnColor]];
     [self addSubview:_fltReleaseTimeSlider];
     
     _fltReleaseTimeTextField = [[UITextField alloc] init];
-    [_fltReleaseTimeTextField setTextColor:[UIColor colorWithWhite:0.4f alpha:1.0f]];
+    [_fltReleaseTimeTextField setTextColor:[UIColor valueTextDarkWhiteColor]];
     [_fltReleaseTimeTextField setBackgroundColor:[UIColor colorWithWhite:0.1f alpha:1.0f]];
     [_fltReleaseTimeTextField setFont:[UIFont systemFontOfSize:11.0f]];
     [_fltReleaseTimeTextField setTextAlignment:NSTextAlignmentCenter];

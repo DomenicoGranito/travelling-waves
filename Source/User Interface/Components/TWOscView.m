@@ -11,6 +11,7 @@
 #import "TWAudioController.h"
 #import "TWKeyboardAccessoryView.h"
 #import "TWUtils.h"
+#import "UIColor+Additions.h"
 
 
 @interface TWOscView() <UITextFieldDelegate, TWKeyboardAccessoryViewDelegate>
@@ -120,7 +121,7 @@
         [segments addObject:[NSString stringWithFormat:@"%d", i+1]];
     }
     _segmentedControl = [[UISegmentedControl alloc] initWithItems:segments];
-    [_segmentedControl setBackgroundColor:[UIColor colorWithWhite:0.2f alpha:1.0f]];
+    [_segmentedControl setBackgroundColor:[UIColor segmentedControlColor]];
     [_segmentedControl setSelectedSegmentIndex:0];
     [_segmentedControl setTintColor:[UIColor colorWithWhite:0.5f alpha:1.0f]];
     [_segmentedControl addTarget:self action:@selector(segmentValueChanged:) forControlEvents:UIControlEventValueChanged];
@@ -140,11 +141,11 @@
     [self addSubview:_bfLabel];
     
     _baseFreqSlider = [[UISlider alloc] init];
-    [_baseFreqSlider setMinimumValue:20.0f];
-    [_baseFreqSlider setMaximumValue:2000.0f];
-    [_baseFreqSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_baseFreqSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.25f alpha:1.0f]];
-    [_baseFreqSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_baseFreqSlider setMinimumValue:0.0f];
+    [_baseFreqSlider setMaximumValue:1.0f];
+    [_baseFreqSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
+    [_baseFreqSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
+    [_baseFreqSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_baseFreqSlider addTarget:self action:@selector(baseFreqSliderChanged) forControlEvents:UIControlEventValueChanged];
     [self addSubview:_baseFreqSlider];
     
@@ -156,9 +157,9 @@
     _beatFreqSlider = [[UISlider alloc] init];
     [_beatFreqSlider setMinimumValue:0.0f];
     [_beatFreqSlider setMaximumValue:32.0f];
-    [_beatFreqSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_beatFreqSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.25f alpha:1.0f]];
-    [_beatFreqSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_beatFreqSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
+    [_beatFreqSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
+    [_beatFreqSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_beatFreqSlider addTarget:self action:@selector(beatFreqSliderChanged) forControlEvents:UIControlEventValueChanged];
     [self addSubview:_beatFreqSlider];
     
@@ -176,9 +177,9 @@
     _mononessSlider = [[UISlider alloc] init];
     [_mononessSlider setMinimumValue:0.0f];
     [_mononessSlider setMaximumValue:1.0f];
-    [_mononessSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_mononessSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.25f alpha:1.0f]];
-    [_mononessSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_mononessSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
+    [_mononessSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
+    [_mononessSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_mononessSlider addTarget:self action:@selector(mononessSliderChanged) forControlEvents:UIControlEventValueChanged];
     [self addSubview:_mononessSlider];
     
@@ -190,8 +191,8 @@
     NSDictionary* attribute = [NSDictionary dictionaryWithObject:[UIFont systemFontOfSize:10.0f] forKey:NSFontAttributeName];
     _waveformSelector = [[UISegmentedControl alloc] initWithItems:@[@"Sine", @"Saw", @"Square", @"Noise"]];
     [_waveformSelector setTitleTextAttributes:attribute forState:UIControlStateNormal];
-    [_waveformSelector setTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_waveformSelector setBackgroundColor:[UIColor colorWithWhite:0.2f alpha:1.0f]];
+    [_waveformSelector setTintColor:[UIColor sliderOnColor]];
+    [_waveformSelector setBackgroundColor:[UIColor segmentedControlColor]];
     [_waveformSelector addTarget:self action:@selector(waveformChanged) forControlEvents:UIControlEventValueChanged];
     [self addSubview:_waveformSelector];
     
@@ -212,9 +213,9 @@
     _tremoloFreqSlider = [[UISlider alloc] init];
     [_tremoloFreqSlider setMinimumValue:0.0f];
     [_tremoloFreqSlider setMaximumValue:24.0f];
-    [_tremoloFreqSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_tremoloFreqSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.25f alpha:1.0f]];
-    [_tremoloFreqSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_tremoloFreqSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
+    [_tremoloFreqSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
+    [_tremoloFreqSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_tremoloFreqSlider addTarget:self action:@selector(tremFreqSliderChanged) forControlEvents:UIControlEventValueChanged];
     [self addSubview:_tremoloFreqSlider];
     
@@ -231,9 +232,9 @@
     _tremoloDepthSlider = [[UISlider alloc] init];
     [_tremoloDepthSlider setMinimumValue:0.0f];
     [_tremoloDepthSlider setMaximumValue:1.0f];
-    [_tremoloDepthSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_tremoloDepthSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.25f alpha:1.0f]];
-    [_tremoloDepthSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_tremoloDepthSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
+    [_tremoloDepthSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
+    [_tremoloDepthSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_tremoloDepthSlider addTarget:self action:@selector(tremDepthSliderChanged) forControlEvents:UIControlEventValueChanged];
     [self addSubview:_tremoloDepthSlider];
     
@@ -259,9 +260,9 @@
     _cutoffFreqSlider = [[UISlider alloc] init];
     [_cutoffFreqSlider setMinimumValue:0.0f];
     [_cutoffFreqSlider setMaximumValue:1.0f];
-    [_cutoffFreqSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_cutoffFreqSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.25f alpha:1.0f]];
-    [_cutoffFreqSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_cutoffFreqSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
+    [_cutoffFreqSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
+    [_cutoffFreqSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_cutoffFreqSlider addTarget:self action:@selector(cutoffFreqSliderChanged) forControlEvents:UIControlEventValueChanged];
     [self addSubview:_cutoffFreqSlider];
     
@@ -272,22 +273,22 @@
     
     _filterSelector = [[UISegmentedControl alloc] initWithItems:@[@"LPF", @"HPF", @"BPF1", @"BPF2", @"Ntch"]];
     [_filterSelector setTitleTextAttributes:attribute forState:UIControlStateNormal];
-    [_filterSelector setTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_filterSelector setBackgroundColor:[UIColor colorWithWhite:0.2f alpha:1.0f]];
+    [_filterSelector setTintColor:[UIColor sliderOnColor]];
+    [_filterSelector setBackgroundColor:[UIColor segmentedControlColor]];
     [_filterSelector addTarget:self action:@selector(filterTypeChanged) forControlEvents:UIControlEventValueChanged];
     [self addSubview:_filterSelector];
     
     _filterEnableSwitch = [[UISwitch alloc] initWithFrame:CGRectZero];
-    [_filterEnableSwitch setOnTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor-0.25f alpha:1.0f]];
-    [_filterEnableSwitch setTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_filterEnableSwitch setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_filterEnableSwitch setOnTintColor:[UIColor switchOnColor]];
+    [_filterEnableSwitch setTintColor:[UIColor sliderOnColor]];
+    [_filterEnableSwitch setThumbTintColor:[UIColor sliderOnColor]];
     [_filterEnableSwitch addTarget:self action:@selector(filterEnableSwitchChanged) forControlEvents:UIControlEventValueChanged];
     [self addSubview:_filterEnableSwitch];
     
     _lfoEnableSwitch = [[UISwitch alloc] initWithFrame:CGRectZero];
-    [_lfoEnableSwitch setOnTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor-0.25f alpha:1.0f]];
-    [_lfoEnableSwitch setTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_lfoEnableSwitch setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_lfoEnableSwitch setOnTintColor:[UIColor switchOnColor]];
+    [_lfoEnableSwitch setTintColor:[UIColor sliderOnColor]];
+    [_lfoEnableSwitch setThumbTintColor:[UIColor sliderOnColor]];
     [_lfoEnableSwitch addTarget:self action:@selector(lfoEnableSwitchChanged) forControlEvents:UIControlEventValueChanged];
     [self addSubview:_lfoEnableSwitch];
     
@@ -299,10 +300,10 @@
     
     _resonanceSlider = [[UISlider alloc] init];
     [_resonanceSlider setMinimumValue:0.0f];
-    [_resonanceSlider setMaximumValue:6.0f];
-    [_resonanceSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_resonanceSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.25f alpha:1.0f]];
-    [_resonanceSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_resonanceSlider setMaximumValue:1.0f];
+    [_resonanceSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
+    [_resonanceSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
+    [_resonanceSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_resonanceSlider addTarget:self action:@selector(resonanceSliderChanged) forControlEvents:UIControlEventValueChanged];
     [self addSubview:_resonanceSlider];
     
@@ -319,9 +320,9 @@
     _filterGainSlider = [[UISlider alloc] init];
     [_filterGainSlider setMinimumValue:1.0f];
     [_filterGainSlider setMaximumValue:5.0f];
-    [_filterGainSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_filterGainSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.25f alpha:1.0f]];
-    [_filterGainSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_filterGainSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
+    [_filterGainSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
+    [_filterGainSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_filterGainSlider addTarget:self action:@selector(filterGainSliderChanged) forControlEvents:UIControlEventValueChanged];
     [self addSubview:_filterGainSlider];
     
@@ -338,9 +339,9 @@
     _lfoFreqSlider = [[UISlider alloc] init];
     [_lfoFreqSlider setMinimumValue:0.0f];
     [_lfoFreqSlider setMaximumValue:24.0f];
-    [_lfoFreqSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_lfoFreqSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.25f alpha:1.0f]];
-    [_lfoFreqSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_lfoFreqSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
+    [_lfoFreqSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
+    [_lfoFreqSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_lfoFreqSlider addTarget:self action:@selector(lfoFreqSliderChanged) forControlEvents:UIControlEventValueChanged];
     [self addSubview:_lfoFreqSlider];
     
@@ -357,9 +358,9 @@
     _lfoRangeSlider = [[UISlider alloc] init];
     [_lfoRangeSlider setMinimumValue:0.0f];
     [_lfoRangeSlider setMaximumValue:1.0f];
-    [_lfoRangeSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_lfoRangeSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.25f alpha:1.0f]];
-    [_lfoRangeSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_lfoRangeSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
+    [_lfoRangeSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
+    [_lfoRangeSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_lfoRangeSlider addTarget:self action:@selector(lfoRangeSliderChanged) forControlEvents:UIControlEventValueChanged];
     [self addSubview:_lfoRangeSlider];
     
@@ -376,9 +377,9 @@
     _lfoOffsetSlider = [[UISlider alloc] init];
     [_lfoOffsetSlider setMinimumValue:0.0f];
     [_lfoOffsetSlider setMaximumValue:2.0f * M_PI];
-    [_lfoOffsetSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_lfoOffsetSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.25f alpha:1.0f]];
-    [_lfoOffsetSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_lfoOffsetSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
+    [_lfoOffsetSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
+    [_lfoOffsetSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_lfoOffsetSlider addTarget:self action:@selector(lfoOffsetSliderChanged) forControlEvents:UIControlEventValueChanged];
     [self addSubview:_lfoOffsetSlider];
     
@@ -399,9 +400,9 @@
     _rampTimeSlider = [[UISlider alloc] init];
     [_rampTimeSlider setMinimumValue:0.0f];
     [_rampTimeSlider setMaximumValue:8000.0f];
-    [_rampTimeSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_rampTimeSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.25f alpha:1.0f]];
-    [_rampTimeSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_rampTimeSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
+    [_rampTimeSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
+    [_rampTimeSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_rampTimeSlider addTarget:self action:@selector(rampTimeSliderChanged) forControlEvents:UIControlEventValueChanged];
     [self addSubview:_rampTimeSlider];
     
@@ -428,9 +429,9 @@
     _fmAmountSlider = [[UISlider alloc] init];
     [_fmAmountSlider setMinimumValue:0.0f];
     [_fmAmountSlider setMaximumValue:1.0f];
-    [_fmAmountSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_fmAmountSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.25f alpha:1.0f]];
-    [_fmAmountSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_fmAmountSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
+    [_fmAmountSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
+    [_fmAmountSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_fmAmountSlider addTarget:self action:@selector(fmAmountSliderChanged) forControlEvents:UIControlEventValueChanged];
     [self addSubview:_fmAmountSlider];
     
@@ -448,9 +449,9 @@
     _fmFreqSlider = [[UISlider alloc] init];
     [_fmFreqSlider setMinimumValue:0.001f];
     [_fmFreqSlider setMaximumValue:200.0f];
-    [_fmFreqSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_fmFreqSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.25f alpha:1.0f]];
-    [_fmFreqSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_fmFreqSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
+    [_fmFreqSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
+    [_fmFreqSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_fmFreqSlider addTarget:self action:@selector(fmFreqSliderChanged) forControlEvents:UIControlEventValueChanged];
     [self addSubview:_fmFreqSlider];
     
@@ -701,7 +702,7 @@
 #pragma mark - UISliders
 
 - (void)baseFreqSliderChanged {
-    float value = [TWUtils logScaleFromLinear:_baseFreqSlider.value outMin:kCutoffFrequencyMin outMax:kCutoffFrequencyMax];
+    float value = [TWUtils logScaleFromLinear:_baseFreqSlider.value outMin:kFrequencyMin outMax:kFrequencyMax];
     [[TWAudioController sharedController] setOscParameter:kOscParam_OscBaseFrequency withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
     [_baseFreqField setText:[NSString stringWithFormat:@"%.2f", value]];
 }
@@ -747,7 +748,7 @@
 }
 
 - (void)cutoffFreqSliderChanged {
-    float frequency = [TWUtils logScaleFromLinear:_cutoffFreqSlider.value outMin:kCutoffFrequencyMin outMax:kCutoffFrequencyMax];
+    float frequency = [TWUtils logScaleFromLinear:_cutoffFreqSlider.value outMin:kFrequencyMin outMax:kFrequencyMax];
     [[TWAudioController sharedController] setOscParameter:kOscParam_FilterCutoff withValue:frequency atSourceIdx:_oscID inTime:_rampTimeSlider.value];
     [_cutoffFreqField setText:[NSString stringWithFormat:@"%.2f", frequency]];
 }
@@ -757,7 +758,7 @@
 }
 
 - (void)resonanceSliderChanged {
-    float value = _resonanceSlider.value;
+    float value = [TWUtils logScaleFromLinear:_resonanceSlider.value outMin:kResonanceMin outMax:kResonanceMax];
     [[TWAudioController sharedController] setOscParameter:kOscParam_FilterQ withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
     [_resonanceField setText:[NSString stringWithFormat:@"%.2f", value]];
 }
@@ -775,7 +776,7 @@
 }
 
 - (void)lfoRangeSliderChanged {
-    float value = [TWUtils logScaleFromLinear:_lfoRangeSlider.value outMin:kCutoffFrequencyMin outMax:kCutoffFrequencyMax];
+    float value = [TWUtils logScaleFromLinear:_lfoRangeSlider.value outMin:kFrequencyMin outMax:kFrequencyMax];
     [[TWAudioController sharedController] setOscParameter:kOscParam_LFORange withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
     [_lfoRangeField setText:[NSString stringWithFormat:@"%.1f", value]];
 }
@@ -851,8 +852,11 @@
     
     else if (currentResponder == _resonanceField) {
         float value = [[_resonanceField text] floatValue];
+        if (value <= kResonanceMin) {
+            value = kResonanceMin;
+        }
         [[TWAudioController sharedController] setOscParameter:kOscParam_FilterQ withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
-        [_resonanceSlider setValue:value animated:YES];
+        [self setResonanceSlider:value];
     }
     
     else if (currentResponder == _filterGainField) {
@@ -907,7 +911,7 @@
     UITextField* currentResponder = [[TWKeyboardAccessoryView sharedView] currentResponder];
     
     if (currentResponder == _baseFreqField) {
-        float frequency = [TWUtils logScaleFromLinear:_baseFreqSlider.value outMin:kCutoffFrequencyMin outMax:kCutoffFrequencyMax];
+        float frequency = [TWUtils logScaleFromLinear:_baseFreqSlider.value outMin:kFrequencyMin outMax:kFrequencyMax];
         [_baseFreqField setText:[NSString stringWithFormat:@"%.2f", frequency]];
     }
 
@@ -957,7 +961,7 @@
     }
 
     else if (currentResponder == _lfoRangeField) {
-        float range = [TWUtils logScaleFromLinear:_lfoRangeSlider.value outMin:kCutoffFrequencyMin outMax:kCutoffFrequencyMax];
+        float range = [TWUtils logScaleFromLinear:_lfoRangeSlider.value outMin:kFrequencyMin outMax:kFrequencyMax];
         [_lfoRangeField setText:[NSString stringWithFormat:@"%.2f", range]];
     }
 
@@ -1098,7 +1102,7 @@
     [_filterGainField setText:[NSString stringWithFormat:@"%.2f", gain]];
     
     float res = [[TWAudioController sharedController] getOscParameter:kOscParam_FilterQ atSourceIdx:_oscID];
-    [_resonanceSlider setValue:res animated:YES];
+    [self setResonanceSlider:res];
     [_resonanceField setText:[NSString stringWithFormat:@"%.2f", res]];
     
     float range = [[TWAudioController sharedController] getOscParameter:kOscParam_LFORange atSourceIdx:_oscID];
@@ -1150,15 +1154,19 @@
 #pragma mark - Parameter Scaling
 
 - (void)setOscBaseFrequencySlider:(float)value {
-    [_baseFreqSlider setValue:[TWUtils linearScaleFromLog:value inMin:kCutoffFrequencyMin inMax:kCutoffFrequencyMax] animated:YES];
+    [_baseFreqSlider setValue:[TWUtils linearScaleFromLog:value inMin:kFrequencyMin inMax:kFrequencyMax] animated:YES];
 }
 
 - (void)setCutoffFrequencySlider:(float)value {
-    [_cutoffFreqSlider setValue:[TWUtils linearScaleFromLog:value inMin:kCutoffFrequencyMin inMax:kCutoffFrequencyMax] animated:YES];
+    [_cutoffFreqSlider setValue:[TWUtils linearScaleFromLog:value inMin:kFrequencyMin inMax:kFrequencyMax] animated:YES];
+}
+
+- (void)setResonanceSlider:(float)value {
+    [_resonanceSlider setValue:[TWUtils linearScaleFromLog:value inMin:kResonanceMin inMax:kResonanceMax] animated:YES];
 }
 
 - (void)setFilterLFORangeSlider:(float)value {
-    [_lfoRangeSlider setValue:[TWUtils linearScaleFromLog:value inMin:kCutoffFrequencyMin inMax:kCutoffFrequencyMax] animated:YES];
+    [_lfoRangeSlider setValue:[TWUtils linearScaleFromLog:value inMin:kFrequencyMin inMax:kFrequencyMax] animated:YES];
 }
     
 @end

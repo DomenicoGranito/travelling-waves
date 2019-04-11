@@ -36,6 +36,11 @@ void TWLevelMeter::prepare(float sampleRate)
 
 void TWLevelMeter::process(float sample)
 {
+    if (isnan(sample)) {
+        printf("\nNaNs!!\n");
+        return;
+    }
+    
     _buffer[_sampleCount] = sample;
     
     uint32_t sampleCount = (_sampleCount + 1);

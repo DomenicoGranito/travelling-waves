@@ -14,7 +14,5 @@
 - (void)willEnterForeground;
 - (void)willEnterBackground;
 
-- (void)updateIOButtonState:(BOOL)isRunning;
-
 @end
 

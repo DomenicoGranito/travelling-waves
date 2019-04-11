@@ -18,6 +18,9 @@
 		FC0D2E712254945A00A68D58 /* TWDrumPad.m in Sources */ = {isa = PBXBuildFile; fileRef = FC0D2E652254945A00A68D58 /* TWDrumPad.m */; };
 		FC0D2E722254945A00A68D58 /* TWMixerView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC0D2E662254945A00A68D58 /* TWMixerView.m */; };
 		FC0D2E732254945A00A68D58 /* TWForceButton.m in Sources */ = {isa = PBXBuildFile; fileRef = FC0D2E672254945A00A68D58 /* TWForceButton.m */; };
+		FC1B308B225F06E7003ED2E7 /* TWSynthView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC1B308A225F06E7003ED2E7 /* TWSynthView.m */; };
+		FC1B308E225F0832003ED2E7 /* TWKeypad.m in Sources */ = {isa = PBXBuildFile; fileRef = FC1B308D225F0832003ED2E7 /* TWKeypad.m */; };
+		FC1B3092225F3270003ED2E7 /* UIColor+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = FC1B3091225F3270003ED2E7 /* UIColor+Additions.m */; };
 		FC356C4C2223D0F500B93F5C /* TWBinauralBiquad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C402223D0F500B93F5C /* TWBinauralBiquad.cpp */; };
 		FC356C4D2223D0F500B93F5C /* TWBiquad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C412223D0F500B93F5C /* TWBiquad.cpp */; };
 		FC356C4E2223D0F500B93F5C /* TWOscillator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C422223D0F500B93F5C /* TWOscillator.cpp */; };
@@ -104,6 +107,12 @@
 		FC0D2E652254945A00A68D58 /* TWDrumPad.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWDrumPad.m; sourceTree = "<group>"; };
 		FC0D2E662254945A00A68D58 /* TWMixerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWMixerView.m; sourceTree = "<group>"; };
 		FC0D2E672254945A00A68D58 /* TWForceButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWForceButton.m; sourceTree = "<group>"; };
+		FC1B3089225F06E7003ED2E7 /* TWSynthView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TWSynthView.h; sourceTree = "<group>"; };
+		FC1B308A225F06E7003ED2E7 /* TWSynthView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TWSynthView.m; sourceTree = "<group>"; };
+		FC1B308C225F0832003ED2E7 /* TWKeypad.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TWKeypad.h; sourceTree = "<group>"; };
+		FC1B308D225F0832003ED2E7 /* TWKeypad.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TWKeypad.m; sourceTree = "<group>"; };
+		FC1B3090225F3270003ED2E7 /* UIColor+Additions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIColor+Additions.h"; sourceTree = "<group>"; };
+		FC1B3091225F3270003ED2E7 /* UIColor+Additions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Additions.m"; sourceTree = "<group>"; };
 		FC356C402223D0F500B93F5C /* TWBinauralBiquad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TWBinauralBiquad.cpp; sourceTree = "<group>"; };
 		FC356C412223D0F500B93F5C /* TWBiquad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TWBiquad.cpp; sourceTree = "<group>"; };
 		FC356C422223D0F500B93F5C /* TWOscillator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TWOscillator.cpp; sourceTree = "<group>"; };
@@ -243,8 +252,28 @@
 				FC0D2E5D2254945A00A68D58 /* TWFrequencyRatioControlView.m */,
 				FC0D2E542254945A00A68D58 /* TWSeqNoteButton.m */,
 				FC0D2E612254945A00A68D58 /* TWSeqNoteButton.h */,
+				FC1B308C225F0832003ED2E7 /* TWKeypad.h */,
+				FC1B308D225F0832003ED2E7 /* TWKeypad.m */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		FC1B3088225F06D7003ED2E7 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				FC1B3089225F06E7003ED2E7 /* TWSynthView.h */,
+				FC1B308A225F06E7003ED2E7 /* TWSynthView.m */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		FC1B308F225F3253003ED2E7 /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				FC1B3090225F3270003ED2E7 /* UIColor+Additions.h */,
+				FC1B3091225F3270003ED2E7 /* UIColor+Additions.m */,
+			);
+			path = Categories;
 			sourceTree = "<group>";
 		};
 		FC356C3F2223D0F500B93F5C /* Oscillator */ = {
@@ -405,6 +434,8 @@
 		FCBDC35D2184720A00E7695C /* User Interface */ = {
 			isa = PBXGroup;
 			children = (
+				FC1B308F225F3253003ED2E7 /* Categories */,
+				FC1B3088225F06D7003ED2E7 /* Views */,
 				FC0D2E4F2254945A00A68D58 /* Components */,
 				FC356C762223D8C400B93F5C /* ViewControllers */,
 				FCBDC35F2184720A00E7695C /* TWViewController.h */,
@@ -611,6 +642,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC1B308B225F06E7003ED2E7 /* TWSynthView.m in Sources */,
 				FC356C4D2223D0F500B93F5C /* TWBiquad.cpp in Sources */,
 				FC356C902223D8C400B93F5C /* TWLoadProjectViewController.m in Sources */,
 				FC0D2E6E2254945A00A68D58 /* TWKeyboardAccessoryView.m in Sources */,
@@ -636,6 +668,7 @@
 				FC356C722223D80200B93F5C /* TWUtils.m in Sources */,
 				FC0D2E732254945A00A68D58 /* TWForceButton.m in Sources */,
 				FC356C4E2223D0F500B93F5C /* TWOscillator.cpp in Sources */,
+				FC1B3092225F3270003ED2E7 /* UIColor+Additions.m in Sources */,
 				FC356C672223D10400B93F5C /* TWLevelMeter.cpp in Sources */,
 				FC356C662223D10400B93F5C /* TWAudioEngine.cpp in Sources */,
 				FC0D2E702254945A00A68D58 /* TWLevelMeterView.m in Sources */,
@@ -647,6 +680,7 @@
 				FC356C692223D10400B93F5C /* TWEnvelope.cpp in Sources */,
 				FC0D2E722254945A00A68D58 /* TWMixerView.m in Sources */,
 				FC0D2E6F2254945A00A68D58 /* TWEnvelopeView.m in Sources */,
+				FC1B308E225F0832003ED2E7 /* TWKeypad.m in Sources */,
 				FC356C6A2223D10400B93F5C /* TWParameter.cpp in Sources */,
 				FCBDC364218532D400E7695C /* TWAudioController.mm in Sources */,
 			);

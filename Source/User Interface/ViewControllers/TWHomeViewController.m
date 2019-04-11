@@ -7,19 +7,24 @@
 //
 
 #import "TWHomeViewController.h"
+
+#import "TWSynthView.h"
+
 #import "TWOscView.h"
 #import "TWMixerView.h"
 #import "TWFrequencyRatioControlView.h"
 #import "TWMasterController.h"
 #import "TWAudioController.h"
 #import "TWHeader.h"
+
 #import "TWLoadProjectViewController.h"
 #import "TWFrequencyChartViewController.h"
 #import "TWSequencerViewController.h"
 #import "TWDrumPadViewController.h"
-#import "TWKeyboardAccessoryView.h"
 #import "TWLevelMeterView.h"
 
+#import "TWKeypad.h"
+#import "UIColor+Additions.h"
 
 
 @interface TWHomeScrollView : UIScrollView
@@ -44,7 +49,7 @@
 
 
 
-@interface TWHomeViewController () <UITextFieldDelegate, TWKeyboardAccessoryViewDelegate>
+@interface TWHomeViewController () <TWKeypadDelegate>
 {
     UIButton*                       _ioButton;
     UIButton*                       _viewSequencerButton;
@@ -64,9 +69,9 @@
     UIButton*                       _loadProjectButton;
     
     UISlider*                       _masterLeftSlider;
-    UITextField*                    _masterLeftField;
+    UIButton*                       _masterLeftField;
     UISlider*                       _masterRightSlider;
-    UITextField*                    _masterRightField;
+    UIButton*                       _masterRightField;
     
     NSTimer*                        _levelMeterTimer;
     TWLevelMeterView*               _leftLevelMeterView;
@@ -173,49 +178,37 @@
     
     
     // Master Gain
-
     
-    TWKeyboardAccessoryView* sharedView = [TWKeyboardAccessoryView sharedView];
-    [sharedView addToDelegates:self];
-    
-    _masterLeftField = [[UITextField alloc] init];
-    [_masterLeftField setTextColor:[UIColor colorWithWhite:0.4f alpha:1.0f]];
-    [_masterLeftField setFont:[UIFont systemFontOfSize:11.0f]];
-    [_masterLeftField setTextAlignment:NSTextAlignmentCenter];
-    [_masterLeftField setKeyboardType:UIKeyboardTypeDecimalPad];
-    [_masterLeftField setKeyboardAppearance:UIKeyboardAppearanceDark];
-    [_masterLeftField setInputAccessoryView:sharedView];
+    _masterLeftField = [[UIButton alloc] init];
+    [_masterLeftField setTitleColor:[UIColor valueTextDarkWhiteColor] forState:UIControlStateNormal];
+    [_masterLeftField.titleLabel setFont:[UIFont systemFontOfSize:11.0f]];
     [_masterLeftField setBackgroundColor:[UIColor clearColor]];
-    [_masterLeftField setDelegate:self];
+    [_masterLeftField addTarget:self action:@selector(masterLeftFieldTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_masterLeftField];
     
     _masterLeftSlider = [[UISlider alloc] init];
     [_masterLeftSlider setMinimumValue:0.0f];
     [_masterLeftSlider setMaximumValue:1.0f];
     [_masterLeftSlider addTarget:self action:@selector(masterLeftSliderValueChanged:) forControlEvents:UIControlEventValueChanged];
-    [_masterLeftSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_masterLeftSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.2f alpha:1.0f]];
-    [_masterLeftSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_masterLeftSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
+    [_masterLeftSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
+    [_masterLeftSlider setThumbTintColor:[UIColor sliderOnColor]];
     [self.view addSubview:_masterLeftSlider];
     
     _masterRightSlider = [[UISlider alloc] init];
     [_masterRightSlider setMinimumValue:0.0f];
     [_masterRightSlider setMaximumValue:1.0f];
     [_masterRightSlider addTarget:self action:@selector(masterRightSliderValueChanged:) forControlEvents:UIControlEventValueChanged];
-    [_masterRightSlider setMinimumTrackTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_masterRightSlider setMaximumTrackTintColor:[UIColor colorWithWhite:0.2f alpha:1.0f]];
-    [_masterRightSlider setThumbTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
+    [_masterRightSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
+    [_masterRightSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
+    [_masterRightSlider setThumbTintColor:[UIColor sliderOnColor]];
     [self.view addSubview:_masterRightSlider];
     
-    _masterRightField = [[UITextField alloc] init];
-    [_masterRightField setTextColor:[UIColor colorWithWhite:0.4f alpha:1.0f]];
-    [_masterRightField setFont:[UIFont systemFontOfSize:11.0f]];
-    [_masterRightField setTextAlignment:NSTextAlignmentCenter];
-    [_masterRightField setKeyboardType:UIKeyboardTypeDecimalPad];
-    [_masterRightField setKeyboardAppearance:UIKeyboardAppearanceDark];
-    [_masterRightField setInputAccessoryView:sharedView];
+    _masterRightField = [[UIButton alloc] init];
+    [_masterRightField setTitleColor:[UIColor valueTextDarkWhiteColor] forState:UIControlStateNormal];
+    [_masterRightField.titleLabel setFont:[UIFont systemFontOfSize:11.0f]];
     [_masterRightField setBackgroundColor:[UIColor clearColor]];
-    [_masterRightField setDelegate:self];
+    [_masterRightField addTarget:self action:@selector(masterRightFieldTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_masterRightField];
     
     
@@ -229,6 +222,9 @@
     [self.view addSubview:_rightLevelMeterView];
     
     [self startLevelMeterTimer];
+    
+    [[TWKeypad sharedKeypad] addToDelegates:self];
+    [self.view addSubview:[TWKeypad sharedKeypad]];
     
     
     [self.view setBackgroundColor:[UIColor colorWithWhite:0.12f alpha:1.0f]];
@@ -327,7 +323,11 @@
     [_rightLevelMeterView setFrame:_masterRightSlider.frame];
     
     
-    [[TWKeyboardAccessoryView sharedView] updateLayout];
+    CGFloat keypadHeight = 3.5f * componentHeight;
+    CGRect keypadHideFrame = CGRectMake(0.0f, screenHeight, screenWidth, keypadHeight);
+    [[TWKeypad sharedKeypad] setFrame:keypadHideFrame];
+    [[TWKeypad sharedKeypad] setHideFrame:keypadHideFrame];
+    [[TWKeypad sharedKeypad] setShowFrame:CGRectMake(keypadHideFrame.origin.x, keypadHideFrame.origin.y - keypadHeight, keypadHideFrame.size.width, keypadHideFrame.size.height)];
 }
 
 
@@ -344,10 +344,11 @@
     
     CGFloat masterLeftGain = [[TWAudioController sharedController] getMasterGainOnChannel:kLeftChannel];
     [_masterLeftSlider setValue:masterLeftGain animated:animated];
-    [_masterLeftField setText:[NSString stringWithFormat:@"%.2f", masterLeftGain]];
+    [_masterLeftField setTitle:[NSString stringWithFormat:@"%.2f", masterLeftGain] forState:UIControlStateNormal];
+
     CGFloat masterRightGain = [[TWAudioController sharedController] getMasterGainOnChannel:kRightChannel];
     [_masterRightSlider setValue:masterRightGain animated:animated];
-    [_masterRightField setText:[NSString stringWithFormat:@"%.2f", masterRightGain]];
+    [_masterRightField setTitle:[NSString stringWithFormat:@"%.2f", masterRightGain] forState:UIControlStateNormal];
 }
 
 
@@ -390,13 +391,13 @@
 - (void)masterLeftSliderValueChanged:(UISlider*)sender {
     float gain = sender.value;
     [[TWAudioController sharedController] setMasterGain:gain onChannel:kLeftChannel inTime:kDefaultRampTime_ms];
-    [_masterLeftField setText:[NSString stringWithFormat:@"%.2f", gain]];
+    [_masterLeftField setTitle:[NSString stringWithFormat:@"%.2f", gain] forState:UIControlStateNormal];
 }
 
 - (void)masterRightSliderValueChanged:(UISlider*)sender {
     float gain = sender.value;
     [[TWAudioController sharedController] setMasterGain:gain onChannel:kRightChannel inTime:kDefaultRampTime_ms];
-    [_masterRightField setText:[NSString stringWithFormat:@"%.2f", gain]];
+    [_masterRightField setTitle:[NSString stringWithFormat:@"%.2f", gain] forState:UIControlStateNormal];
 }
 
 
@@ -429,6 +430,7 @@
     TWDrumPadViewController* vc = [[TWDrumPadViewController alloc] init];
     [self.navigationController pushViewController:vc animated:YES];
 }
+
 
 
 
@@ -545,83 +547,7 @@
 
 
 
-
-#pragma - UITextFieldDelegate
-
-- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
-    [[TWKeyboardAccessoryView sharedView] setValueText:[textField text]];
-    if (textField == _masterLeftField) {
-        [[TWKeyboardAccessoryView sharedView] setTitleText:@"Left Master: "];
-    } else if (textField == _masterRightField) {
-        [[TWKeyboardAccessoryView sharedView] setTitleText:@"Right Master: "];
-    }
-    return  YES;
-}
-
-- (void)textFieldDidBeginEditing:(UITextField *)textField {
-    [textField selectAll:textField];
-    [[TWKeyboardAccessoryView sharedView] setCurrentResponder:textField];
-}
-
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
-    [[TWKeyboardAccessoryView sharedView] setValueText:[[textField text] stringByReplacingCharactersInRange:range withString:string]];
-    return YES;
-}
-
-- (BOOL)textFieldShouldEndEditing:(UITextField *)textField {
-    return YES;
-}
-
-- (void)textFieldDidEndEditing:(UITextField *)textField {
-    [textField resignFirstResponder];
-}
-
-- (BOOL)textFieldShouldClear:(UITextField *)textField {
-    return YES;
-}
-
-- (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    return YES;
-}
-
-
-- (void)keyboardDoneButtonTapped:(id)sender {
-    
-    UITextField* currentResponder = [[TWKeyboardAccessoryView sharedView] currentResponder];
-    
-    if (currentResponder == _masterLeftField) {
-        float gain = [[_masterLeftField text] floatValue];
-        [[TWAudioController sharedController] setMasterGain:gain onChannel:kLeftChannel inTime:kDefaultRampTime_ms];
-        [_masterLeftSlider setValue:gain animated:YES];
-    }
-    
-    else if (currentResponder == _masterRightField) {
-        float gain = [[_masterRightField text] floatValue];
-        [[TWAudioController sharedController] setMasterGain:gain onChannel:kRightChannel inTime:kDefaultRampTime_ms];
-        [_masterRightSlider setValue:gain animated:YES];
-    }
-    
-    [currentResponder resignFirstResponder];
-}
-
-- (void)keyboardCancelButtonTapped:(id)sender {
-    
-    UITextField* currentResponder = [[TWKeyboardAccessoryView sharedView] currentResponder];
-    
-    if (currentResponder == _masterLeftField) {
-        float gain = [_masterLeftSlider value];
-        [_masterLeftField setText:[NSString stringWithFormat:@"%.2f", gain]];
-    }
-    
-    else if (currentResponder == _masterRightField) {
-        float gain = [_masterRightSlider value];
-        [_masterRightField setText:[NSString stringWithFormat:@"%.2f", gain]];
-    }
-    
-    [currentResponder resignFirstResponder];
-}
-
-
+#pragma mark - Level Meters
 
 - (void)updateLevelMeter {
     float leftLevel = [[TWAudioController sharedController] getRMSLevelAtChannel:kLeftChannel];
@@ -629,6 +555,7 @@
     [_leftLevelMeterView setLevel:leftLevel];
     [_rightLevelMeterView setLevel:rightLevel];
 }
+
 
 - (void)startLevelMeterTimer {
     if (!_levelMeterTimer) {
@@ -646,5 +573,59 @@
     }
     _levelMeterTimer = nil;
 }
+
+
+
+
+#pragma mark - TWKeypad
+
+- (void)keypadDoneButtonTapped:(UIButton *)responder withValue:(NSString *)value {
+    
+    if (responder == _masterLeftField) {
+        float gain = [value floatValue];
+        [[TWAudioController sharedController] setMasterGain:gain onChannel:kLeftChannel inTime:kDefaultRampTime_ms];
+        [_masterLeftField setTitle:[NSString stringWithFormat:@"%.2f", gain] forState:UIControlStateNormal];
+        [_masterLeftSlider setValue:gain animated:YES];
+    }
+    
+    else if (responder == _masterRightField) {
+        float gain = [value floatValue];
+        [[TWAudioController sharedController] setMasterGain:gain onChannel:kRightChannel inTime:kDefaultRampTime_ms];
+        [_masterRightField setTitle:[NSString stringWithFormat:@"%.2f", gain] forState:UIControlStateNormal];
+        [_masterRightSlider setValue:gain animated:YES];
+    }
+}
+
+
+- (void)keypadCancelButtonTapped:(UIButton*)responder {
+    
+    if (responder == _masterLeftField) {
+        float gain = [[TWAudioController sharedController] getMasterGainOnChannel:kLeftChannel];
+        [_masterLeftField setTitle:[NSString stringWithFormat:@"%.2f", gain] forState:UIControlStateNormal];
+    }
+    
+    else if (responder == _masterRightField) {
+        float gain = [[TWAudioController sharedController] getMasterGainOnChannel:kRightChannel];
+        [_masterRightField setTitle:[NSString stringWithFormat:@"%.2f", gain] forState:UIControlStateNormal];
+    }
+}
+
+
+#pragma mark - Button Keypad Fields
+
+- (void)masterLeftFieldTapped {
+    TWKeypad* keypad = [TWKeypad sharedKeypad];
+    [keypad setTitle:@"Left Master: "];
+    [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWAudioController sharedController] getMasterGainOnChannel:kLeftChannel]]];
+    [keypad setCurrentResponder:_masterLeftField];
+}
+
+- (void)masterRightFieldTapped {
+    TWKeypad* keypad = [TWKeypad sharedKeypad];
+    [keypad setTitle:@"Right Master: "];
+    [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWAudioController sharedController] getMasterGainOnChannel:kRightChannel]]];
+    [keypad setCurrentResponder:_masterRightField];
+}
+
 
 @end

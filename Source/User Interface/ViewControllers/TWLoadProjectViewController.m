@@ -9,7 +9,7 @@
 #import "TWLoadProjectViewController.h"
 #import "TWHeader.h"
 #import "TWMasterController.h"
-
+#import "UIColor+Additions.h"
 
 typedef enum : NSUInteger {
     LocalLibrary    = 0,
@@ -53,8 +53,8 @@ typedef enum : NSUInteger {
     NSDictionary* attribute = [NSDictionary dictionaryWithObject:[UIFont systemFontOfSize:11.0f] forKey:NSFontAttributeName];
     _segmentedControl = [[UISegmentedControl alloc] initWithItems:@[@"Local", @"Remote"]];
     [_segmentedControl setTitleTextAttributes:attribute forState:UIControlStateNormal];
-    [_segmentedControl setTintColor:[UIColor colorWithWhite:kSliderOnWhiteColor alpha:1.0f]];
-    [_segmentedControl setBackgroundColor:[UIColor colorWithWhite:0.2f alpha:1.0f]];
+    [_segmentedControl setTintColor:[UIColor sliderOnColor]];
+    [_segmentedControl setBackgroundColor:[UIColor segmentedControlColor]];
     [_segmentedControl addTarget:self action:@selector(projectsSourceChanged) forControlEvents:UIControlEventValueChanged];
     [self.view addSubview:_segmentedControl];
     
