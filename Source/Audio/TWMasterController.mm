@@ -269,7 +269,7 @@
             sourceParams[@"Beat Freq Ratios"] = @[@(_timeControlRatios[TWTimeRatioControl_BeatFrequency][kNumerator][sourceIdx]), @(_timeControlRatios[TWTimeRatioControl_BeatFrequency][kDenominator][sourceIdx])];
             sourceParams[@"Trem Freq Ratios"] = @[@(_timeControlRatios[TWTimeRatioControl_TremFrequency][kNumerator][sourceIdx]), @(_timeControlRatios[TWTimeRatioControl_TremFrequency][kDenominator][sourceIdx])];
             sourceParams[@"Filter LFO Freq Ratios"] = @[@(_timeControlRatios[TWTimeRatioControl_FilterLFOFrequency][kNumerator][sourceIdx]), @(_timeControlRatios[TWTimeRatioControl_FilterLFOFrequency][kDenominator][sourceIdx])];
-            for (int paramID = 1; paramID <= kOscNumParams; paramID++) {
+            for (int paramID = 1; paramID < kOscNumParams; paramID++) {
                 NSString* key = [self keyForOscParamID:paramID];
                 sourceParams[key] = @([[TWAudioController sharedController] getOscParameter:paramID atSourceIdx:sourceIdx]);
             }
@@ -287,7 +287,7 @@
             int interval = [[TWAudioController sharedController] getSeqIntervalAtSourceIdx:sourceIdx];
             envelope[@"Interval"] = @(interval);
             envelope[@"Enable"] = @([[TWAudioController sharedController] getSeqEnabledAtSourceIdx:sourceIdx]);
-            for (int paramID=1; paramID <= kSeqNumParams; paramID++) {
+            for (int paramID=1; paramID < kSeqNumParams; paramID++) {
                 NSString* key = [self keyForSeqParamID:paramID];
                 envelope[key] = @([[TWAudioController sharedController] getSeqParameter:paramID atSourceIdx:sourceIdx]);
             }
@@ -380,7 +380,7 @@
                 }
                 [[TWAudioController sharedController] setOscParameter:kOscParam_RampTime_ms withValue:rampTime_ms atSourceIdx:sourceIdx inTime:0.0f];
                 
-                for (int paramID = 1; paramID <= kOscNumParams; paramID++) {
+                for (int paramID = 1; paramID < kOscNumParams; paramID++) {
                     [self setOscParamValue:paramID fromDictionary:sourceParams atSourceIdx:sourceIdx inTime:rampTime_ms];
                 }
     
@@ -422,7 +422,7 @@
                     if ([envelope objectForKey:@"Enable"]) {
                         [[TWAudioController sharedController] setSeqEnabled:[envelope[@"Enable"] boolValue] atSourceIdx:sourceIdx];
                     }
-                    for (int paramID = 1; paramID <= kSeqNumParams; paramID++) {
+                    for (int paramID = 1; paramID < kSeqNumParams; paramID++) {
                         [self setSeqParamValue:paramID fromDictionary:envelope atSourceIdx:sourceIdx];
                     }
                 }

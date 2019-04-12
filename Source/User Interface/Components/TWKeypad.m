@@ -73,7 +73,7 @@ static const float      kKeypadAnimationTime_s              = 0.15f;
         [_backspaceButton setTitle:[NSString stringWithFormat:@"\u232B"] forState:UIControlStateNormal];
         [_backspaceButton setBackgroundColor:_upColor];
         [_backspaceButton setTitleColor:[UIColor colorWithWhite:0.9f alpha:1.0f] forState:UIControlStateNormal];
-        [[_backspaceButton titleLabel] setFont:[UIFont systemFontOfSize:17.0f]];
+        [[_backspaceButton titleLabel] setFont:[UIFont systemFontOfSize:15.0f]];
         [_backspaceButton setClipsToBounds:YES];
         [_backspaceButton addTarget:self action:@selector(backspaceButtonDown:) forControlEvents:UIControlEventTouchDown];
         [_backspaceButton addTarget:self action:@selector(backspaceButtonUp:) forControlEvents:UIControlEventTouchUpInside];
@@ -185,7 +185,7 @@ static const float      kKeypadAnimationTime_s              = 0.15f;
         
         CGFloat numOptionsInRow = 4;
         CGFloat optionButtonWidth = width / (((numOptionsInRow+1) * kKeyPaddingAmount) + numOptionsInRow);
-        CGFloat optionButtonHeight = height - (3.0f * keyButtonPadding) - keyButtonHeight;
+        CGFloat optionButtonHeight = height - (5.0f * keyButtonPadding) - keyButtonHeight;
         
         
         CGFloat optionButtonPadding = kKeyPaddingAmount * optionButtonWidth;
@@ -242,7 +242,7 @@ static const float      kKeypadAnimationTime_s              = 0.15f;
         
         CGFloat numOptionsInRow = 4;
         CGFloat optionButtonWidth = width / (((numOptionsInRow+1) * kKeyPaddingAmount) + numOptionsInRow);
-        CGFloat optionButtonHeight = height - (9.0f * keyButtonPadding) - (2.0f * keyButtonHeight);
+        CGFloat optionButtonHeight = height - (10.0f * keyButtonPadding) - (2.0f * keyButtonHeight);
         
         
         CGFloat optionButtonPadding = kKeyPaddingAmount * optionButtonWidth;
