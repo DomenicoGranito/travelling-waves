@@ -11,20 +11,19 @@
 #import "TWAudioController.h"
 #import "TWSeqNoteButton.h"
 #import "TWEnvelopeView.h"
-#import "TWKeyboardAccessoryView.h"
 #import "TWForceButton.h"
+#import "TWKeypad.h"
 #import "UIColor+Additions.h"
 #import <QuartzCore/QuartzCore.h>
 
 
-static const CGFloat kSourceIDLabelWidth          = 12.0f;
+static const CGFloat kSourceIDLabelWidth            = 12.0f;
 
 static const CGFloat kProgressBarWidth              = 5.0f;
-static const CGFloat kProgressBarUpdateInterval    = 0.1f;  // 50ms
+static const CGFloat kProgressBarUpdateInterval     = 0.1f;  // 50ms
 
 
-@interface TWSequencerViewController () <UITextFieldDelegate,
-                                        TWKeyboardAccessoryViewDelegate,
+@interface TWSequencerViewController () <TWKeypadDelegate,
                                         TWForceButtonDelegate,
                                         TWEnvelopeViewDelegate,
                                         TWAudioControllerDelegate>
@@ -32,7 +31,7 @@ static const CGFloat kProgressBarUpdateInterval    = 0.1f;  // 50ms
     UIColor*                    _seqNoteButtonOffColor;
     UIColor*                    _seqNoteButtonOnColor;
     
-    UITextField*                _durationTextField;
+    UIButton*                   _durationField;
     
     NSArray*                    _sourceEnableButtons;
     
@@ -69,11 +68,6 @@ static const CGFloat kProgressBarUpdateInterval    = 0.1f;  // 50ms
     _seqNoteButtonOnColor = [[UIColor alloc] initWithWhite:0.4f alpha:1.0f];
     
     
-    TWKeyboardAccessoryView* accView = [TWKeyboardAccessoryView sharedView];
-    [accView addToDelegates:self];
-    
-    
-    
     _backButton = [[UIButton alloc] init];
     [_backButton setTitle:@"Back" forState:UIControlStateNormal];
     [_backButton setBackgroundColor:[UIColor colorWithWhite:0.1 alpha:1.0f]];
@@ -91,16 +85,13 @@ static const CGFloat kProgressBarUpdateInterval    = 0.1f;  // 50ms
     [_ioButton addTarget:self action:@selector(ioButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_ioButton];
 
-    _durationTextField = [[UITextField alloc] init];
-    [_durationTextField setTextColor:[UIColor valueTextDarkWhiteColor]];
-    [_durationTextField setFont:[UIFont systemFontOfSize:11.0f]];
-    [_durationTextField setTextAlignment:NSTextAlignmentCenter];
-    [_durationTextField setKeyboardType:UIKeyboardTypeDecimalPad];
-    [_durationTextField setKeyboardAppearance:UIKeyboardAppearanceDark];
-    [_durationTextField setInputAccessoryView:accView];
-    [_durationTextField setBackgroundColor:[UIColor colorWithWhite:0.1f alpha:1.0f]];
-    [_durationTextField setDelegate:self];
-    [self.view addSubview:_durationTextField];
+    _durationField = [[UIButton alloc] init];
+    [_durationField setTitleColor:[UIColor valueTextDarkWhiteColor] forState:UIControlStateNormal];
+    [_durationField.titleLabel setFont:[UIFont systemFontOfSize:11.0f]];
+    [_durationField setBackgroundColor:[UIColor clearColor]];
+    [_durationField addTarget:self action:@selector(durationFieldTapped) forControlEvents:UIControlEventTouchUpInside];
+    [_durationField setTag:(int)kSeqParam_Duration_ms];
+    [self.view addSubview:_durationField];
     
     _clearAllButton = [[UIButton alloc] init];
     [_clearAllButton setBackgroundColor:[UIColor colorWithWhite:0.06 alpha:1.0f]];
@@ -179,6 +170,8 @@ static const CGFloat kProgressBarUpdateInterval    = 0.1f;  // 50ms
     
     [[TWAudioController sharedController] addToDelegates:self];
     
+    [[TWKeypad sharedKeypad] addToDelegates:self];
+    
     [self.view setBackgroundColor:[UIColor colorWithWhite:0.12f alpha:1.0f]];
 }
 
@@ -192,13 +185,20 @@ static const CGFloat kProgressBarUpdateInterval    = 0.1f;  // 50ms
         [self updateSourceEnableButton:_sourceEnableButtons[sourceIdx] withState:[[TWAudioController sharedController] getSeqEnabledAtSourceIdx:sourceIdx]];
     }
     
-    int duration_ms = [[TWAudioController sharedController] getSeqDuration_ms];
-    [_durationTextField setText:[NSString stringWithFormat:@"%d", duration_ms]];
+    float duration_ms = [[TWAudioController sharedController] getSeqParameter:kSeqParam_Duration_ms atSourceIdx:-1];
+    [_durationField setTitle:[NSString stringWithFormat:@"%.2f", duration_ms] forState:UIControlStateNormal];
     
     
     if ([[TWAudioController sharedController] isRunning]) {
         [self startProgressAnimation];
     }
+    
+    [self.view addSubview:[TWKeypad sharedKeypad]];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [[TWKeypad sharedKeypad] removeFromSuperview];
+    [super viewWillDisappear:animated];
 }
 
 
@@ -228,7 +228,7 @@ static const CGFloat kProgressBarUpdateInterval    = 0.1f;  // 50ms
     [_ioButton setFrame:CGRectMake(xPos, yPos, titleButtonWidth, componentHeight)];
     
     xPos += titleButtonWidth;
-    [_durationTextField setFrame:CGRectMake(xPos, yPos, titleButtonWidth, componentHeight)];
+    [_durationField setFrame:CGRectMake(xPos, yPos, titleButtonWidth, componentHeight)];
     
     xPos += titleButtonWidth;
     [_clearAllButton setFrame:CGRectMake(xPos, yPos, titleButtonWidth, componentHeight)];
@@ -300,8 +300,6 @@ static const CGFloat kProgressBarUpdateInterval    = 0.1f;  // 50ms
     
     [_progressBarView setFrame:CGRectMake(0.0f, 0.0f, kProgressBarWidth, _scrollView.frame.size.height)];
     _progressRect = _progressBarView.frame;
-    
-    [[TWKeyboardAccessoryView sharedView] updateLayout];
 }
 
 
@@ -534,64 +532,32 @@ static const CGFloat kProgressBarUpdateInterval    = 0.1f;  // 50ms
 
 
 
+#pragma mark - TWKeypad
 
-#pragma mark - UITextFieldDelegate
 
-- (void)keyboardDoneButtonTapped:(id)sender {
+- (void)keypadDoneButtonTapped:(UIButton *)responder withValue:(NSString *)inValue {
     
-    UITextField* currentResponder = [[TWKeyboardAccessoryView sharedView] currentResponder];
-    if (currentResponder == _durationTextField) {
-        float duration_ms = [[_durationTextField text] floatValue];
-        [[TWAudioController sharedController] setSeqDuration_ms:duration_ms];
+    if (responder == _durationField) {
+        float duration_ms = [inValue floatValue];
+        [[TWAudioController sharedController] setSeqParameter:kSeqParam_Duration_ms withValue:duration_ms atSourceIdx:-1];
+        [responder setTitle:[NSString stringWithFormat:@"%f", duration_ms] forState:UIControlStateNormal];
     }
-    
-    [currentResponder resignFirstResponder];
 }
 
 
-- (void)keyboardCancelButtonTapped:(id)sender {
+- (void)keypadCancelButtonTapped:(UIButton*)responder {
     
-    UITextField* currentResponder = [[TWKeyboardAccessoryView sharedView] currentResponder];
-    
-    if (currentResponder == _durationTextField) {
-        int duration_ms = [[TWAudioController sharedController] getSeqDuration_ms];
-        [_durationTextField setText:[NSString stringWithFormat:@"%d", duration_ms]];
+    if (responder == _durationField) {
+        float duration_ms = [[TWAudioController sharedController] getSeqParameter:kSeqParam_Duration_ms atSourceIdx:-1];
+        [responder setTitle:[NSString stringWithFormat:@"%.2f", duration_ms] forState:UIControlStateNormal];
     }
-    [currentResponder resignFirstResponder];
 }
 
-- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
-    [[TWKeyboardAccessoryView sharedView] setValueText:[textField text]];
-    if (textField == _durationTextField) {
-        [[TWKeyboardAccessoryView sharedView] setTitleText:@"Seq Duration: "];
-    }
-    return  YES;
-}
-
-- (void)textFieldDidBeginEditing:(UITextField *)textField {
-    [textField selectAll:textField];
-    [[TWKeyboardAccessoryView sharedView] setCurrentResponder:textField];
-}
-
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
-    [[TWKeyboardAccessoryView sharedView] setValueText:[[textField text] stringByReplacingCharactersInRange:range withString:string]];
-    return YES;
-}
-
-- (BOOL)textFieldShouldEndEditing:(UITextField *)textField {
-    return YES;
-}
-
-- (void)textFieldDidEndEditing:(UITextField *)textField {
-    [textField resignFirstResponder];
-}
-
-- (BOOL)textFieldShouldClear:(UITextField *)textField {
-    return YES;
-}
-
-- (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    return YES;
+- (void)durationFieldTapped {
+    TWKeypad* keypad = [TWKeypad sharedKeypad];
+    [keypad setTitle:@"Seq Duration (ms): "];
+    [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWAudioController sharedController] getSeqParameter:kSeqParam_Duration_ms atSourceIdx:-1]]];
+    [keypad setCurrentResponder:_durationField];
 }
 
 
@@ -639,8 +605,8 @@ static const CGFloat kProgressBarUpdateInterval    = 0.1f;  // 50ms
 
 
 - (void)updateOscView:(int)sourceIdx {
-    if ([_oscView respondsToSelector:@selector(setOscID:)]) {
-        [_oscView setOscID:sourceIdx];
+    if ([_oscView respondsToSelector:@selector(setSourceIdx:)]) {
+        [_oscView setSourceIdx:sourceIdx];
     }
 }
                              

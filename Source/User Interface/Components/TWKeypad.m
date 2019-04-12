@@ -20,7 +20,7 @@ static const float      kKeypadAnimationTime_s              = 0.15f;
     UIButton*                               _doneButton;
     UIButton*                               _cancelButton;
     UIButton*                               _backspaceButton;
-    UIButton*                               _dotButton;
+    UIButton*                               _decimalPointButton;
     
     UILabel*                                _titleLabel;
     UILabel*                                _valueLabel;
@@ -31,7 +31,8 @@ static const float      kKeypadAnimationTime_s              = 0.15f;
     UIColor*                                _upColor;
     UIColor*                                _editingColor;
     
-    BOOL                                    _isShowing;
+    BOOL                                    _isFirstNumeral;
+    BOOL                                    _decimalPointAlreadyTyped;
     
     NSMutableArray<id<TWKeypadDelegate>>*   _delegates;
 }
@@ -72,21 +73,21 @@ static const float      kKeypadAnimationTime_s              = 0.15f;
         [_backspaceButton setTitle:[NSString stringWithFormat:@"\u232B"] forState:UIControlStateNormal];
         [_backspaceButton setBackgroundColor:_upColor];
         [_backspaceButton setTitleColor:[UIColor colorWithWhite:0.9f alpha:1.0f] forState:UIControlStateNormal];
-        [[_backspaceButton titleLabel] setFont:[UIFont systemFontOfSize:14.0f]];
+        [[_backspaceButton titleLabel] setFont:[UIFont systemFontOfSize:17.0f]];
         [_backspaceButton setClipsToBounds:YES];
         [_backspaceButton addTarget:self action:@selector(backspaceButtonDown:) forControlEvents:UIControlEventTouchDown];
         [_backspaceButton addTarget:self action:@selector(backspaceButtonUp:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:_backspaceButton];
         
-        _dotButton = [[UIButton alloc] init];
-        [_dotButton setTitle:[NSString stringWithFormat:@"."] forState:UIControlStateNormal];
-        [_dotButton setBackgroundColor:_upColor];
-        [_dotButton setTitleColor:[UIColor colorWithWhite:0.9f alpha:1.0f] forState:UIControlStateNormal];
-        [[_dotButton titleLabel] setFont:[UIFont systemFontOfSize:14.0f]];
-        [_dotButton setClipsToBounds:YES];
-        [_dotButton addTarget:self action:@selector(dotButtonDown:) forControlEvents:UIControlEventTouchDown];
-        [_dotButton addTarget:self action:@selector(dotButtonUp:) forControlEvents:UIControlEventTouchUpInside];
-        [self addSubview:_dotButton];
+        _decimalPointButton = [[UIButton alloc] init];
+        [_decimalPointButton setTitle:[NSString stringWithFormat:@"."] forState:UIControlStateNormal];
+        [_decimalPointButton setBackgroundColor:_upColor];
+        [_decimalPointButton setTitleColor:[UIColor colorWithWhite:0.9f alpha:1.0f] forState:UIControlStateNormal];
+        [[_decimalPointButton titleLabel] setFont:[UIFont systemFontOfSize:14.0f]];
+        [_decimalPointButton setClipsToBounds:YES];
+        [_decimalPointButton addTarget:self action:@selector(decimalPointButtonDown:) forControlEvents:UIControlEventTouchDown];
+        [_decimalPointButton addTarget:self action:@selector(decimalPointButtonUp:) forControlEvents:UIControlEventTouchUpInside];
+        [self addSubview:_decimalPointButton];
         
         
         
@@ -135,7 +136,9 @@ static const float      kKeypadAnimationTime_s              = 0.15f;
         
         _currentValue = [[NSMutableString alloc] init];
         
-        _isShowing = NO;
+        _keypadIsShowing = NO;
+        _isFirstNumeral = YES;
+        _decimalPointAlreadyTyped = NO;
         
         [self setBackgroundColor:[UIColor colorWithWhite:0.117 alpha:1.0f]];
     }
@@ -161,66 +164,133 @@ static const float      kKeypadAnimationTime_s              = 0.15f;
 - (void)setFrame:(CGRect)frame {
     [super setFrame:frame];
     
+//    NSLog(@"Keypad SetFrame: %f %f %f %f", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
     
     CGFloat width = frame.size.width;
     CGFloat height = frame.size.height;
     
-//    bool isIPad = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
-//    UIInterfaceOrientation orienation = [[UIApplication sharedApplication] statusBarOrientation];
-//    bool isLandscape = (orienation == UIInterfaceOrientationLandscapeLeft) || (orienation == UIInterfaceOrientationLandscapeRight);
-    
-    CGFloat numKeysInRow = 12;
-    
-    CGFloat keyButtonWidth = width / (((numKeysInRow+1) * kKeyPaddingAmount) + numKeysInRow);
-    CGFloat keyButtonHeight = keyButtonWidth;
-    CGFloat keyButtonPadding = kKeyPaddingAmount * keyButtonWidth;
+    bool isIPad = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
+    UIInterfaceOrientation orienation = [[UIApplication sharedApplication] statusBarOrientation];
+    bool isLandscape = (orienation == UIInterfaceOrientationLandscapeLeft) || (orienation == UIInterfaceOrientationLandscapeRight);
     
     
-    CGFloat numOptionsInRow = 4;
-    CGFloat optionButtonWidth = width / (((numOptionsInRow+1) * kKeyPaddingAmount) + numOptionsInRow);
-    CGFloat optionButtonHeight = height - (3.0f * keyButtonPadding) - keyButtonHeight;
-    
-    
-    CGFloat optionButtonPadding = kKeyPaddingAmount * optionButtonWidth;
-    
-    CGFloat yPos = keyButtonPadding;
-    CGFloat xPos = optionButtonPadding;
-    
-    [_cancelButton setFrame:CGRectMake(xPos, yPos, optionButtonWidth, optionButtonHeight)];
-    xPos += optionButtonPadding + optionButtonWidth;
-    
-    [_titleLabel setFrame:CGRectMake(xPos, yPos, optionButtonWidth, optionButtonHeight)];
-    xPos += optionButtonPadding + optionButtonWidth;
-    
-    [_valueLabel setFrame:CGRectMake(xPos, yPos, optionButtonWidth, optionButtonHeight)];
-    xPos += optionButtonPadding + optionButtonWidth;
-    
-    [_doneButton setFrame:CGRectMake(xPos, yPos, optionButtonWidth, optionButtonHeight)];
-    
-    
-    yPos += keyButtonPadding + optionButtonHeight;
-    xPos = keyButtonPadding;
-    
-    CGFloat cornerRadius = 8.0f;
-    
-    for (int i=1; i < 10; i++) {
-        UIButton* keyButton = [_keyButtons objectAtIndex:i];
-        [keyButton setFrame:CGRectMake(xPos, yPos, keyButtonWidth, keyButtonHeight)];
-        [keyButton.layer setCornerRadius:cornerRadius];
+    if (isIPad || isLandscape) {
+        
+        CGFloat numKeysInRow = 12;
+        
+        CGFloat keyButtonWidth = width / (((numKeysInRow+1) * kKeyPaddingAmount) + numKeysInRow);
+        CGFloat keyButtonHeight = keyButtonWidth;
+        CGFloat keyButtonPadding = kKeyPaddingAmount * keyButtonWidth;
+        
+        
+        CGFloat numOptionsInRow = 4;
+        CGFloat optionButtonWidth = width / (((numOptionsInRow+1) * kKeyPaddingAmount) + numOptionsInRow);
+        CGFloat optionButtonHeight = height - (3.0f * keyButtonPadding) - keyButtonHeight;
+        
+        
+        CGFloat optionButtonPadding = kKeyPaddingAmount * optionButtonWidth;
+        
+        CGFloat yPos = keyButtonPadding;
+        CGFloat xPos = optionButtonPadding;
+        
+        [_cancelButton setFrame:CGRectMake(xPos, yPos, optionButtonWidth, optionButtonHeight)];
+        xPos += optionButtonPadding + optionButtonWidth;
+        
+        [_titleLabel setFrame:CGRectMake(xPos, yPos, optionButtonWidth, optionButtonHeight)];
+        xPos += optionButtonPadding + optionButtonWidth;
+        
+        [_valueLabel setFrame:CGRectMake(xPos, yPos, optionButtonWidth, optionButtonHeight)];
+        xPos += optionButtonPadding + optionButtonWidth;
+        
+        [_doneButton setFrame:CGRectMake(xPos, yPos, optionButtonWidth, optionButtonHeight)];
+        
+        
+        yPos += keyButtonPadding + optionButtonHeight;
+        xPos = keyButtonPadding;
+        
+        CGFloat cornerRadius = 8.0f;
+        
+        for (int i=1; i < 10; i++) {
+            UIButton* keyButton = [_keyButtons objectAtIndex:i];
+            [keyButton setFrame:CGRectMake(xPos, yPos, keyButtonWidth, keyButtonHeight)];
+            [keyButton.layer setCornerRadius:cornerRadius];
+            xPos += keyButtonPadding + keyButtonWidth;
+        }
+        
+        UIButton* zeroButton = [_keyButtons objectAtIndex:0];
+        [zeroButton setFrame:CGRectMake(xPos, yPos, keyButtonWidth, keyButtonHeight)];
+        [zeroButton.layer setCornerRadius:cornerRadius];
         xPos += keyButtonPadding + keyButtonWidth;
+        
+        [_decimalPointButton setFrame:CGRectMake(xPos, yPos, keyButtonWidth, keyButtonHeight)];
+        [_decimalPointButton.layer setCornerRadius:cornerRadius];
+        xPos += keyButtonPadding + keyButtonWidth;
+        
+        [_backspaceButton setFrame:CGRectMake(xPos, yPos, keyButtonWidth, keyButtonHeight)];
+        [_backspaceButton.layer setCornerRadius:cornerRadius];
+        
     }
     
-    UIButton* zeroButton = [_keyButtons objectAtIndex:0];
-    [zeroButton setFrame:CGRectMake(xPos, yPos, keyButtonWidth, keyButtonHeight)];
-    [zeroButton.layer setCornerRadius:cornerRadius];
-    xPos += keyButtonPadding + keyButtonWidth;
-    
-    [_dotButton setFrame:CGRectMake(xPos, yPos, keyButtonWidth, keyButtonHeight)];
-    [_dotButton.layer setCornerRadius:cornerRadius];
-    xPos += keyButtonPadding + keyButtonWidth;
-    
-    [_backspaceButton setFrame:CGRectMake(xPos, yPos, keyButtonWidth, keyButtonHeight)];
-    [_backspaceButton.layer setCornerRadius:cornerRadius];
+    else {  // if iPhone Portrait
+        
+        CGFloat numKeysInRow = 6;
+        
+        CGFloat keyButtonWidth = width / (((numKeysInRow+1) * kKeyPaddingAmount) + numKeysInRow);
+        CGFloat keyButtonHeight = keyButtonWidth;
+        CGFloat keyButtonPadding = kKeyPaddingAmount * keyButtonWidth;
+        
+        
+        CGFloat numOptionsInRow = 4;
+        CGFloat optionButtonWidth = width / (((numOptionsInRow+1) * kKeyPaddingAmount) + numOptionsInRow);
+        CGFloat optionButtonHeight = height - (9.0f * keyButtonPadding) - (2.0f * keyButtonHeight);
+        
+        
+        CGFloat optionButtonPadding = kKeyPaddingAmount * optionButtonWidth;
+        
+        CGFloat yPos = keyButtonPadding;
+        CGFloat xPos = optionButtonPadding;
+        
+        [_cancelButton setFrame:CGRectMake(xPos, yPos, optionButtonWidth - 20.0f, optionButtonHeight)];
+        xPos += optionButtonPadding + optionButtonWidth - 20.0f;
+        
+        [_titleLabel setFrame:CGRectMake(xPos, yPos, optionButtonWidth + 60.0f, optionButtonHeight)];
+        xPos += optionButtonPadding + optionButtonWidth + 60.0f;
+        
+        [_valueLabel setFrame:CGRectMake(xPos, yPos, optionButtonWidth - 20.0f, optionButtonHeight)];
+        xPos += optionButtonPadding + optionButtonWidth - 20.0f;
+        
+        [_doneButton setFrame:CGRectMake(xPos, yPos, optionButtonWidth - 20.0f, optionButtonHeight)];
+        
+        
+        yPos += keyButtonPadding + optionButtonHeight;
+        xPos = keyButtonPadding;
+        
+        CGFloat cornerRadius = 6.0f;
+        
+        for (int i=1; i < 10; i++) {
+            UIButton* keyButton = [_keyButtons objectAtIndex:i];
+            [keyButton setFrame:CGRectMake(xPos, yPos, keyButtonWidth, keyButtonHeight)];
+            [keyButton.layer setCornerRadius:cornerRadius];
+            xPos += keyButtonPadding + keyButtonWidth;
+            
+            if ((i % 6) == 0) {
+                xPos = keyButtonPadding;
+                yPos += keyButtonPadding + keyButtonHeight;
+            }
+        }
+        
+        UIButton* zeroButton = [_keyButtons objectAtIndex:0];
+        [zeroButton setFrame:CGRectMake(xPos, yPos, keyButtonWidth, keyButtonHeight)];
+        [zeroButton.layer setCornerRadius:cornerRadius];
+        xPos += keyButtonPadding + keyButtonWidth;
+        
+        [_decimalPointButton setFrame:CGRectMake(xPos, yPos, keyButtonWidth, keyButtonHeight)];
+        [_decimalPointButton.layer setCornerRadius:cornerRadius];
+        xPos += keyButtonPadding + keyButtonWidth;
+        
+        [_backspaceButton setFrame:CGRectMake(xPos, yPos, keyButtonWidth, keyButtonHeight)];
+        [_backspaceButton.layer setCornerRadius:cornerRadius];
+    }
 }
 
 /*
@@ -236,19 +306,37 @@ static const float      kKeypadAnimationTime_s              = 0.15f;
 }
 
 - (void)keyButtonUp:(UIButton*)sender {
+    
+    if (_isFirstNumeral) {
+        [_currentValue setString:@""];
+        _isFirstNumeral = NO;
+    }
+    
     [_currentValue appendString:[NSString stringWithFormat:@"%d",(int)sender.tag]];
     [self updateValueLabel];
     [sender setBackgroundColor:_upColor];
 }
 
 
-- (void)dotButtonDown:(UIButton*)sender {
+- (void)decimalPointButtonDown:(UIButton*)sender {
     [sender setBackgroundColor:_downColor];
 }
 
-- (void)dotButtonUp:(UIButton*)sender {
-    [_currentValue appendString:@"."];
-    [self updateValueLabel];
+- (void)decimalPointButtonUp:(UIButton*)sender {
+    
+    if (!_decimalPointAlreadyTyped) {
+        
+        if (_isFirstNumeral) {
+            [_currentValue setString:@""];
+            _isFirstNumeral = NO;
+        }
+        
+        [_currentValue appendString:@"."];
+        [self updateValueLabel];
+        _decimalPointAlreadyTyped = YES;
+        
+    }
+    
     [sender setBackgroundColor:_upColor];
 }
 
@@ -260,6 +348,7 @@ static const float      kKeypadAnimationTime_s              = 0.15f;
 
 - (void)backspaceButtonUp:(UIButton*)sender {
     [_currentValue setString:@""];
+    _decimalPointAlreadyTyped = NO;
     [self updateValueLabel];
     [sender setBackgroundColor:_upColor];
 }
@@ -316,7 +405,7 @@ static const float      kKeypadAnimationTime_s              = 0.15f;
     [_currentResponder setBackgroundColor:[UIColor clearColor]];
     _currentResponder = currentResponder;
     [_currentResponder setBackgroundColor:_editingColor];
-    if (!_isShowing) {
+    if (!_keypadIsShowing) {
         [self showKeypad];
     }
 }
@@ -331,10 +420,12 @@ static const float      kKeypadAnimationTime_s              = 0.15f;
 
 
 - (void)showKeypad {
+    _decimalPointAlreadyTyped = NO;
+    _isFirstNumeral = YES;
     [UIView animateWithDuration:kKeypadAnimationTime_s delay:0.0f options:UIViewAnimationOptionCurveEaseIn animations:^{
         [self setFrame:self->_showFrame];
     } completion:^(BOOL finished) {
-        self->_isShowing = YES;
+        self->_keypadIsShowing = YES;
     }];
 }
 
@@ -342,7 +433,7 @@ static const float      kKeypadAnimationTime_s              = 0.15f;
     [UIView animateWithDuration:kKeypadAnimationTime_s delay:0.0f options:UIViewAnimationOptionCurveEaseIn animations:^{
         [self setFrame:self->_hideFrame];
     } completion:^(BOOL finished) {
-        self->_isShowing = NO;
+        self->_keypadIsShowing = NO;
     }];
 }
 

@@ -260,7 +260,7 @@ static const CGFloat kSoloButtonWidth       = 28.0f;
 - (void)sliderValueChanged:(UISlider*)sender {
     float amplitude = sender.value;
     int sourceIdx = (int)sender.tag;
-    int rampTime_ms = [[TWAudioController sharedController] getRampTimeAtSourceIdx:sourceIdx];
+    int rampTime_ms = (int)[[TWAudioController sharedController] getOscParameter:kOscParam_RampTime_ms atSourceIdx:sourceIdx];
     [[TWAudioController sharedController] setOscParameter:kOscParam_OscAmplitude withValue:amplitude atSourceIdx:sourceIdx inTime:rampTime_ms];
     UIButton* textField = [_textFields objectAtIndex:sourceIdx];
     [textField setTitle:[NSString stringWithFormat:@"%.2f", amplitude] forState:UIControlStateNormal];
@@ -292,8 +292,8 @@ static const CGFloat kSoloButtonWidth       = 28.0f;
 
 
 - (void)updateOscView:(int)sourceIdx {
-    if ([_oscView respondsToSelector:@selector(setOscID:)]) {
-        [_oscView setOscID:sourceIdx];
+    if ([_oscView respondsToSelector:@selector(setSourceIdx:)]) {
+        [_oscView setSourceIdx:sourceIdx];
     }
 }
 
@@ -301,12 +301,13 @@ static const CGFloat kSoloButtonWidth       = 28.0f;
 
 #pragma mark - TWKeypad
 
-- (void)keypadDoneButtonTapped:(UIButton *)responder withValue:(NSString *)value {
+- (void)keypadDoneButtonTapped:(UIButton *)responder withValue:(NSString *)inValue {
     for (UIButton* field in _textFields) {
         if (responder == field) {
             int sourceIdx = (int)field.tag;
-            int rampTime_ms = [[TWAudioController sharedController] getRampTimeAtSourceIdx:sourceIdx];
-            float amplitude = [value floatValue];
+            
+            int rampTime_ms = [[TWAudioController sharedController] getOscParameter:kOscParam_RampTime_ms atSourceIdx:sourceIdx];
+            float amplitude = [inValue floatValue];
             [[TWAudioController sharedController] setOscParameter:kOscParam_OscAmplitude withValue:amplitude atSourceIdx:sourceIdx inTime:rampTime_ms];
             UISlider* slider = [_sliders objectAtIndex:sourceIdx];
             [slider setValue:amplitude animated:YES];

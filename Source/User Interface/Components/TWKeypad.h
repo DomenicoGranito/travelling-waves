@@ -11,7 +11,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol TWKeypadDelegate <NSObject>
-- (void)keypadDoneButtonTapped:(UIButton*)responder withValue:(NSString*)value;
+- (void)keypadDoneButtonTapped:(UIButton*)responder withValue:(NSString*)inValue;
 - (void)keypadCancelButtonTapped:(UIButton*)responder;
 @end
 
@@ -30,6 +30,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign) CGRect showFrame;
 @property (nonatomic, assign) CGRect hideFrame;
+
+@property (nonatomic, readonly) BOOL keypadIsShowing;
 
 @end
 

@@ -9,12 +9,12 @@
 #import "TWOscView.h"
 #import "TWHeader.h"
 #import "TWAudioController.h"
-#import "TWKeyboardAccessoryView.h"
+#import "TWKeypad.h"
 #import "TWUtils.h"
 #import "UIColor+Additions.h"
 
 
-@interface TWOscView() <UITextFieldDelegate, TWKeyboardAccessoryViewDelegate>
+@interface TWOscView() <TWKeypadDelegate>
 {
     
     UISegmentedControl*         _segmentedControl;
@@ -27,14 +27,16 @@
     
     UILabel*                    _bfLabel;
     UISlider*                   _baseFreqSlider;
-    UITextField*                _baseFreqField;
+//    UITextField*                _baseFreqField;
+    UIButton*                   _baseFreqField;
     
     UISlider*                   _beatFreqSlider;
-    UITextField*                _beatFreqField;
+//    UITextField*                _beatFreqField;
+    UIButton*                   _beatFreqField;
     
     UILabel*                    _mLabel;
     UISlider*                   _mononessSlider;
-    UITextField*                _mononessField;
+    UIButton*                   _mononessField;
     
     
     // Tremolo
@@ -42,11 +44,11 @@
     
     UILabel*                    _tremFLabel;
     UISlider*                   _tremoloFreqSlider;
-    UITextField*                _tremoloFreqField;
+    UIButton*                   _tremoloFreqField;
     
     UILabel*                    _tremDLabel;
     UISlider*                   _tremoloDepthSlider;
-    UITextField*                _tremoloDepthField;
+    UIButton*                   _tremoloDepthField;
     
     
     // Filter
@@ -56,46 +58,46 @@
     
     UILabel*                    _fcLabel;
     UISlider*                   _cutoffFreqSlider;
-    UITextField*                _cutoffFreqField;
+    UIButton*                   _cutoffFreqField;
     
     UISwitch*                   _filterEnableSwitch;
     UISwitch*                   _lfoEnableSwitch;
     
     UILabel*                    _resonanceLabel;
     UISlider*                   _resonanceSlider;
-    UITextField*                _resonanceField;
+    UIButton*                   _resonanceField;
     
     UILabel*                    _filterGainLabel;
     UISlider*                   _filterGainSlider;
-    UITextField*                _filterGainField;
+    UIButton*                    _filterGainField;
     
     UILabel*                    _lfoFLabel;
     UISlider*                   _lfoFreqSlider;
-    UITextField*                _lfoFreqField;
+    UIButton*                   _lfoFreqField;
     
     UILabel*                    _lfoRLabel;
     UISlider*                   _lfoRangeSlider;
-    UITextField*                _lfoRangeField;
+    UIButton*                   _lfoRangeField;
     
     UILabel*                    _ofstLabel;
     UISlider*                   _lfoOffsetSlider;
-    UITextField*                _lfoOffsetField;
+    UIButton*                   _lfoOffsetField;
     
     
     // General
     UILabel*                    _rTLabel;
     UISlider*                   _rampTimeSlider;
-    UITextField*                _rampTimeField;
+    UIButton*                   _rampTimeField;
     
     
     // FM
     UILabel*                    _fmAmountLabel;
     UISlider*                   _fmAmountSlider;
-    UITextField*                _fmAmountField;
+    UIButton*                   _fmAmountField;
     
     UILabel*                    _fmFreqLabel;
     UISlider*                   _fmFreqSlider;
-    UITextField*                _fmFreqField;
+    UIButton*                   _fmFreqField;
     
     UIView*                     _fmBackView;
 }
@@ -112,9 +114,6 @@
 }
 
 - (void)initialize {
-    
-    [[TWKeyboardAccessoryView sharedView] addToDelegates:self];
-    
     
     NSMutableArray* segments = [[NSMutableArray alloc] init];
     for (int i=0; i < kNumSources; i++) {
@@ -135,10 +134,13 @@
     [_oscBackView setBackgroundColor:[UIColor colorWithWhite:0.2f alpha:0.2f]];
     [self addSubview:_oscBackView];
     
+    
+    
     _bfLabel = [[UILabel alloc] init];
     [_bfLabel setText:@"Freq:"];
     [self setupLabelProperties:_bfLabel];
     [self addSubview:_bfLabel];
+    
     
     _baseFreqSlider = [[UISlider alloc] init];
     [_baseFreqSlider setMinimumValue:0.0f];
@@ -147,12 +149,15 @@
     [_baseFreqSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
     [_baseFreqSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_baseFreqSlider addTarget:self action:@selector(baseFreqSliderChanged) forControlEvents:UIControlEventValueChanged];
+    [_baseFreqSlider setTag:kOscParam_OscBaseFrequency];
     [self addSubview:_baseFreqSlider];
     
-    _baseFreqField = [[UITextField alloc] init];
-    [self setupTextFieldProperties:_baseFreqField];
-    [_baseFreqField setDelegate:self];
+    _baseFreqField = [[UIButton alloc] init];
+    [self setupButtonFieldProperties:_baseFreqField];
+    [_baseFreqField addTarget:self action:@selector(baseFreqFieldTapped) forControlEvents:UIControlEventTouchUpInside];
+    [_baseFreqField setTag:kOscParam_OscBaseFrequency];
     [self addSubview:_baseFreqField];
+    
     
     _beatFreqSlider = [[UISlider alloc] init];
     [_beatFreqSlider setMinimumValue:0.0f];
@@ -161,12 +166,15 @@
     [_beatFreqSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
     [_beatFreqSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_beatFreqSlider addTarget:self action:@selector(beatFreqSliderChanged) forControlEvents:UIControlEventValueChanged];
+    [_beatFreqSlider setTag:kOscParam_OscBeatFrequency];
     [self addSubview:_beatFreqSlider];
     
-    _beatFreqField = [[UITextField alloc] init];
-    [self setupTextFieldProperties:_beatFreqField];
-    [_beatFreqField setDelegate:self];
+    _beatFreqField = [[UIButton alloc] init];
+    [self setupButtonFieldProperties:_beatFreqField];
+    [_beatFreqField addTarget:self action:@selector(beatFreqFieldTapped) forControlEvents:UIControlEventTouchUpInside];
+    [_beatFreqField setTag:kOscParam_OscBeatFrequency];
     [self addSubview:_beatFreqField];
+    
     
     
     _mLabel = [[UILabel alloc] init];
@@ -181,12 +189,17 @@
     [_mononessSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
     [_mononessSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_mononessSlider addTarget:self action:@selector(mononessSliderChanged) forControlEvents:UIControlEventValueChanged];
+    [_mononessSlider setTag:kOscParam_OscMononess];
     [self addSubview:_mononessSlider];
     
-    _mononessField = [[UITextField alloc] init];
-    [self setupTextFieldProperties:_mononessField];
-    [_mononessField setDelegate:self];
+    _mononessField = [[UIButton alloc] init];
+    [self setupButtonFieldProperties:_mononessField];
+    [_mononessField addTarget:self action:@selector(mononessFieldTapped) forControlEvents:UIControlEventTouchUpInside];
+    [_mononessField setTag:kOscParam_OscMononess];
     [self addSubview:_mononessField];
+    
+    
+    
     
     NSDictionary* attribute = [NSDictionary dictionaryWithObject:[UIFont systemFontOfSize:10.0f] forKey:NSFontAttributeName];
     _waveformSelector = [[UISegmentedControl alloc] initWithItems:@[@"Sine", @"Saw", @"Square", @"Noise"]];
@@ -194,6 +207,7 @@
     [_waveformSelector setTintColor:[UIColor sliderOnColor]];
     [_waveformSelector setBackgroundColor:[UIColor segmentedControlColor]];
     [_waveformSelector addTarget:self action:@selector(waveformChanged) forControlEvents:UIControlEventValueChanged];
+    [_waveformSelector setTag:kOscParam_OscWaveform];
     [self addSubview:_waveformSelector];
     
     
@@ -217,12 +231,15 @@
     [_tremoloFreqSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
     [_tremoloFreqSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_tremoloFreqSlider addTarget:self action:@selector(tremFreqSliderChanged) forControlEvents:UIControlEventValueChanged];
+    [_tremoloFreqSlider setTag:kOscParam_TremoloFrequency];
     [self addSubview:_tremoloFreqSlider];
     
-    _tremoloFreqField = [[UITextField alloc] init];
-    [self setupTextFieldProperties:_tremoloFreqField];
-    [_tremoloFreqField setDelegate:self];
+    _tremoloFreqField = [[UIButton alloc] init];
+    [self setupButtonFieldProperties:_tremoloFreqField];
+    [_tremoloFreqField addTarget:self action:@selector(tremFreqFieldTapped) forControlEvents:UIControlEventTouchUpInside];
+    [_tremoloFreqField setTag:kOscParam_TremoloFrequency];
     [self addSubview:_tremoloFreqField];
+    
     
     _tremDLabel = [[UILabel alloc] init];
     [_tremDLabel setText:@"TrDp:"];
@@ -236,11 +253,13 @@
     [_tremoloDepthSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
     [_tremoloDepthSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_tremoloDepthSlider addTarget:self action:@selector(tremDepthSliderChanged) forControlEvents:UIControlEventValueChanged];
+    [_tremoloDepthSlider setTag:kOscParam_TremoloDepth];
     [self addSubview:_tremoloDepthSlider];
     
-    _tremoloDepthField = [[UITextField alloc] init];
-    [self setupTextFieldProperties:_tremoloDepthField];
-    [_tremoloDepthField setDelegate:self];
+    _tremoloDepthField = [[UIButton alloc] init];
+    [self setupButtonFieldProperties:_tremoloDepthField];
+    [_tremoloDepthField addTarget:self action:@selector(tremDepthFieldTapped) forControlEvents:UIControlEventTouchUpInside];
+    [_tremoloDepthField setTag:kOscParam_TremoloDepth];
     [self addSubview:_tremoloDepthField];
     
     
@@ -264,18 +283,22 @@
     [_cutoffFreqSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
     [_cutoffFreqSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_cutoffFreqSlider addTarget:self action:@selector(cutoffFreqSliderChanged) forControlEvents:UIControlEventValueChanged];
+    [_cutoffFreqSlider setTag:kOscParam_FilterCutoff];
     [self addSubview:_cutoffFreqSlider];
     
-    _cutoffFreqField = [[UITextField alloc] init];
-    [self setupTextFieldProperties:_cutoffFreqField];
-    [_cutoffFreqField setDelegate:self];
+    _cutoffFreqField = [[UIButton alloc] init];
+    [self setupButtonFieldProperties:_cutoffFreqField];
+    [_cutoffFreqField addTarget:self action:@selector(cutoffFreqFieldTapped) forControlEvents:UIControlEventTouchUpInside];
+    [_cutoffFreqField setTag:kOscParam_FilterCutoff];
     [self addSubview:_cutoffFreqField];
+    
     
     _filterSelector = [[UISegmentedControl alloc] initWithItems:@[@"LPF", @"HPF", @"BPF1", @"BPF2", @"Ntch"]];
     [_filterSelector setTitleTextAttributes:attribute forState:UIControlStateNormal];
     [_filterSelector setTintColor:[UIColor sliderOnColor]];
     [_filterSelector setBackgroundColor:[UIColor segmentedControlColor]];
     [_filterSelector addTarget:self action:@selector(filterTypeChanged) forControlEvents:UIControlEventValueChanged];
+    [_filterSelector setTag:kOscParam_FilterType];
     [self addSubview:_filterSelector];
     
     _filterEnableSwitch = [[UISwitch alloc] initWithFrame:CGRectZero];
@@ -283,6 +306,7 @@
     [_filterEnableSwitch setTintColor:[UIColor sliderOnColor]];
     [_filterEnableSwitch setThumbTintColor:[UIColor sliderOnColor]];
     [_filterEnableSwitch addTarget:self action:@selector(filterEnableSwitchChanged) forControlEvents:UIControlEventValueChanged];
+    [_filterEnableSwitch setTag:kOscParam_FilterEnable];
     [self addSubview:_filterEnableSwitch];
     
     _lfoEnableSwitch = [[UISwitch alloc] initWithFrame:CGRectZero];
@@ -290,6 +314,7 @@
     [_lfoEnableSwitch setTintColor:[UIColor sliderOnColor]];
     [_lfoEnableSwitch setThumbTintColor:[UIColor sliderOnColor]];
     [_lfoEnableSwitch addTarget:self action:@selector(lfoEnableSwitchChanged) forControlEvents:UIControlEventValueChanged];
+    [_lfoEnableSwitch setTag:kOscParam_LFOEnable];
     [self addSubview:_lfoEnableSwitch];
     
     
@@ -305,12 +330,15 @@
     [_resonanceSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
     [_resonanceSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_resonanceSlider addTarget:self action:@selector(resonanceSliderChanged) forControlEvents:UIControlEventValueChanged];
+    [_resonanceSlider setTag:kOscParam_FilterResonance];
     [self addSubview:_resonanceSlider];
     
-    _resonanceField = [[UITextField alloc] init];
-    [self setupTextFieldProperties:_resonanceField];
-    [_resonanceField setDelegate:self];
+    _resonanceField = [[UIButton alloc] init];
+    [self setupButtonFieldProperties:_resonanceField];
+    [_resonanceField addTarget:self action:@selector(resonanceFieldTapped) forControlEvents:UIControlEventTouchUpInside];
+    [_resonanceField setTag:kOscParam_FilterResonance];
     [self addSubview:_resonanceField];
+    
     
     _filterGainLabel = [[UILabel alloc] init];
     [_filterGainLabel setText:@"G:"];
@@ -324,12 +352,16 @@
     [_filterGainSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
     [_filterGainSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_filterGainSlider addTarget:self action:@selector(filterGainSliderChanged) forControlEvents:UIControlEventValueChanged];
+    [_filterGainSlider setTag:kOscParam_FilterGain];
     [self addSubview:_filterGainSlider];
     
-    _filterGainField = [[UITextField alloc] init];
-    [self setupTextFieldProperties:_filterGainField];
-    [_filterGainField setDelegate:self];
+    _filterGainField = [[UIButton alloc] init];
+    [self setupButtonFieldProperties:_filterGainField];
+    [_filterGainField addTarget:self action:@selector(filterGainFieldTapped) forControlEvents:UIControlEventTouchUpInside];
+    [_filterGainField setTag:kOscParam_FilterGain];
     [self addSubview:_filterGainField];
+    
+    
     
     _lfoFLabel = [[UILabel alloc] init];
     [_lfoFLabel setText:@"LFrt:"];
@@ -343,12 +375,15 @@
     [_lfoFreqSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
     [_lfoFreqSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_lfoFreqSlider addTarget:self action:@selector(lfoFreqSliderChanged) forControlEvents:UIControlEventValueChanged];
+    [_lfoFreqSlider setTag:kOscParam_LFOFrequency];
     [self addSubview:_lfoFreqSlider];
     
-    _lfoFreqField = [[UITextField alloc] init];
-    [self setupTextFieldProperties:_lfoFreqField];
-    [_lfoFreqField setDelegate:self];
+    _lfoFreqField = [[UIButton alloc] init];
+    [self setupButtonFieldProperties:_lfoFreqField];
+    [_lfoFreqField addTarget:self action:@selector(lfoFreqFieldTapped) forControlEvents:UIControlEventTouchUpInside];
+    [_lfoFreqField setTag:kOscParam_LFOFrequency];
     [self addSubview:_lfoFreqField];
+    
     
     _lfoRLabel = [[UILabel alloc] init];
     [_lfoRLabel setText:@"Rnge:"];
@@ -362,12 +397,15 @@
     [_lfoRangeSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
     [_lfoRangeSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_lfoRangeSlider addTarget:self action:@selector(lfoRangeSliderChanged) forControlEvents:UIControlEventValueChanged];
+    [_lfoRangeSlider setTag:kOscParam_LFORange];
     [self addSubview:_lfoRangeSlider];
     
-    _lfoRangeField = [[UITextField alloc] init];
-    [self setupTextFieldProperties:_lfoRangeField];
-    [_lfoRangeField setDelegate:self];
+    _lfoRangeField = [[UIButton alloc] init];
+    [self setupButtonFieldProperties:_lfoRangeField];
+    [_lfoRangeField addTarget:self action:@selector(lfoRangeFieldTapped) forControlEvents:UIControlEventTouchUpInside];
+    [_lfoRangeField setTag:kOscParam_LFORange];
     [self addSubview:_lfoRangeField];
+    
     
     _ofstLabel = [[UILabel alloc] init];
     [_ofstLabel setText:@"Ofst:"];
@@ -381,11 +419,13 @@
     [_lfoOffsetSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
     [_lfoOffsetSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_lfoOffsetSlider addTarget:self action:@selector(lfoOffsetSliderChanged) forControlEvents:UIControlEventValueChanged];
+    [_lfoOffsetSlider setTag:kOscParam_LFOOffset];
     [self addSubview:_lfoOffsetSlider];
     
-    _lfoOffsetField = [[UITextField alloc] init];
-    [self setupTextFieldProperties:_lfoOffsetField];
-    [_lfoOffsetField setDelegate:self];
+    _lfoOffsetField = [[UIButton alloc] init];
+    [self setupButtonFieldProperties:_lfoOffsetField];
+    [_lfoOffsetField addTarget:self action:@selector(lfoOffsetFieldTapped) forControlEvents:UIControlEventTouchUpInside];
+    [_lfoOffsetField setTag:kOscParam_LFOOffset];
     [self addSubview:_lfoOffsetField];
     
     
@@ -404,11 +444,13 @@
     [_rampTimeSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
     [_rampTimeSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_rampTimeSlider addTarget:self action:@selector(rampTimeSliderChanged) forControlEvents:UIControlEventValueChanged];
+    [_rampTimeSlider setTag:kOscParam_RampTime_ms];
     [self addSubview:_rampTimeSlider];
     
-    _rampTimeField = [[UITextField alloc] init];
-    [self setupTextFieldProperties:_rampTimeField];
-    [_rampTimeField setDelegate:self];
+    _rampTimeField = [[UIButton alloc] init];
+    [self setupButtonFieldProperties:_rampTimeField];
+    [_rampTimeField addTarget:self action:@selector(rampTimeFieldTapped) forControlEvents:UIControlEventTouchUpInside];
+    [_rampTimeField setTag:kOscParam_RampTime_ms];
     [self addSubview:_rampTimeField];
     
     
@@ -433,11 +475,13 @@
     [_fmAmountSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
     [_fmAmountSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_fmAmountSlider addTarget:self action:@selector(fmAmountSliderChanged) forControlEvents:UIControlEventValueChanged];
+    [_fmAmountSlider setTag:kOscParam_FMAmount];
     [self addSubview:_fmAmountSlider];
     
-    _fmAmountField = [[UITextField alloc] init];
-    [self setupTextFieldProperties:_fmAmountField];
-    [_fmAmountField setDelegate:self];
+    _fmAmountField = [[UIButton alloc] init];
+    [self setupButtonFieldProperties:_fmAmountField];
+    [_fmAmountField addTarget:self action:@selector(fmAmountFieldTapped) forControlEvents:UIControlEventTouchUpInside];
+    [_fmAmountField setTag:kOscParam_FMAmount];
     [self addSubview:_fmAmountField];
     
     
@@ -453,16 +497,20 @@
     [_fmFreqSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
     [_fmFreqSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_fmFreqSlider addTarget:self action:@selector(fmFreqSliderChanged) forControlEvents:UIControlEventValueChanged];
+    [_fmFreqSlider setTag:kOscParam_FMFrequency];
     [self addSubview:_fmFreqSlider];
     
-    _fmFreqField = [[UITextField alloc] init];
-    [self setupTextFieldProperties:_fmFreqField];
-    [_fmFreqField setDelegate:self];
+    _fmFreqField = [[UIButton alloc] init];
+    [self setupButtonFieldProperties:_fmFreqField];
+    [_fmFreqField addTarget:self action:@selector(fmFreqFieldTapped) forControlEvents:UIControlEventTouchUpInside];
+    [_fmFreqField setTag:kOscParam_FMFrequency];
     [self addSubview:_fmFreqField];
     
     
     
-    _oscID = 0;
+    [[TWKeypad sharedKeypad] addToDelegates:self];
+    
+    _sourceIdx = 0;
     [self refreshParametersWithAnimation:YES];
     
     [self setBackgroundColor:[UIColor colorWithWhite:0.2f alpha:1.0]];
@@ -663,14 +711,15 @@
 }
 
 
-- (void)setOscID:(int)oscID {
-    _oscID = oscID;
-    [_segmentedControl setSelectedSegmentIndex:_oscID];
+- (void)setSourceIdx:(int)sourceIdx {
+    _sourceIdx = sourceIdx;
+    [_segmentedControl setSelectedSegmentIndex:_sourceIdx];
     [self refreshParametersWithAnimation:YES];
 }
 
+
 - (void)segmentValueChanged:(UISegmentedControl*)sender {
-    _oscID = (int)sender.selectedSegmentIndex;
+    _sourceIdx = (int)sender.selectedSegmentIndex;
     [self refreshParametersWithAnimation:YES];
 }
 
@@ -683,464 +732,272 @@
 }
 */
 
-- (void)updateBaseFrequencyUIWithValue:(float)frequency {
-    [self setOscBaseFrequencySlider:frequency];
-    [_baseFreqField setText:[NSString stringWithFormat:@"%.2f", frequency]];
-}
-
-- (void)updateBeatFrequencyUIWithValue:(float)frequency {
-    [_beatFreqSlider setValue:frequency animated:YES];
-    [_beatFreqField setText:[NSString stringWithFormat:@"%.2f", frequency]];
-}
-
-- (void)updateRampTimeValueUIWithValue:(int)rampTime_ms {
-    [_rampTimeSlider setValue:rampTime_ms];
-    [_rampTimeField setText:[NSString stringWithFormat:@"%d", rampTime_ms]];
-}
-
 
 #pragma mark - UISliders
 
 - (void)baseFreqSliderChanged {
     float value = [TWUtils logScaleFromLinear:_baseFreqSlider.value outMin:kFrequencyMin outMax:kFrequencyMax];
-    [[TWAudioController sharedController] setOscParameter:kOscParam_OscBaseFrequency withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
-    [_baseFreqField setText:[NSString stringWithFormat:@"%.2f", value]];
+    [[TWAudioController sharedController] setOscParameter:kOscParam_OscBaseFrequency withValue:value atSourceIdx:_sourceIdx inTime:_rampTimeSlider.value];
+    [self updateBaseFreqFieldWithValue:value];
 }
 
 - (void)beatFreqSliderChanged {
     float value = _beatFreqSlider.value;
-    [[TWAudioController sharedController] setOscParameter:kOscParam_OscBeatFrequency withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
-    [_beatFreqField setText:[NSString stringWithFormat:@"%.2f", value]];
+    [[TWAudioController sharedController] setOscParameter:kOscParam_OscBeatFrequency withValue:value atSourceIdx:_sourceIdx inTime:_rampTimeSlider.value];
+    [self updateBeatFreqFieldWithValue:value];
 }
 
 - (void)mononessSliderChanged {
     float value = _mononessSlider.value;
-    [[TWAudioController sharedController] setOscParameter:kOscParam_OscMononess withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
-    [_mononessField setText:[NSString stringWithFormat:@"%.2f", value]];
+    [[TWAudioController sharedController] setOscParameter:kOscParam_OscMononess withValue:value atSourceIdx:_sourceIdx inTime:_rampTimeSlider.value];
+    [self updateMononessFieldWithValue:value];
 }
 
 - (void)waveformChanged {
-    [[TWAudioController sharedController] setOscParameter:kOscParam_OscWaveform withValue:_waveformSelector.selectedSegmentIndex atSourceIdx:_oscID inTime:0];
+    [[TWAudioController sharedController] setOscParameter:kOscParam_OscWaveform withValue:_waveformSelector.selectedSegmentIndex atSourceIdx:_sourceIdx inTime:0];
 }
 
 
 
 - (void)tremFreqSliderChanged {
     float value = _tremoloFreqSlider.value;
-    [[TWAudioController sharedController] setOscParameter:kOscParam_TremoloFrequency withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
-    [_tremoloFreqField setText:[NSString stringWithFormat:@"%.2f", value]];
+    [[TWAudioController sharedController] setOscParameter:kOscParam_TremoloFrequency withValue:value atSourceIdx:_sourceIdx inTime:_rampTimeSlider.value];
+    [self updateTremFreqFieldWithValue:value];
 }
 
 - (void)tremDepthSliderChanged {
     float value = _tremoloDepthSlider.value;
-    [[TWAudioController sharedController] setOscParameter:kOscParam_TremoloDepth withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
-    [_tremoloDepthField setText:[NSString stringWithFormat:@"%.2f", value]];
+    [[TWAudioController sharedController] setOscParameter:kOscParam_TremoloDepth withValue:value atSourceIdx:_sourceIdx inTime:_rampTimeSlider.value];
+    [self updateTremDepthFieldWithValue:value];
 }
 
 
 
 - (void)filterEnableSwitchChanged {
-    [[TWAudioController sharedController] setOscParameter:kOscParam_FilterEnable withValue:_filterEnableSwitch.on atSourceIdx:_oscID inTime:0];
+    [[TWAudioController sharedController] setOscParameter:kOscParam_FilterEnable withValue:_filterEnableSwitch.on atSourceIdx:_sourceIdx inTime:0];
 }
 
 - (void)filterTypeChanged {
-    [[TWAudioController sharedController] setOscParameter:kOscParam_FilterType withValue:_filterSelector.selectedSegmentIndex atSourceIdx:_oscID inTime:0];
+    [[TWAudioController sharedController] setOscParameter:kOscParam_FilterType withValue:_filterSelector.selectedSegmentIndex atSourceIdx:_sourceIdx inTime:0];
 }
 
 - (void)cutoffFreqSliderChanged {
     float frequency = [TWUtils logScaleFromLinear:_cutoffFreqSlider.value outMin:kFrequencyMin outMax:kFrequencyMax];
-    [[TWAudioController sharedController] setOscParameter:kOscParam_FilterCutoff withValue:frequency atSourceIdx:_oscID inTime:_rampTimeSlider.value];
-    [_cutoffFreqField setText:[NSString stringWithFormat:@"%.2f", frequency]];
+    [[TWAudioController sharedController] setOscParameter:kOscParam_FilterCutoff withValue:frequency atSourceIdx:_sourceIdx inTime:_rampTimeSlider.value];
+    [self updateFilterCutoffFieldWithValue:frequency];
 }
 
 - (void)lfoEnableSwitchChanged {
-    [[TWAudioController sharedController] setOscParameter:kOscParam_LFOEnable withValue:_lfoEnableSwitch.on atSourceIdx:_oscID inTime:0];
+    [[TWAudioController sharedController] setOscParameter:kOscParam_LFOEnable withValue:_lfoEnableSwitch.on atSourceIdx:_sourceIdx inTime:0];
 }
 
 - (void)resonanceSliderChanged {
     float value = [TWUtils logScaleFromLinear:_resonanceSlider.value outMin:kResonanceMin outMax:kResonanceMax];
-    [[TWAudioController sharedController] setOscParameter:kOscParam_FilterQ withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
-    [_resonanceField setText:[NSString stringWithFormat:@"%.2f", value]];
+    [[TWAudioController sharedController] setOscParameter:kOscParam_FilterResonance withValue:value atSourceIdx:_sourceIdx inTime:_rampTimeSlider.value];
+    [self updateFilterResonanceFieldWithValue:value];
 }
 
 - (void)filterGainSliderChanged {
     float value = _filterGainSlider.value;
-    [[TWAudioController sharedController] setOscParameter:kOscParam_FilterGain withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
-    [_filterGainField setText:[NSString stringWithFormat:@"%.2f", value]];
+    [[TWAudioController sharedController] setOscParameter:kOscParam_FilterGain withValue:value atSourceIdx:_sourceIdx inTime:_rampTimeSlider.value];
+    [self updateFilterGainFieldWithValue:value];
 }
 
 - (void)lfoFreqSliderChanged {
     float value = _lfoFreqSlider.value;
-    [[TWAudioController sharedController] setOscParameter:kOscParam_LFOFrequency withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
-    [_lfoFreqField setText:[NSString stringWithFormat:@"%.2f", value]];
+    [[TWAudioController sharedController] setOscParameter:kOscParam_LFOFrequency withValue:value atSourceIdx:_sourceIdx inTime:_rampTimeSlider.value];
+    [self updateFilterLFOFrequencyFieldWithValue:value];
 }
 
 - (void)lfoRangeSliderChanged {
     float value = [TWUtils logScaleFromLinear:_lfoRangeSlider.value outMin:kFrequencyMin outMax:kFrequencyMax];
-    [[TWAudioController sharedController] setOscParameter:kOscParam_LFORange withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
-    [_lfoRangeField setText:[NSString stringWithFormat:@"%.1f", value]];
+    [[TWAudioController sharedController] setOscParameter:kOscParam_LFORange withValue:value atSourceIdx:_sourceIdx inTime:_rampTimeSlider.value];
+    [self updateFilterLFORangeFieldWithValue:value];
 }
 
 - (void)lfoOffsetSliderChanged {
     float value = _lfoOffsetSlider.value;
-    [[TWAudioController sharedController] setOscParameter:kOscParam_LFOOffset withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
-    [_lfoOffsetField setText:[NSString stringWithFormat:@"%.2f", value]];
+    [[TWAudioController sharedController] setOscParameter:kOscParam_LFOOffset withValue:value atSourceIdx:_sourceIdx inTime:_rampTimeSlider.value];
+    [self updateFilterLFOOffsetFieldWithValue:value];
 }
 
 
 - (void)rampTimeSliderChanged {
     int value = (int)_rampTimeSlider.value;
-    [[TWAudioController sharedController] setRampTime:value atSourceIdx:_oscID];
-    [_rampTimeField setText:[NSString stringWithFormat:@"%d", value]];
+    [[TWAudioController sharedController] setOscParameter:kOscParam_RampTime_ms withValue:(float)value atSourceIdx:_sourceIdx inTime:0.0f];
+    [self updateRampTimeFieldWithValue:value];
 }
 
 
 - (void)fmAmountSliderChanged {
     float value = _fmAmountSlider.value;
-    [[TWAudioController sharedController] setOscParameter:kOscParam_FMAmount withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
-    [_fmAmountField setText:[NSString stringWithFormat:@"%.2f", value]];
+    [[TWAudioController sharedController] setOscParameter:kOscParam_FMAmount withValue:value atSourceIdx:_sourceIdx inTime:_rampTimeSlider.value];
+    [self updateFMAmountFieldWithValue:value];
 }
 
 - (void)fmFreqSliderChanged {
     float value = _fmFreqSlider.value;
-    [[TWAudioController sharedController] setOscParameter:kOscParam_FMFrequency withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
-    [_fmFreqField setText:[NSString stringWithFormat:@"%.2f", value]];
-}
-
-
-#pragma - UITextFieldDelegate
-
-- (void)keyboardDoneButtonTapped:(id)sender {
-    
-    UITextField* currentResponder = [[TWKeyboardAccessoryView sharedView] currentResponder];
-    
-    if (currentResponder == _baseFreqField) {
-        float value = [[_baseFreqField text] floatValue];
-        [[TWAudioController sharedController] setOscParameter:kOscParam_OscBaseFrequency withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
-        [self setOscBaseFrequencySlider:value];
-    }
-    
-    else if (currentResponder == _beatFreqField) {
-        float value = [[_beatFreqField text] floatValue];
-        [[TWAudioController sharedController] setOscParameter:kOscParam_OscBeatFrequency withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
-        [_beatFreqSlider setValue:value animated:YES];
-    }
-    
-    else if (currentResponder == _mononessField) {
-        float value = [[_mononessField text] floatValue];
-        [[TWAudioController sharedController] setOscParameter:kOscParam_OscMononess withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
-        [_mononessSlider setValue:value animated:YES];
-    }
-    
-    else if (currentResponder == _tremoloFreqField) {
-        float value = [[_tremoloFreqField text] floatValue];
-        [[TWAudioController sharedController] setOscParameter:kOscParam_TremoloFrequency withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
-        [_tremoloFreqSlider setValue:value animated:YES];
-    }
-    
-    else if (currentResponder == _tremoloDepthField) {
-        float value = [[_tremoloDepthField text] floatValue];
-        [[TWAudioController sharedController] setOscParameter:kOscParam_TremoloDepth withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
-        [_tremoloDepthSlider setValue:value animated:YES];
-    }
-    
-    else if (currentResponder == _cutoffFreqField) {
-        float value = [[_cutoffFreqField text] floatValue];
-        [[TWAudioController sharedController] setOscParameter:kOscParam_FilterCutoff withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
-        [self setCutoffFrequencySlider:value];
-    }
-    
-    else if (currentResponder == _resonanceField) {
-        float value = [[_resonanceField text] floatValue];
-        if (value <= kResonanceMin) {
-            value = kResonanceMin;
-        }
-        [[TWAudioController sharedController] setOscParameter:kOscParam_FilterQ withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
-        [self setResonanceSlider:value];
-    }
-    
-    else if (currentResponder == _filterGainField) {
-        float value = [[_filterGainField text] floatValue];
-        [[TWAudioController sharedController] setOscParameter:kOscParam_FilterGain withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
-        [_filterGainSlider setValue:value animated:YES];
-    }
-    
-    else if (currentResponder == _lfoFreqField) {
-        float value = [[_lfoFreqField text] floatValue];
-        [[TWAudioController sharedController] setOscParameter:kOscParam_LFOFrequency withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
-        [_lfoFreqSlider setValue:value animated:YES];
-    }
-    
-    else if (currentResponder == _lfoOffsetField) {
-        float value = [[_lfoOffsetField text] floatValue];
-        [[TWAudioController sharedController] setOscParameter:kOscParam_LFOOffset withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
-        [_lfoOffsetSlider setValue:value animated:YES];
-    }
-    
-    else if (currentResponder == _lfoRangeField) {
-        float value = [[_lfoRangeField text] floatValue];
-        [[TWAudioController sharedController] setOscParameter:kOscParam_LFORange withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
-        [self setFilterLFORangeSlider:value];
-    }
-    
-    else if (currentResponder == _rampTimeField) {
-        int value = [[_rampTimeField text] intValue];
-        [[TWAudioController sharedController] setRampTime:value atSourceIdx:_oscID];
-        [_rampTimeSlider setValue:value animated:YES];
-    }
-    
-    else if (currentResponder == _fmAmountField) {
-        float value = [[_fmAmountField text] floatValue];
-        [[TWAudioController sharedController] setOscParameter:kOscParam_FMAmount withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
-        [_fmAmountSlider setValue:value animated:YES];
-    }
-    
-    else if (currentResponder == _fmFreqField) {
-        float value = [[_fmFreqField text] floatValue];
-        [[TWAudioController sharedController] setOscParameter:kOscParam_FMFrequency withValue:value atSourceIdx:_oscID inTime:_rampTimeSlider.value];
-        [_fmFreqSlider setValue:value animated:YES];
-    }
-    
-    [self endEditing:YES];
-//    [_currentResponder resignFirstResponder];
-}
-
-
-- (void)keyboardCancelButtonTapped:(id)sender {
-    
-    UITextField* currentResponder = [[TWKeyboardAccessoryView sharedView] currentResponder];
-    
-    if (currentResponder == _baseFreqField) {
-        float frequency = [TWUtils logScaleFromLinear:_baseFreqSlider.value outMin:kFrequencyMin outMax:kFrequencyMax];
-        [_baseFreqField setText:[NSString stringWithFormat:@"%.2f", frequency]];
-    }
-
-    else if (currentResponder == _beatFreqField) {
-        float frequency = [_beatFreqSlider value];
-        [_beatFreqField setText:[NSString stringWithFormat:@"%.2f", frequency]];
-    }
-
-    else if (currentResponder == _mononessField) {
-        float mononess = [_mononessSlider value];
-        [_mononessField setText:[NSString stringWithFormat:@"%.2f", mononess]];
-    }
-
-    else if (currentResponder == _tremoloFreqField) {
-        float frequency = [_tremoloFreqSlider value];
-        [_tremoloFreqField setText:[NSString stringWithFormat:@"%.2f", frequency]];
-    }
-
-    else if (currentResponder == _tremoloDepthField) {
-        float depth = [_tremoloDepthSlider value];
-        [_tremoloDepthField setText:[NSString stringWithFormat:@"%.2f", depth]];
-    }
-
-    else if (currentResponder == _cutoffFreqField) {
-        float frequency = [[TWAudioController sharedController] getOscParameter:kOscParam_FilterCutoff atSourceIdx:_oscID];
-        [_cutoffFreqField setText:[NSString stringWithFormat:@"%.2f", frequency]];
-    }
-
-    else if (currentResponder == _resonanceField) {
-        float resonance = [_resonanceSlider value];
-        [_resonanceField setText:[NSString stringWithFormat:@"%.2f", resonance]];
-    }
-
-    else if (currentResponder == _filterGainField) {
-        float gain = [_filterGainSlider value];
-        [_filterGainField setText:[NSString stringWithFormat:@"%.2f", gain]];
-    }
-
-    else if (currentResponder == _lfoFreqField) {
-        float frequency = [_lfoFreqSlider value];
-        [_lfoFreqField setText:[NSString stringWithFormat:@"%.2f", frequency]];
-    }
-
-    else if (currentResponder == _lfoOffsetField) {
-        float offset = [_lfoOffsetSlider value];
-        [_lfoOffsetField setText:[NSString stringWithFormat:@"%.2f", offset]];
-    }
-
-    else if (currentResponder == _lfoRangeField) {
-        float range = [TWUtils logScaleFromLinear:_lfoRangeSlider.value outMin:kFrequencyMin outMax:kFrequencyMax];
-        [_lfoRangeField setText:[NSString stringWithFormat:@"%.2f", range]];
-    }
-
-    else if (currentResponder == _rampTimeField) {
-        int rampTime_ms = (int)[_rampTimeSlider value];
-        [_rampTimeField setText:[NSString stringWithFormat:@"%d", rampTime_ms]];
-    }
-    
-    else if (currentResponder == _fmAmountField) {
-        float range = [_fmAmountSlider value];
-        [_fmAmountField setText:[NSString stringWithFormat:@"%.2f", range]];
-    }
-    
-    else if (currentResponder == _fmFreqField) {
-        float range = [_fmFreqSlider value];
-        [_fmFreqField setText:[NSString stringWithFormat:@"%.2f", range]];
-    }
-    
-    [self endEditing:YES];
-//    [_currentResponder resignFirstResponder];
-}
-
-
-- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
-//    NSLog(@"GRP: ShouldBeginEditing: %p", textField);
-    
-    TWKeyboardAccessoryView* accView = [TWKeyboardAccessoryView sharedView];
-    [accView setValueText:[textField text]];
-
-    NSString* titleText;
-    if (textField == _baseFreqField) {
-        titleText = [NSString stringWithFormat:@"Osc[%d]. Base Frequency:", _oscID];
-    } else if (textField == _beatFreqField) {
-        titleText = [NSString stringWithFormat:@"Osc[%d]. Beat Frequency:", _oscID];
-    } else if (textField == _mononessField) {
-        titleText = [NSString stringWithFormat:@"Osc[%d]. Mononess:", _oscID];
-    } else if (textField == _tremoloFreqField) {
-        titleText = [NSString stringWithFormat:@"Osc[%d]. Tremolo Frequency:", _oscID];
-    } else if (textField == _tremoloDepthField) {
-        titleText = [NSString stringWithFormat:@"Osc[%d]. Tremolo Depth:", _oscID];
-    } else if (textField == _cutoffFreqField) {
-        titleText = [NSString stringWithFormat:@"Osc[%d]. Filter Cutoff Frequency:", _oscID];
-    } else if (textField == _resonanceField) {
-        titleText = [NSString stringWithFormat:@"Osc[%d]. Filter Resonance:", _oscID];
-    } else if (textField == _filterGainField) {
-        titleText = [NSString stringWithFormat:@"Osc[%d]. Filter Gain:", _oscID];
-    } else if (textField == _lfoFreqField) {
-        titleText = [NSString stringWithFormat:@"Osc[%d]. LFO Frequency:", _oscID];
-    } else if (textField == _lfoOffsetField) {
-        titleText = [NSString stringWithFormat:@"Osc[%d]. LFO Stereo Offset:", _oscID];
-    } else if (textField == _lfoRangeField) {
-        titleText = [NSString stringWithFormat:@"Osc[%d]. LFO Range:", _oscID];
-    } else if (textField == _rampTimeField) {
-        titleText = [NSString stringWithFormat:@"Osc[%d]. Ramp Time:", _oscID];
-    } else if (textField == _fmAmountField) {
-        titleText = [NSString stringWithFormat:@"Osc[%d]. FM Amount:", _oscID];
-    } else if (textField == _fmFreqField) {
-        titleText = [NSString stringWithFormat:@"Osc[%d]. FM Frequency:", _oscID];
-    }
-    
-    [accView setTitleText:titleText];
-    
-    return YES;
-}
-
-- (void)textFieldDidBeginEditing:(UITextField *)textField {
-//    NSLog(@"GRP: DidBeginEditing: %p", textField);
-    [textField selectAll:textField];
-    [[TWKeyboardAccessoryView sharedView] setCurrentResponder:textField];
-}
-
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
-    [[TWKeyboardAccessoryView sharedView] setValueText:[[textField text] stringByReplacingCharactersInRange:range withString:string]];
-    return YES;
-}
-
-- (BOOL)textFieldShouldEndEditing:(UITextField *)textField {
-//    NSLog(@"GRP: ShouldEndEditing: %p", textField);
-    return YES;
-}
-
-- (void)textFieldDidEndEditing:(UITextField *)textField {
-//    NSLog(@"GRP: DidEndEditing: %p", textField);
-    [textField resignFirstResponder];
+    [[TWAudioController sharedController] setOscParameter:kOscParam_FMFrequency withValue:value atSourceIdx:_sourceIdx inTime:_rampTimeSlider.value];
+    [self updateFMFrequencyFieldWithValue:value];
 }
 
 
 
-- (BOOL)textFieldShouldClear:(UITextField *)textField {
-//    NSLog(@"GRP: ShouldClear: %p", textField);
-    return YES;
-}
-
-- (BOOL)textFieldShouldReturn:(UITextField *)textField {
-//    NSLog(@"GRP: ShouldReturn: %p", textField);
-    return YES;
-}
 
 
 #pragma mark - Private
 
+
+- (void)updateBaseFrequencyUIWithValue:(float)frequency {
+    [self setOscBaseFrequencySlider:frequency];
+    [self updateBaseFreqFieldWithValue:frequency];
+}
+
+- (void)updateBeatFrequencyUIWithValue:(float)frequency {
+    [_beatFreqSlider setValue:frequency animated:YES];
+    [self updateBeatFreqFieldWithValue:frequency];
+}
+
+- (void)updateRampTimeValueUIWithValue:(int)rampTime_ms {
+    [_rampTimeSlider setValue:rampTime_ms];
+    [self updateRampTimeFieldWithValue:rampTime_ms];
+}
+
+
+- (void)updateBaseFreqFieldWithValue:(float)value {
+    [_baseFreqField setTitle:[NSString stringWithFormat:@"%.2f", value] forState:UIControlStateNormal];
+}
+
+- (void)updateBeatFreqFieldWithValue:(float)value {
+    [_beatFreqField setTitle:[NSString stringWithFormat:@"%.2f", value] forState:UIControlStateNormal];
+}
+
+- (void)updateMononessFieldWithValue:(float)value {
+    [_mononessField setTitle:[NSString stringWithFormat:@"%.2f", value] forState:UIControlStateNormal];
+}
+
+- (void)updateTremFreqFieldWithValue:(float)value {
+    [_tremoloFreqField setTitle:[NSString stringWithFormat:@"%.2f", value] forState:UIControlStateNormal];
+}
+
+- (void)updateTremDepthFieldWithValue:(float)value {
+    [_tremoloDepthField setTitle:[NSString stringWithFormat:@"%.2f", value] forState:UIControlStateNormal];
+}
+
+- (void)updateFilterCutoffFieldWithValue:(float)value {
+    [_cutoffFreqField setTitle:[NSString stringWithFormat:@"%.2f", value] forState:UIControlStateNormal];
+}
+
+- (void)updateFilterResonanceFieldWithValue:(float)value {
+    [_resonanceField setTitle:[NSString stringWithFormat:@"%.2f", value] forState:UIControlStateNormal];
+}
+
+- (void)updateFilterGainFieldWithValue:(float)value {
+    [_filterGainField setTitle:[NSString stringWithFormat:@"%.2f", value] forState:UIControlStateNormal];
+}
+
+- (void)updateFilterLFOFrequencyFieldWithValue:(float)value {
+    [_lfoFreqField setTitle:[NSString stringWithFormat:@"%.2f", value] forState:UIControlStateNormal];
+}
+
+- (void)updateFilterLFORangeFieldWithValue:(float)value {
+    [_lfoRangeField setTitle:[NSString stringWithFormat:@"%.2f", value] forState:UIControlStateNormal];
+}
+
+- (void)updateFilterLFOOffsetFieldWithValue:(float)value {
+    [_lfoOffsetField setTitle:[NSString stringWithFormat:@"%.2f", value] forState:UIControlStateNormal];
+}
+
+- (void)updateRampTimeFieldWithValue:(int)value {
+    [_rampTimeField setTitle:[NSString stringWithFormat:@"%d", value] forState:UIControlStateNormal];
+}
+
+- (void)updateFMAmountFieldWithValue:(float)value {
+    [_fmAmountField setTitle:[NSString stringWithFormat:@"%.2f", value] forState:UIControlStateNormal];
+}
+
+- (void)updateFMFrequencyFieldWithValue:(float)value {
+    [_fmFreqField setTitle:[NSString stringWithFormat:@"%.2f", value] forState:UIControlStateNormal];
+}
+
+
 - (void)refreshParametersWithAnimation:(BOOL)animated {
     
-    float baseFreq = [[TWAudioController sharedController] getOscParameter:kOscParam_OscBaseFrequency atSourceIdx:_oscID];
+    float baseFreq = [[TWAudioController sharedController] getOscParameter:kOscParam_OscBaseFrequency atSourceIdx:_sourceIdx];
     [self updateBaseFrequencyUIWithValue:baseFreq];
     
-    float beatFreq = [[TWAudioController sharedController] getOscParameter:kOscParam_OscBeatFrequency atSourceIdx:_oscID];
+    float beatFreq = [[TWAudioController sharedController] getOscParameter:kOscParam_OscBeatFrequency atSourceIdx:_sourceIdx];
     [self updateBeatFrequencyUIWithValue:beatFreq];
     
-    float mononess = [[TWAudioController sharedController] getOscParameter:kOscParam_OscMononess atSourceIdx:_oscID];
+    float mononess = [[TWAudioController sharedController] getOscParameter:kOscParam_OscMononess atSourceIdx:_sourceIdx];
     [_mononessSlider setValue:mononess animated:animated];
-    [_mononessField setText:[NSString stringWithFormat:@"%.2f", mononess]];
-    
-    [_waveformSelector setSelectedSegmentIndex:[[TWAudioController sharedController] getOscParameter:kOscParam_OscWaveform atSourceIdx:_oscID]];
+    [self updateMononessFieldWithValue:mononess];
     
     
+    [_waveformSelector setSelectedSegmentIndex:[[TWAudioController sharedController] getOscParameter:kOscParam_OscWaveform atSourceIdx:_sourceIdx]];
     
-    float tremFreq = [[TWAudioController sharedController] getOscParameter:kOscParam_TremoloFrequency atSourceIdx:_oscID];
+    
+    
+    float tremFreq = [[TWAudioController sharedController] getOscParameter:kOscParam_TremoloFrequency atSourceIdx:_sourceIdx];
     [_tremoloFreqSlider setValue:tremFreq animated:animated];
-    [_tremoloFreqField setText:[NSString stringWithFormat:@"%.2f", tremFreq]];
+    [self updateTremFreqFieldWithValue:tremFreq];
     
-    float tremDepth = [[TWAudioController sharedController] getOscParameter:kOscParam_TremoloDepth atSourceIdx:_oscID];
+    float tremDepth = [[TWAudioController sharedController] getOscParameter:kOscParam_TremoloDepth atSourceIdx:_sourceIdx];
     [_tremoloDepthSlider setValue:tremDepth animated:animated];
-    [_tremoloDepthField setText:[NSString stringWithFormat:@"%.2f", tremDepth]];
+    [self updateTremDepthFieldWithValue:tremDepth];
     
     
     
-    float Fc = [[TWAudioController sharedController] getOscParameter:kOscParam_FilterCutoff atSourceIdx:_oscID];
+    float Fc = [[TWAudioController sharedController] getOscParameter:kOscParam_FilterCutoff atSourceIdx:_sourceIdx];
     [self setCutoffFrequencySlider:Fc];
-    [_cutoffFreqField setText:[NSString stringWithFormat:@"%.2f", Fc]];
+    [self updateFilterCutoffFieldWithValue:Fc];
     
-    [_filterSelector setSelectedSegmentIndex:[[TWAudioController sharedController] getOscParameter:kOscParam_FilterType atSourceIdx:_oscID]];
-    [_filterEnableSwitch setOn:[[TWAudioController sharedController] getOscParameter:kOscParam_FilterEnable atSourceIdx:_oscID]];
-    [_lfoEnableSwitch setOn:[[TWAudioController sharedController] getOscParameter:kOscParam_LFOEnable atSourceIdx:_oscID]];
     
-    float gain = [[TWAudioController sharedController] getOscParameter:kOscParam_FilterGain atSourceIdx:_oscID];
+    [_filterSelector setSelectedSegmentIndex:[[TWAudioController sharedController] getOscParameter:kOscParam_FilterType atSourceIdx:_sourceIdx]];
+    [_filterEnableSwitch setOn:[[TWAudioController sharedController] getOscParameter:kOscParam_FilterEnable atSourceIdx:_sourceIdx]];
+    [_lfoEnableSwitch setOn:[[TWAudioController sharedController] getOscParameter:kOscParam_LFOEnable atSourceIdx:_sourceIdx]];
+    
+    
+    float gain = [[TWAudioController sharedController] getOscParameter:kOscParam_FilterGain atSourceIdx:_sourceIdx];
     [_filterGainSlider setValue:gain animated:YES];
-    [_filterGainField setText:[NSString stringWithFormat:@"%.2f", gain]];
+    [self updateFilterGainFieldWithValue:gain];
     
-    float res = [[TWAudioController sharedController] getOscParameter:kOscParam_FilterQ atSourceIdx:_oscID];
+    float res = [[TWAudioController sharedController] getOscParameter:kOscParam_FilterResonance atSourceIdx:_sourceIdx];
     [self setResonanceSlider:res];
-    [_resonanceField setText:[NSString stringWithFormat:@"%.2f", res]];
+    [self updateFilterResonanceFieldWithValue:res];
     
-    float range = [[TWAudioController sharedController] getOscParameter:kOscParam_LFORange atSourceIdx:_oscID];
+    float range = [[TWAudioController sharedController] getOscParameter:kOscParam_LFORange atSourceIdx:_sourceIdx];
     [self setFilterLFORangeSlider:range];
-    [_lfoRangeField setText:[NSString stringWithFormat:@"%.1f", range]];
+    [self updateFilterLFORangeFieldWithValue:range];
     
-    float lfoFreq = [[TWAudioController sharedController] getOscParameter:kOscParam_LFOFrequency atSourceIdx:_oscID];
+    float lfoFreq = [[TWAudioController sharedController] getOscParameter:kOscParam_LFOFrequency atSourceIdx:_sourceIdx];
     [_lfoFreqSlider setValue:lfoFreq animated:animated];
-    [_lfoFreqField setText:[NSString stringWithFormat:@"%.2f", lfoFreq]];
+    [self updateFilterLFOFrequencyFieldWithValue:lfoFreq];
     
-    float lfoOffset = [[TWAudioController sharedController] getOscParameter:kOscParam_LFOOffset atSourceIdx:_oscID];
+    float lfoOffset = [[TWAudioController sharedController] getOscParameter:kOscParam_LFOOffset atSourceIdx:_sourceIdx];
     [_lfoOffsetSlider setValue:lfoOffset animated:animated];
-    [_lfoOffsetField setText:[NSString stringWithFormat:@"%.2f", lfoOffset]];
+    [self updateFilterLFOOffsetFieldWithValue:lfoOffset];
     
-    int rampTime_ms = [[TWAudioController sharedController] getRampTimeAtSourceIdx:_oscID];
+    int rampTime_ms = (int)[[TWAudioController sharedController] getOscParameter:kOscParam_RampTime_ms atSourceIdx:_sourceIdx];
     [self updateRampTimeValueUIWithValue:rampTime_ms];
     
-    float fmAmount = [[TWAudioController sharedController] getOscParameter:kOscParam_FMAmount atSourceIdx:_oscID];
+    float fmAmount = [[TWAudioController sharedController] getOscParameter:kOscParam_FMAmount atSourceIdx:_sourceIdx];
     [_fmAmountSlider setValue:fmAmount animated:animated];
-    [_fmAmountField setText:[NSString stringWithFormat:@"%.2f", fmAmount]];
+    [self updateFMAmountFieldWithValue:fmAmount];
     
-    float fmFrequency = [[TWAudioController sharedController] getOscParameter:kOscParam_FMFrequency atSourceIdx:_oscID];
+    float fmFrequency = [[TWAudioController sharedController] getOscParameter:kOscParam_FMFrequency atSourceIdx:_sourceIdx];
     [_fmFreqSlider setValue:fmFrequency animated:animated];
-    [_fmFreqField setText:[NSString stringWithFormat:@"%.2f", fmFrequency]];
+    [self updateFMFrequencyFieldWithValue:fmFrequency];
 }
 
 
 
-- (void)setupTextFieldProperties:(UITextField*)textField {
-    [textField setTextColor:[UIColor colorWithWhite:0.8f alpha:1.0f]];
-    [textField setFont:[UIFont systemFontOfSize:9.0f]];
-    [textField setTextAlignment:NSTextAlignmentCenter];
-    [textField setKeyboardType:UIKeyboardTypeDecimalPad];
-    [textField setKeyboardAppearance:UIKeyboardAppearanceDark];
-    [textField setInputAccessoryView:[TWKeyboardAccessoryView sharedView]];
-//    [textField setBackgroundColor:[UIColor orangeColor]];
-    [textField setBackgroundColor:[UIColor colorWithWhite:0.5f alpha:0.05f]];
+- (void)setupButtonFieldProperties:(UIButton*)field {
+    [field setTitleColor:[UIColor valueTextLightWhiteColor] forState:UIControlStateNormal];
+    [field.titleLabel setFont:[UIFont systemFontOfSize:10.0f]];
+    [field setBackgroundColor:[UIColor clearColor]];
 }
+
 
 - (void)setupLabelProperties:(UILabel*)label {
     [label setTextColor:[UIColor colorWithWhite:0.8f alpha:1.0f]];
@@ -1149,6 +1006,7 @@
 //    [label setBackgroundColor:[UIColor yellowColor]];
     [label setBackgroundColor:[UIColor clearColor]];
 }
+
 
 
 #pragma mark - Parameter Scaling
@@ -1168,5 +1026,291 @@
 - (void)setFilterLFORangeSlider:(float)value {
     [_lfoRangeSlider setValue:[TWUtils linearScaleFromLog:value inMin:kFrequencyMin inMax:kFrequencyMax] animated:YES];
 }
+
+
+#pragma mark - TWKeypad
+
+- (void)keypadDoneButtonTapped:(UIButton *)responder withValue:(NSString *)inValue {
+    
+    if (responder == _baseFreqField) {
+        float value = [inValue floatValue];
+        [[TWAudioController sharedController] setOscParameter:kOscParam_OscBaseFrequency withValue:value atSourceIdx:_sourceIdx inTime:_rampTimeSlider.value];
+        [self updateBaseFreqFieldWithValue:value];
+        [self setOscBaseFrequencySlider:value];
+    }
+    
+    else if (responder == _beatFreqField) {
+        float value = [inValue floatValue];
+        [[TWAudioController sharedController] setOscParameter:kOscParam_OscBeatFrequency withValue:value atSourceIdx:_sourceIdx inTime:_rampTimeSlider.value];
+        [self updateBeatFreqFieldWithValue:value];
+        [_beatFreqSlider setValue:value animated:YES];
+    }
+    
+    else if (responder == _mononessField) {
+        float value = [inValue floatValue];
+        [[TWAudioController sharedController] setOscParameter:kOscParam_OscMononess withValue:value atSourceIdx:_sourceIdx inTime:_rampTimeSlider.value];
+        [self updateMononessFieldWithValue:value];
+        [_mononessSlider setValue:value animated:YES];
+    }
+    
+    else if (responder == _tremoloFreqField) {
+        float value = [inValue floatValue];
+        [[TWAudioController sharedController] setOscParameter:kOscParam_TremoloFrequency withValue:value atSourceIdx:_sourceIdx inTime:_rampTimeSlider.value];
+        [self updateTremFreqFieldWithValue:value];
+        [_tremoloFreqSlider setValue:value animated:YES];
+    }
+    
+    else if (responder == _tremoloDepthField) {
+        float value = [inValue floatValue];
+        [[TWAudioController sharedController] setOscParameter:kOscParam_TremoloDepth withValue:value atSourceIdx:_sourceIdx inTime:_rampTimeSlider.value];
+        [self updateTremDepthFieldWithValue:value];
+        [_tremoloDepthSlider setValue:value animated:YES];
+    }
+    
+    else if (responder == _cutoffFreqField) {
+        float value = [inValue floatValue];
+        [[TWAudioController sharedController] setOscParameter:kOscParam_FilterCutoff withValue:value atSourceIdx:_sourceIdx inTime:_rampTimeSlider.value];
+        [self updateFilterCutoffFieldWithValue:value];
+        [self setCutoffFrequencySlider:value];
+    }
+    
+    else if (responder == _resonanceField) {
+        float value = [inValue floatValue];
+        if (value <= kResonanceMin) {
+            value = kResonanceMin;
+        }
+        [[TWAudioController sharedController] setOscParameter:kOscParam_FilterResonance withValue:value atSourceIdx:_sourceIdx inTime:_rampTimeSlider.value];
+        [self updateFilterResonanceFieldWithValue:value];
+        [self setResonanceSlider:value];
+    }
+    
+    else if (responder == _filterGainField) {
+        float value = [inValue floatValue];
+        [[TWAudioController sharedController] setOscParameter:kOscParam_FilterGain withValue:value atSourceIdx:_sourceIdx inTime:_rampTimeSlider.value];
+        [self updateFilterGainFieldWithValue:value];
+        [_filterGainSlider setValue:value animated:YES];
+    }
+    
+    else if (responder == _lfoFreqField) {
+        float value = [inValue floatValue];
+        [[TWAudioController sharedController] setOscParameter:kOscParam_LFOFrequency withValue:value atSourceIdx:_sourceIdx inTime:_rampTimeSlider.value];
+        [self updateFilterLFOFrequencyFieldWithValue:value];
+        [_lfoFreqSlider setValue:value animated:YES];
+    }
+    
+    else if (responder == _lfoOffsetField) {
+        float value = [inValue floatValue];
+        [[TWAudioController sharedController] setOscParameter:kOscParam_LFOOffset withValue:value atSourceIdx:_sourceIdx inTime:_rampTimeSlider.value];
+        [self updateFilterLFOOffsetFieldWithValue:value];
+        [_lfoOffsetSlider setValue:value animated:YES];
+    }
+    
+    else if (responder == _lfoRangeField) {
+        float value = [inValue floatValue];
+        [[TWAudioController sharedController] setOscParameter:kOscParam_LFORange withValue:value atSourceIdx:_sourceIdx inTime:_rampTimeSlider.value];
+        [self updateFilterLFORangeFieldWithValue:value];
+        [self setFilterLFORangeSlider:value];
+    }
+    
+    else if (responder == _rampTimeField) {
+        int value = [inValue floatValue];
+        [[TWAudioController sharedController] setOscParameter:kOscParam_RampTime_ms withValue:value atSourceIdx:_sourceIdx inTime:0.0f];
+        [_rampTimeSlider setValue:value animated:YES];
+        [self updateRampTimeFieldWithValue:value];
+    }
+    
+    else if (responder == _fmAmountField) {
+        float value = [inValue floatValue];
+        [[TWAudioController sharedController] setOscParameter:kOscParam_FMAmount withValue:value atSourceIdx:_sourceIdx inTime:_rampTimeSlider.value];
+        [self updateFMAmountFieldWithValue:value];
+        [_fmAmountSlider setValue:value animated:YES];
+    }
+    
+    else if (responder == _fmFreqField) {
+        float value = [inValue floatValue];
+        [[TWAudioController sharedController] setOscParameter:kOscParam_FMFrequency withValue:value atSourceIdx:_sourceIdx inTime:_rampTimeSlider.value];
+        [self updateFMFrequencyFieldWithValue:value];
+        [_fmFreqSlider setValue:value animated:YES];
+    }
+}
+
+
+- (void)keypadCancelButtonTapped:(UIButton *)responder {
+    
+    if (responder == _baseFreqField) {
+        float value = [[TWAudioController sharedController] getOscParameter:kOscParam_OscBaseFrequency atSourceIdx:_sourceIdx];
+        [self updateBaseFreqFieldWithValue:value];
+    }
+    
+    else if (responder == _beatFreqField) {
+        float value = [[TWAudioController sharedController] getOscParameter:kOscParam_OscBeatFrequency atSourceIdx:_sourceIdx];
+        [self updateBeatFreqFieldWithValue:value];
+    }
+    
+    else if (responder == _mononessField) {
+        float value = [[TWAudioController sharedController] getOscParameter:kOscParam_OscMononess atSourceIdx:_sourceIdx];
+        [self updateMononessFieldWithValue:value];
+    }
+    
+    else if (responder == _tremoloFreqField) {
+        float value = [[TWAudioController sharedController] getOscParameter:kOscParam_TremoloFrequency atSourceIdx:_sourceIdx];
+        [self updateTremFreqFieldWithValue:value];
+    }
+    
+    else if (responder == _tremoloDepthField) {
+        float value = [[TWAudioController sharedController] getOscParameter:kOscParam_TremoloDepth atSourceIdx:_sourceIdx];
+        [self updateTremDepthFieldWithValue:value];
+    }
+    
+    else if (responder == _cutoffFreqField) {
+        float value = [[TWAudioController sharedController] getOscParameter:kOscParam_FilterCutoff atSourceIdx:_sourceIdx];
+        [self updateFilterCutoffFieldWithValue:value];
+    }
+    
+    else if (responder == _resonanceField) {
+        float value = [[TWAudioController sharedController] getOscParameter:kOscParam_FilterResonance atSourceIdx:_sourceIdx];
+        [self updateFilterResonanceFieldWithValue:value];
+    }
+    
+    else if (responder == _filterGainField) {
+        float value = [[TWAudioController sharedController] getOscParameter:kOscParam_FilterGain atSourceIdx:_sourceIdx];
+        [self updateFilterGainFieldWithValue:value];
+    }
+    
+    else if (responder == _lfoFreqField) {
+        float value = [[TWAudioController sharedController] getOscParameter:kOscParam_LFOFrequency atSourceIdx:_sourceIdx];
+        [self updateFilterLFOFrequencyFieldWithValue:value];
+    }
+    
+    else if (responder == _lfoOffsetField) {
+        float value = [[TWAudioController sharedController] getOscParameter:kOscParam_LFOOffset atSourceIdx:_sourceIdx];
+        [self updateFilterLFOOffsetFieldWithValue:value];
+    }
+    
+    else if (responder == _lfoRangeField) {
+        float value = [[TWAudioController sharedController] getOscParameter:kOscParam_LFORange atSourceIdx:_sourceIdx];
+        [self updateFilterLFORangeFieldWithValue:value];
+    }
+    
+    else if (responder == _rampTimeField) {
+        int value = (int)(int)[[TWAudioController sharedController] getOscParameter:kOscParam_RampTime_ms atSourceIdx:_sourceIdx];
+        [self updateRampTimeFieldWithValue:value];
+    }
+    
+    else if (responder == _fmAmountField) {
+        float value = [[TWAudioController sharedController] getOscParameter:kOscParam_FMAmount atSourceIdx:_sourceIdx];
+        [self updateFMAmountFieldWithValue:value];
+    }
+    
+    else if (responder == _fmFreqField) {
+        float value = [[TWAudioController sharedController] getOscParameter:kOscParam_FMFrequency atSourceIdx:_sourceIdx];
+        [self updateFMFrequencyFieldWithValue:value];
+    }
+}
+
+
+
+
+
+- (void)baseFreqFieldTapped {
+    TWKeypad* keypad = [TWKeypad sharedKeypad];
+    [keypad setTitle:[NSString stringWithFormat:@"[%d] Base Freq (Hz): ", _sourceIdx]];
+    [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWAudioController sharedController] getOscParameter:kOscParam_OscBaseFrequency atSourceIdx:_sourceIdx]]];
+    [keypad setCurrentResponder:_baseFreqField];
+}
+
+- (void)beatFreqFieldTapped {
+    TWKeypad* keypad = [TWKeypad sharedKeypad];
+    [keypad setTitle:[NSString stringWithFormat:@"[%d] Beat Freq (Hz): ", _sourceIdx]];
+    [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWAudioController sharedController] getOscParameter:kOscParam_OscBeatFrequency atSourceIdx:_sourceIdx]]];
+    [keypad setCurrentResponder:_beatFreqField];
+}
+
+- (void)mononessFieldTapped {
+    TWKeypad* keypad = [TWKeypad sharedKeypad];
+    [keypad setTitle:[NSString stringWithFormat:@"[%d] Mononess: ", _sourceIdx]];
+    [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWAudioController sharedController] getOscParameter:kOscParam_OscMononess atSourceIdx:_sourceIdx]]];
+    [keypad setCurrentResponder:_mononessField];
+}
+
+- (void)tremFreqFieldTapped {
+    TWKeypad* keypad = [TWKeypad sharedKeypad];
+    [keypad setTitle:[NSString stringWithFormat:@"[%d] Trem Freq (Hz): ", _sourceIdx]];
+    [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWAudioController sharedController] getOscParameter:kOscParam_TremoloFrequency atSourceIdx:_sourceIdx]]];
+    [keypad setCurrentResponder:_tremoloFreqField];
+}
+
+- (void)tremDepthFieldTapped {
+    TWKeypad* keypad = [TWKeypad sharedKeypad];
+    [keypad setTitle:[NSString stringWithFormat:@"[%d] Trem Depth (Hz): ", _sourceIdx]];
+    [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWAudioController sharedController] getOscParameter:kOscParam_TremoloDepth atSourceIdx:_sourceIdx]]];
+    [keypad setCurrentResponder:_tremoloDepthField];
+}
+
+- (void)cutoffFreqFieldTapped {
+    TWKeypad* keypad = [TWKeypad sharedKeypad];
+    [keypad setTitle:[NSString stringWithFormat:@"[%d] Filter Fc (Hz): ", _sourceIdx]];
+    [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWAudioController sharedController] getOscParameter:kOscParam_FilterCutoff atSourceIdx:_sourceIdx]]];
+    [keypad setCurrentResponder:_cutoffFreqField];
+}
+
+- (void)resonanceFieldTapped {
+    TWKeypad* keypad = [TWKeypad sharedKeypad];
+    [keypad setTitle:[NSString stringWithFormat:@"[%d] Resonance (Q): ", _sourceIdx]];
+    [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWAudioController sharedController] getOscParameter:kOscParam_FilterResonance atSourceIdx:_sourceIdx]]];
+    [keypad setCurrentResponder:_resonanceField];
+}
+
+- (void)filterGainFieldTapped {
+    TWKeypad* keypad = [TWKeypad sharedKeypad];
+    [keypad setTitle:[NSString stringWithFormat:@"[%d] Filter Gain: ", _sourceIdx]];
+    [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWAudioController sharedController] getOscParameter:kOscParam_FilterGain atSourceIdx:_sourceIdx]]];
+    [keypad setCurrentResponder:_filterGainField];
+}
+
+- (void)lfoFreqFieldTapped {
+    TWKeypad* keypad = [TWKeypad sharedKeypad];
+    [keypad setTitle:[NSString stringWithFormat:@"[%d] Filter LFO Freq (Hz): ", _sourceIdx]];
+    [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWAudioController sharedController] getOscParameter:kOscParam_LFOFrequency atSourceIdx:_sourceIdx]]];
+    [keypad setCurrentResponder:_lfoFreqField];
+}
+
+- (void)lfoRangeFieldTapped {
+    TWKeypad* keypad = [TWKeypad sharedKeypad];
+    [keypad setTitle:[NSString stringWithFormat:@"[%d] Filter LFO Range (Hz): ", _sourceIdx]];
+    [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWAudioController sharedController] getOscParameter:kOscParam_LFORange atSourceIdx:_sourceIdx]]];
+    [keypad setCurrentResponder:_lfoRangeField];
+}
+
+- (void)lfoOffsetFieldTapped {
+    TWKeypad* keypad = [TWKeypad sharedKeypad];
+    [keypad setTitle:[NSString stringWithFormat:@"[%d] Filter LFO Offset (Hz): ", _sourceIdx]];
+    [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWAudioController sharedController] getOscParameter:kOscParam_LFOOffset atSourceIdx:_sourceIdx]]];
+    [keypad setCurrentResponder:_lfoOffsetField];
+}
+
+- (void)rampTimeFieldTapped {
+    TWKeypad* keypad = [TWKeypad sharedKeypad];
+    [keypad setTitle:[NSString stringWithFormat:@"[%d] Ramp Time (ms): ", _sourceIdx]];
+    [keypad setValue:[NSString stringWithFormat:@"%d", (int)(int)[[TWAudioController sharedController] getOscParameter:kOscParam_RampTime_ms atSourceIdx:_sourceIdx]]];
+    [keypad setCurrentResponder:_rampTimeField];
+}
+
+- (void)fmAmountFieldTapped {
+    TWKeypad* keypad = [TWKeypad sharedKeypad];
+    [keypad setTitle:[NSString stringWithFormat:@"[%d] FM Amount: ", _sourceIdx]];
+    [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWAudioController sharedController] getOscParameter:kOscParam_FMAmount atSourceIdx:_sourceIdx]]];
+    [keypad setCurrentResponder:_fmAmountField];
+}
+
+- (void)fmFreqFieldTapped {
+    TWKeypad* keypad = [TWKeypad sharedKeypad];
+    [keypad setTitle:[NSString stringWithFormat:@"[%d] FM Freq (Hz): ", _sourceIdx]];
+    [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWAudioController sharedController] getOscParameter:kOscParam_FMFrequency atSourceIdx:_sourceIdx]]];
+    [keypad setCurrentResponder:_fmFreqField];
+}
+
+
+
     
 @end

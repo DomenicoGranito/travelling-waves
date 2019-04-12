@@ -412,25 +412,11 @@ static void enginePlaybackFinishedProc(int sourceIdx, int status) {
 //    _engine->resetPhase(rampTimeInSamples);
 }
 
-- (void)setRampTime:(float)rampTime_ms atSourceIdx:(int)sourceIdx {
-    _engine->setRampTimeAtSourceIdx(sourceIdx, rampTime_ms);
-}
-- (float)getRampTimeAtSourceIdx:(int)sourceIdx {
-    return _engine->getRampTimeAtSourceIdx(sourceIdx);
-}
-
 - (float)getRMSLevelAtChannel:(int)channel {
     return _engine->getRMSLevel(channel);
 }
 
 //===== Sequencer Methods =====//
-
-- (void)setSeqDuration_ms:(float)duration_ms {
-    _engine->setSeqDuration_ms(duration_ms);
-}
-- (float)getSeqDuration_ms {
-    return _engine->getSeqDuration_ms();
-}
 
 - (void)setSeqEnabled:(BOOL)enabled atSourceIdx:(int)sourceIdx {
     _engine->setSeqEnabledAtSourceIdx(sourceIdx, enabled);

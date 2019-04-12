@@ -12,7 +12,6 @@
 		FC0D2E6B2254945A00A68D58 /* TWCycleStateButton.m in Sources */ = {isa = PBXBuildFile; fileRef = FC0D2E582254945A00A68D58 /* TWCycleStateButton.m */; };
 		FC0D2E6C2254945A00A68D58 /* TWOscView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC0D2E5A2254945A00A68D58 /* TWOscView.m */; };
 		FC0D2E6D2254945A00A68D58 /* TWFrequencyRatioControlView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC0D2E5D2254945A00A68D58 /* TWFrequencyRatioControlView.m */; };
-		FC0D2E6E2254945A00A68D58 /* TWKeyboardAccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC0D2E5F2254945A00A68D58 /* TWKeyboardAccessoryView.m */; };
 		FC0D2E6F2254945A00A68D58 /* TWEnvelopeView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC0D2E602254945A00A68D58 /* TWEnvelopeView.m */; };
 		FC0D2E702254945A00A68D58 /* TWLevelMeterView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC0D2E632254945A00A68D58 /* TWLevelMeterView.m */; };
 		FC0D2E712254945A00A68D58 /* TWDrumPad.m in Sources */ = {isa = PBXBuildFile; fileRef = FC0D2E652254945A00A68D58 /* TWDrumPad.m */; };
@@ -89,7 +88,6 @@
 		FC0D2E522254945A00A68D58 /* TWFillSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWFillSlider.m; sourceTree = "<group>"; };
 		FC0D2E532254945A00A68D58 /* TWEnvelopeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWEnvelopeView.h; sourceTree = "<group>"; };
 		FC0D2E542254945A00A68D58 /* TWSeqNoteButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWSeqNoteButton.m; sourceTree = "<group>"; };
-		FC0D2E552254945A00A68D58 /* TWKeyboardAccessoryView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWKeyboardAccessoryView.h; sourceTree = "<group>"; };
 		FC0D2E562254945A00A68D58 /* TWMixerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWMixerView.h; sourceTree = "<group>"; };
 		FC0D2E572254945A00A68D58 /* TWDrumPad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWDrumPad.h; sourceTree = "<group>"; };
 		FC0D2E582254945A00A68D58 /* TWCycleStateButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWCycleStateButton.m; sourceTree = "<group>"; };
@@ -98,7 +96,6 @@
 		FC0D2E5B2254945A00A68D58 /* TWForceButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWForceButton.h; sourceTree = "<group>"; };
 		FC0D2E5C2254945A00A68D58 /* TWFillSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWFillSlider.h; sourceTree = "<group>"; };
 		FC0D2E5D2254945A00A68D58 /* TWFrequencyRatioControlView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWFrequencyRatioControlView.m; sourceTree = "<group>"; };
-		FC0D2E5F2254945A00A68D58 /* TWKeyboardAccessoryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWKeyboardAccessoryView.m; sourceTree = "<group>"; };
 		FC0D2E602254945A00A68D58 /* TWEnvelopeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWEnvelopeView.m; sourceTree = "<group>"; };
 		FC0D2E612254945A00A68D58 /* TWSeqNoteButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWSeqNoteButton.h; sourceTree = "<group>"; };
 		FC0D2E622254945A00A68D58 /* TWOscView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWOscView.h; sourceTree = "<group>"; };
@@ -240,8 +237,6 @@
 				FC0D2E522254945A00A68D58 /* TWFillSlider.m */,
 				FC0D2E5B2254945A00A68D58 /* TWForceButton.h */,
 				FC0D2E672254945A00A68D58 /* TWForceButton.m */,
-				FC0D2E552254945A00A68D58 /* TWKeyboardAccessoryView.h */,
-				FC0D2E5F2254945A00A68D58 /* TWKeyboardAccessoryView.m */,
 				FC0D2E592254945A00A68D58 /* TWLevelMeterView.h */,
 				FC0D2E632254945A00A68D58 /* TWLevelMeterView.m */,
 				FC0D2E562254945A00A68D58 /* TWMixerView.h */,
@@ -645,7 +640,6 @@
 				FC1B308B225F06E7003ED2E7 /* TWSynthView.m in Sources */,
 				FC356C4D2223D0F500B93F5C /* TWBiquad.cpp in Sources */,
 				FC356C902223D8C400B93F5C /* TWLoadProjectViewController.m in Sources */,
-				FC0D2E6E2254945A00A68D58 /* TWKeyboardAccessoryView.m in Sources */,
 				FCBDC3602184720A00E7695C /* TWViewController.m in Sources */,
 				FC356C642223D10400B93F5C /* TWSequencer.cpp in Sources */,
 				FC3A29F7224DC9A500767E1B /* TWTestViewController.m in Sources */,

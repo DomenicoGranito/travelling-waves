@@ -203,16 +203,6 @@ void TWAudioEngine::resetPhase(float rampTimeInSamples)
     _seqSampleCount = 0;
 }
 
-void TWAudioEngine::setRampTimeAtSourceIdx(int sourceIdx, float rampTime_ms)
-{
-    _rampTimes[sourceIdx] = rampTime_ms;
-}
-
-float TWAudioEngine::getRampTimeAtSourceIdx(int sourceIdx)
-{
-    return _rampTimes[sourceIdx];
-}
-
 float TWAudioEngine::getRMSLevel(int channel)
 {
     return _levelMeters[channel].getCurrentLevel();
@@ -223,20 +213,6 @@ float TWAudioEngine::getRMSLevel(int channel)
 // Sequencer
 //============================================================
 #pragma mark - Sequencer
-
-void TWAudioEngine::setSeqDuration_ms(float duration_ms)
-{
-    if (duration_ms <= 0.0f) {
-        duration_ms = 1.0f;
-    }
-    _seqDuration_ms = duration_ms;
-    _seqUpdateTotalDurationSamples();
-}
-float TWAudioEngine::getSeqDuration_ms()
-{
-    return _seqDuration_ms;
-}
-
 
 float TWAudioEngine::getSeqNormalizedProgress()
 {
@@ -322,6 +298,15 @@ int TWAudioEngine::getSeqNoteForBeatAtSourceIdx(int sourceIdx, int beat)
 void TWAudioEngine::setSeqParameterAtSourceIdx(int sourceIdx, int paramID, float value)
 {
     switch (paramID) {
+            
+        case kSeqParam_Duration_ms:
+            if (value <= 0.0f) {
+                value = 1.0f;
+            }
+            _seqDuration_ms = value;
+            _seqUpdateTotalDurationSamples();
+            break;
+            
         case kSeqParam_AmpAttackTime:
             _seqEnvelopes[sourceIdx].setAmpAttackTime_ms(value);
             break;
@@ -334,35 +319,35 @@ void TWAudioEngine::setSeqParameterAtSourceIdx(int sourceIdx, int paramID, float
             _seqEnvelopes[sourceIdx].setAmpReleaseTime_ms(value);
             break;
             
-        case kSeqParam_FltEnable:
+        case kSeqParam_FilterEnable:
             _seqEnvelopes[sourceIdx].setFltEnabled((bool)value);
             break;
             
-        case kSeqParam_FltType:
+        case kSeqParam_FilterType:
             _seqEnvelopes[sourceIdx].setFltType((TWBiquad::TWFilterType)value);
             break;
             
-        case kSeqParam_FltAttackTime:
+        case kSeqParam_FilterAttackTime:
             _seqEnvelopes[sourceIdx].setFltAttackTime_ms(value);
             break;
             
-        case kSeqParam_FltSustainTime:
+        case kSeqParam_FilterSustainTime:
             _seqEnvelopes[sourceIdx].setFltSustainTime_ms(value);
             break;
             
-        case kSeqParam_FltReleaseTime:
+        case kSeqParam_FilterReleaseTime:
             _seqEnvelopes[sourceIdx].setFltReleaseTime_ms(value);
             break;
             
-        case kSeqParam_FltFromCutoff:
+        case kSeqParam_FilterFromCutoff:
             _seqEnvelopes[sourceIdx].setFltFromCutoff(value);
             break;
             
-        case kSeqParam_FltToCutoff:
+        case kSeqParam_FilterToCutoff:
             _seqEnvelopes[sourceIdx].setFltToCutoff(value);
             break;
             
-        case kSeqParam_FltQ:
+        case kSeqParam_FilterResonance:
             _seqEnvelopes[sourceIdx].setFltResonance(value, _rampTimes[sourceIdx]);
             break;
             
@@ -377,6 +362,11 @@ float TWAudioEngine::getSeqParameterAtSourceIdx(int sourceIdx, int paramID)
     float value = 0.0f;
     
     switch (paramID) {
+            
+        case kSeqParam_Duration_ms:
+            value = _seqDuration_ms;
+            break;
+            
         case kSeqParam_AmpAttackTime:
             value = _seqEnvelopes[sourceIdx].getAmpAttackTime_ms();
             break;
@@ -389,35 +379,35 @@ float TWAudioEngine::getSeqParameterAtSourceIdx(int sourceIdx, int paramID)
             value = _seqEnvelopes[sourceIdx].getAmpReleaseTime_ms();
             break;
             
-        case kSeqParam_FltEnable:
+        case kSeqParam_FilterEnable:
             value = _seqEnvelopes[sourceIdx].getFltEnabled();
             break;
             
-        case kSeqParam_FltType:
+        case kSeqParam_FilterType:
             value = _seqEnvelopes[sourceIdx].getFltType();
             break;
             
-        case kSeqParam_FltAttackTime:
+        case kSeqParam_FilterAttackTime:
             value = _seqEnvelopes[sourceIdx].getFltAttackTime_ms();
             break;
             
-        case kSeqParam_FltSustainTime:
+        case kSeqParam_FilterSustainTime:
             value = _seqEnvelopes[sourceIdx].getFltSustainTime_ms();
             break;
             
-        case kSeqParam_FltReleaseTime:
+        case kSeqParam_FilterReleaseTime:
             value = _seqEnvelopes[sourceIdx].getFltReleaseTime_ms();
             break;
             
-        case kSeqParam_FltFromCutoff:
+        case kSeqParam_FilterFromCutoff:
             value = _seqEnvelopes[sourceIdx].getFltFromCutoff();
             break;
             
-        case kSeqParam_FltToCutoff:
+        case kSeqParam_FilterToCutoff:
             value = _seqEnvelopes[sourceIdx].getFltToCutoff();
             break;
             
-        case kSeqParam_FltQ:
+        case kSeqParam_FilterResonance:
             value = _seqEnvelopes[sourceIdx].getFltResonance();
             break;
             
@@ -460,6 +450,11 @@ bool TWAudioEngine::getOscSoloEnabledAtSourceIdx(int sourceIdx)
 void TWAudioEngine::setOscParameterAtSourceIdx(int sourceIdx, int paramID, float value, float rampTime_ms)
 {
     switch (paramID) {
+            
+        case kOscParam_RampTime_ms:
+            _rampTimes[sourceIdx] = value;
+            break;
+            
         case kOscParam_OscWaveform:
             _synths[sourceIdx].setWaveform((TWOscillator::TWWaveform)value);
             break;
@@ -504,7 +499,7 @@ void TWAudioEngine::setOscParameterAtSourceIdx(int sourceIdx, int paramID, float
             _biquads[sourceIdx].setCutoffFrequency(value, rampTime_ms);
             break;
             
-        case kOscParam_FilterQ:
+        case kOscParam_FilterResonance:
             _biquads[sourceIdx].setResonance(value, rampTime_ms);
             break;
             
@@ -551,6 +546,11 @@ float TWAudioEngine::getOscParameterAtSourceIdx(int sourceIdx, int paramID)
     float value = 0.0f;
     
     switch (paramID) {
+            
+        case kOscParam_RampTime_ms:
+            value = _rampTimes[sourceIdx];
+            break;
+            
         case kOscParam_OscWaveform:
             value = _synths[sourceIdx].getWaveform();
             break;
@@ -595,7 +595,7 @@ float TWAudioEngine::getOscParameterAtSourceIdx(int sourceIdx, int paramID)
             value = _biquads[sourceIdx].getCutoffFrequency();
             break;
             
-        case kOscParam_FilterQ:
+        case kOscParam_FilterResonance:
             value = _biquads[sourceIdx].getResonance();
             break;
             

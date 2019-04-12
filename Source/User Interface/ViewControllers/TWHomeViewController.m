@@ -224,8 +224,6 @@
     [self startLevelMeterTimer];
     
     [[TWKeypad sharedKeypad] addToDelegates:self];
-    [self.view addSubview:[TWKeypad sharedKeypad]];
-    
     
     [self.view setBackgroundColor:[UIColor colorWithWhite:0.12f alpha:1.0f]];
 }
@@ -323,11 +321,32 @@
     [_rightLevelMeterView setFrame:_masterRightSlider.frame];
     
     
-    CGFloat keypadHeight = 3.5f * componentHeight;
-    CGRect keypadHideFrame = CGRectMake(0.0f, screenHeight, screenWidth, keypadHeight);
-    [[TWKeypad sharedKeypad] setFrame:keypadHideFrame];
+    
+    
+    CGFloat keypadHeight;
+    CGFloat keypadShowYOffset;
+    if (isIPad) {
+        keypadHeight = 3.5f * componentHeight;
+        keypadShowYOffset = 0.0f;
+    } else if (isLandscape) {
+        keypadHeight = 3.5f * componentHeight;
+        keypadShowYOffset = 0.5 * componentHeight;
+    } else {
+        keypadHeight = 6.0f * componentHeight;
+        keypadShowYOffset = 0.0f;
+    }
+    
+    CGRect keypadHideFrame = CGRectMake(xMargin, self.view.frame.size.height, screenWidth, keypadHeight);
+    CGRect keypadShowFrame = CGRectMake(keypadHideFrame.origin.x, keypadHideFrame.origin.y - keypadHeight - keypadShowYOffset, keypadHideFrame.size.width, keypadHideFrame.size.height);
+    
     [[TWKeypad sharedKeypad] setHideFrame:keypadHideFrame];
-    [[TWKeypad sharedKeypad] setShowFrame:CGRectMake(keypadHideFrame.origin.x, keypadHideFrame.origin.y - keypadHeight, keypadHideFrame.size.width, keypadHideFrame.size.height)];
+    [[TWKeypad sharedKeypad] setShowFrame:keypadShowFrame];
+    
+    if ([[TWKeypad sharedKeypad] keypadIsShowing]) {
+        [[TWKeypad sharedKeypad] setFrame:keypadShowFrame];
+    } else {
+        [[TWKeypad sharedKeypad] setFrame:keypadHideFrame];
+    }
 }
 
 
@@ -349,6 +368,8 @@
     CGFloat masterRightGain = [[TWAudioController sharedController] getMasterGainOnChannel:kRightChannel];
     [_masterRightSlider setValue:masterRightGain animated:animated];
     [_masterRightField setTitle:[NSString stringWithFormat:@"%.2f", masterRightGain] forState:UIControlStateNormal];
+    
+    [self.view addSubview:[TWKeypad sharedKeypad]];
 }
 
 
@@ -361,6 +382,11 @@
     [self stopLevelMeterTimer];
 }
 
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [[TWKeypad sharedKeypad] removeFromSuperview];
+    [super viewWillDisappear:animated];
+}
 
 
 #pragma mark - UI
@@ -579,17 +605,17 @@
 
 #pragma mark - TWKeypad
 
-- (void)keypadDoneButtonTapped:(UIButton *)responder withValue:(NSString *)value {
+- (void)keypadDoneButtonTapped:(UIButton *)responder withValue:(NSString *)inValue {
     
     if (responder == _masterLeftField) {
-        float gain = [value floatValue];
+        float gain = [inValue floatValue];
         [[TWAudioController sharedController] setMasterGain:gain onChannel:kLeftChannel inTime:kDefaultRampTime_ms];
         [_masterLeftField setTitle:[NSString stringWithFormat:@"%.2f", gain] forState:UIControlStateNormal];
         [_masterLeftSlider setValue:gain animated:YES];
     }
     
     else if (responder == _masterRightField) {
-        float gain = [value floatValue];
+        float gain = [inValue floatValue];
         [[TWAudioController sharedController] setMasterGain:gain onChannel:kRightChannel inTime:kDefaultRampTime_ms];
         [_masterRightField setTitle:[NSString stringWithFormat:@"%.2f", gain] forState:UIControlStateNormal];
         [_masterRightSlider setValue:gain animated:YES];

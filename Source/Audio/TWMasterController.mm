@@ -110,7 +110,7 @@
 - (void)setRampTime_ms:(int)rampTime_ms {
     _rampTime_ms = rampTime_ms;
     for (int idx=0; idx < kNumSources; idx++) {
-        [[TWAudioController sharedController] setRampTime:_rampTime_ms atSourceIdx:idx];
+        [[TWAudioController sharedController] setOscParameter:kOscParam_RampTime_ms withValue:_rampTime_ms atSourceIdx:idx inTime:0.0f];
     }
 }
 
@@ -273,7 +273,7 @@
                 NSString* key = [self keyForOscParamID:paramID];
                 sourceParams[key] = @([[TWAudioController sharedController] getOscParameter:paramID atSourceIdx:sourceIdx]);
             }
-            sourceParams[@"RampTime_ms"] = @([[TWAudioController sharedController] getRampTimeAtSourceIdx:sourceIdx]);
+            sourceParams[@"RampTime_ms"] = @((int)[[TWAudioController sharedController] getOscParameter:kOscParam_RampTime_ms atSourceIdx:sourceIdx]);
             [sources addObject:sourceParams];
         }
         parameters[@"Sources"] = sources;
@@ -300,7 +300,7 @@
         }
         sequencer[@"Envelopes"] = envelopes;
         sequencer[@"Events"] = events;
-        sequencer[@"Duration_ms"] = @([[TWAudioController sharedController] getSeqDuration_ms]);
+        sequencer[@"Duration_ms"] = @([[TWAudioController sharedController] getSeqParameter:kSeqParam_Duration_ms atSourceIdx:-1]);
         
         parameters[@"Sequencer"] = sequencer;
         
@@ -374,11 +374,11 @@
                 }
                 
                 
-                float rampTime_ms = [[TWAudioController sharedController] getRampTimeAtSourceIdx:sourceIdx];
+                int rampTime_ms = (int)[[TWAudioController sharedController] getOscParameter:kOscParam_RampTime_ms atSourceIdx:sourceIdx];
                 if ([sourceParams objectForKey:@"RampTime_ms"]) {
                     rampTime_ms = [sourceParams[@"RampTime_ms"] intValue];
                 }
-                [[TWAudioController sharedController] setRampTime:rampTime_ms atSourceIdx:sourceIdx];
+                [[TWAudioController sharedController] setOscParameter:kOscParam_RampTime_ms withValue:rampTime_ms atSourceIdx:sourceIdx inTime:0.0f];
                 
                 for (int paramID = 1; paramID <= kOscNumParams; paramID++) {
                     [self setOscParamValue:paramID fromDictionary:sourceParams atSourceIdx:sourceIdx inTime:rampTime_ms];
@@ -396,7 +396,7 @@
             NSDictionary* sequencer = parameters[@"Sequencer"];
             
             if ([sequencer objectForKey:@"Duration_ms"]) {
-                [[TWAudioController sharedController] setSeqDuration_ms:[sequencer[@"Duration_ms"] floatValue]];
+                [[TWAudioController sharedController] setSeqParameter:kSeqParam_Duration_ms withValue:[sequencer[@"Duration_ms"] floatValue] atSourceIdx:-1];
             }
             
             if ([sequencer objectForKey:@"Events"] != nil) {
@@ -513,7 +513,7 @@
             key = @"Filter Cutoff";
             break;
             
-        case kOscParam_FilterQ:
+        case kOscParam_FilterResonance:
             key = @"Filter Q";
             break;
             
@@ -563,35 +563,35 @@
             key = @"AmpReleaseTime_ms";
             break;
             
-        case kSeqParam_FltEnable:
+        case kSeqParam_FilterEnable:
             key = @"FltEnable";
             break;
             
-        case kSeqParam_FltType:
+        case kSeqParam_FilterType:
             key = @"FltType";
             break;
             
-        case kSeqParam_FltAttackTime:
+        case kSeqParam_FilterAttackTime:
             key = @"FltAttackTime_ms";
             break;
             
-        case kSeqParam_FltSustainTime:
+        case kSeqParam_FilterSustainTime:
             key = @"FltSustainTime_ms";
             break;
             
-        case kSeqParam_FltReleaseTime:
+        case kSeqParam_FilterReleaseTime:
             key = @"FltReleaseTime_ms";
             break;
             
-        case kSeqParam_FltFromCutoff:
+        case kSeqParam_FilterFromCutoff:
             key = @"FltFromCutoff";
             break;
             
-        case kSeqParam_FltToCutoff:
+        case kSeqParam_FilterToCutoff:
             key = @"FltToCutoff";
             break;
             
-        case kSeqParam_FltQ:
+        case kSeqParam_FilterResonance:
             key = @"FltQ";
             break;
             
@@ -608,7 +608,7 @@
     
     float numerator = (float)_timeControlRatios[control][kNumerator][idx];
     float denominator = (float)_timeControlRatios[control][kDenominator][idx];
-    float rampTime_ms = [[TWAudioController sharedController] getRampTimeAtSourceIdx:idx];
+    int rampTime_ms = (int)[[TWAudioController sharedController] getOscParameter:kOscParam_RampTime_ms atSourceIdx:idx];
     float value = 0.0f;
     
     switch (control) {

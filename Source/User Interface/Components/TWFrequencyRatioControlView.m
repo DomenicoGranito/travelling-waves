@@ -577,8 +577,8 @@
 
 
 - (void)updateOscView:(int)sourceIdx {
-    if ([_oscView respondsToSelector:@selector(setOscID:)]) {
-        [_oscView setOscID:sourceIdx];
+    if ([_oscView respondsToSelector:@selector(setSourceIdx:)]) {
+        [_oscView setSourceIdx:sourceIdx];
     }
 }
 
@@ -629,24 +629,24 @@
 
 #pragma mark - TWKeypadDelegate
 
-- (void)keypadDoneButtonTapped:(UIButton *)responder withValue:(NSString *)value {
+- (void)keypadDoneButtonTapped:(UIButton *)responder withValue:(NSString *)inValue {
     
     if (responder == _rootFreqField) {
-        float frequency = [value floatValue];
+        float frequency = [inValue floatValue];
         [[TWMasterController sharedController] setRootFrequency:frequency];
         [_rootFreqField setTitle:[NSString stringWithFormat:@"%.2f", frequency] forState:UIControlStateNormal];
         [self setRootFrequencySlider:frequency];
     }
     
     else if (responder == _rampTimeField) {
-        int rampTime_ms = [value intValue];
+        int rampTime_ms = [inValue intValue];
         [[TWMasterController sharedController] setRampTime_ms:rampTime_ms];
         [_rampTimeField setTitle:[NSString stringWithFormat:@"%d", rampTime_ms] forState:UIControlStateNormal];
         [_rampTimeSlider setValue:rampTime_ms animated:YES];
     }
     
     else if (responder == _tempoField) {
-        float tempo = [value floatValue];
+        float tempo = [inValue floatValue];
         [[TWMasterController sharedController] setTempo:tempo];
         [_tempoField setTitle:[NSString stringWithFormat:@"%.2f", tempo] forState:UIControlStateNormal];
         [_tempoSlider setValue:tempo animated:YES];
@@ -743,7 +743,7 @@
     TWKeypad* keypad = [TWKeypad sharedKeypad];
     
     int tag = (int)sender.tag;
-    int oscID = (int)tag / 2.0f;
+    int sourceIdx = (int)tag / 2.0f;
     int denOrNum = tag % 2;
     
     
@@ -752,19 +752,19 @@
     switch (_currentControl) {
             
         case TWTimeRatioControl_BaseFrequency:
-            titleText = denOrNum ? [NSString stringWithFormat:@"Osc[%d] Den: ", oscID+1] : [NSString stringWithFormat:@"Osc[%d] Num: ", oscID+1];
+            titleText = denOrNum ? [NSString stringWithFormat:@"Osc[%d] Den: ", sourceIdx+1] : [NSString stringWithFormat:@"Osc[%d] Num: ", sourceIdx+1];
             break;
             
         case TWTimeRatioControl_BeatFrequency:
-            titleText = denOrNum ? [NSString stringWithFormat:@"Beat[%d] Den: ", oscID+1] : [NSString stringWithFormat:@"Beat[%d] Num: ", oscID+1];
+            titleText = denOrNum ? [NSString stringWithFormat:@"Beat[%d] Den: ", sourceIdx+1] : [NSString stringWithFormat:@"Beat[%d] Num: ", sourceIdx+1];
             break;
             
         case TWTimeRatioControl_TremFrequency:
-            titleText = denOrNum ? [NSString stringWithFormat:@"Tremolo[%d] Den: ", oscID+1] : [NSString stringWithFormat:@"Tremolo[%d] Num: ", oscID+1];
+            titleText = denOrNum ? [NSString stringWithFormat:@"Tremolo[%d] Den: ", sourceIdx+1] : [NSString stringWithFormat:@"Tremolo[%d] Num: ", sourceIdx+1];
             break;
             
         case TWTimeRatioControl_FilterLFOFrequency:
-            titleText = denOrNum ? [NSString stringWithFormat:@"Filter LFO[%d] Den: ", oscID+1] : [NSString stringWithFormat:@"Filter LFO[%d] Num: ", oscID+1];
+            titleText = denOrNum ? [NSString stringWithFormat:@"Filter LFO[%d] Den: ", sourceIdx+1] : [NSString stringWithFormat:@"Filter LFO[%d] Num: ", sourceIdx+1];
             break;
             
         default:
@@ -776,9 +776,9 @@
     
     int value = 0;
     if (denOrNum) {
-        value = [[TWMasterController sharedController] getDenominatorRatioForControl:_currentControl atSourceIdx:oscID];
+        value = [[TWMasterController sharedController] getDenominatorRatioForControl:_currentControl atSourceIdx:sourceIdx];
     } else {
-        value = [[TWMasterController sharedController] getNumeratorRatioForControl:_currentControl atSourceIdx:oscID];
+        value = [[TWMasterController sharedController] getNumeratorRatioForControl:_currentControl atSourceIdx:sourceIdx];
     }
     
     [keypad setValue:[NSString stringWithFormat:@"%d", value]];

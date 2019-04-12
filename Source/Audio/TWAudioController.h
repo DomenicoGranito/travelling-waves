@@ -36,16 +36,10 @@ typedef void (^TWAudioControllerPlaybackFinishedBlock)(int sourceIdx, int status
 
 - (void)resetPhaseInSamples:(float)samples;
 
-- (void)setRampTime:(float)rampTime_ms atSourceIdx:(int)sourceIdx;
-- (float)getRampTimeAtSourceIdx:(int)sourceIdx;
-
 - (float)getRMSLevelAtChannel:(int)channel;
 
 
 //===== Sequencer Methods =====//
-- (void)setSeqDuration_ms:(float)duration_ms;
-- (float)getSeqDuration_ms;
-
 - (void)setSeqEnabled:(BOOL)enabled atSourceIdx:(int)sourceIdx;
 - (BOOL)getSeqEnabledAtSourceIdx:(int)sourceIdx;
 

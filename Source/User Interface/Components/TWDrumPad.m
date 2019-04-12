@@ -145,7 +145,7 @@ static const CGFloat kFileTitleLabelHeightFraction      = 0.2f; // Fraction of h
     _fileTitleLabel = [[UILabel alloc] init];
     [_fileTitleLabel setTextAlignment:NSTextAlignmentLeft];
     [_fileTitleLabel setFont:[UIFont systemFontOfSize:8.0f]];
-    [_fileTitleLabel setTextColor:[UIColor colorWithWhite:0.1f alpha:0.45f]];
+    [_fileTitleLabel setTextColor:[UIColor colorWithWhite:0.06f alpha:0.5f]];
     [_fileTitleLabel setBackgroundColor:[UIColor clearColor]];
     [_fileTitleLabel setUserInteractionEnabled:NO];
     [self addSubview:_fileTitleLabel];

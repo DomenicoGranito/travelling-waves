@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface TWOscView : UIView
 
-@property (nonatomic, assign) int oscID;
+@property (nonatomic, assign) int sourceIdx;
 
 - (void)refreshParametersWithAnimation:(BOOL)animated;
 

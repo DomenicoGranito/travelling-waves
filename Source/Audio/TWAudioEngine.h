@@ -51,9 +51,6 @@ public:
     float getMasterGain(int channel);
     
     void resetPhase(float rampTimeInSamples);
-    void setRampTimeAtSourceIdx(int sourceIdx, float rampTime_ms);
-    float getRampTimeAtSourceIdx(int sourceIdx);
-    
     float getRMSLevel(int channel);
     
     
@@ -68,9 +65,6 @@ public:
         int         beat;
         int         sourceIdx;
     };
-    
-    void setSeqDuration_ms(float duration_ms);
-    float getSeqDuration_ms();
     
     float getSeqNormalizedProgress();
     
