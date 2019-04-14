@@ -65,10 +65,13 @@
 
 
 
-+ (UIColor*)segmentedControlColor {
++ (UIColor*)segmentedControlBackgroundColor {
     return [UIColor colorWithWhite:0.2f alpha:1.0f];
 }
 
++ (UIColor*)segmentedControlTintColor {
+    return [UIColor colorWithWhite:0.5f alpha:1.0f];
+}
 
 
 
@@ -91,6 +94,41 @@
 
 + (UIColor*)valueTextLightWhiteColor {
     return [UIColor colorWithWhite:0.8f alpha:1.0f];
+}
+
+
+#include "TWHeader.h"
+
++ (UIColor*)frequencyRatioControlBackgroundColor {
+    return [UIColor colorWithWhite:0.16f alpha:1.0f];
+}
+
++ (NSArray<UIColor*>*)timeRatioControlTintColors {
+    NSMutableArray<UIColor*>* array = [[NSMutableArray alloc] init];
+    for (int i=0; i < kNumTimeRatioControls; i++) {
+        if (i==0) {
+            [array addObject:[UIColor segmentedControlTintColor]];
+        } else {
+            CGFloat hue = (float)i / kNumTimeRatioControls;
+            UIColor* color = [UIColor colorWithHue:hue saturation:0.4f brightness:0.5f alpha:1.0f];
+            [array addObject:color];
+        }
+    }
+    return array;
+}
+
++ (NSArray<UIColor*>*)timeRatioControlBackColors {
+    NSMutableArray<UIColor*>* array = [[NSMutableArray alloc] init];
+    for (int i=0; i < kNumTimeRatioControls; i++) {
+        if (i==0) {
+            [array addObject:[UIColor colorWithWhite:0.16f alpha:0.6f]];
+        } else {
+            CGFloat hue = (float)i / kNumTimeRatioControls;
+            UIColor* color = [UIColor colorWithHue:hue saturation:0.5f brightness:0.16f alpha:0.6f];
+            [array addObject:color];
+        }
+    }
+    return array;
 }
 
 @end

@@ -11,7 +11,8 @@
 #include <stdlib.h>
 #include <cstdarg>
 
-#define DEBUG_PRINT     0
+#define DEBUG_PRINT                 1
+static const int kDebugCountdown    = 200;
 
 #define M_2PI   6.28318530717958647692528676655900576
 
@@ -29,6 +30,8 @@ TWOscillator::TWOscillator()
     _dutyCycle.setTargetValue(0.5f, 0.0f);
     
     _phaseOffset.setTargetValue(0.0f, 0.0f);
+    
+    _softClipp.setTargetValue(0.0f, 0.0f);
 
     _phase = 0.0f;
     _phaseResetIncrement = 0.0f;
@@ -36,9 +39,12 @@ TWOscillator::TWOscillator()
     _isResettingPhase = false;
     _phaseResetIncrement = 0.0f;
     
+    _currentRandomSample = 0.0f;
+    _didCyclePhase = false;
+    
     _setIsRunning(false);
     
-    _debug  = 0;
+    _debugCount  = kDebugCountdown;
     _debugID = 0;
 }
 
@@ -55,6 +61,8 @@ void TWOscillator::prepare(float sampleRate)
     _setIsRunning(true);
     _sampleRate = sampleRate;
     _phase = 0.0f;
+    _currentRandomSample = 0.0f;
+    _debugSampleCount = 0;
 }
 
 float TWOscillator::getSample()
@@ -66,34 +74,52 @@ float TWOscillator::getSample()
     
     switch (_waveform) {
         case Sine:
-            sample = amplitude * sin(phase);
+            sample = sin(phase);
             break;
             
         case Sawtooth:
-            sample = amplitude * (((fmodf(phase + M_PI, M_2PI)) / M_PI) - 1.0f);
+            sample = (((fmodf(phase + M_PI, M_2PI)) / M_PI) - 1.0f);
             break;
             
         case Square:
-            (phase <= (dutyCycle * M_2PI)) ? sample = amplitude : sample = -amplitude;
+            (phase <= (dutyCycle * M_2PI)) ? sample = 1.0f : sample = -1.0f;
             break;
             
         case Noise:
-            sample = amplitude * ((2.0f * ((float)rand() / RAND_MAX)) - 1.0f);
+            sample = ((2.0f * ((float)rand() / RAND_MAX)) - 1.0f);
+            break;
+            
+        case Random:
+            if (_didCyclePhase) {
+                _currentRandomSample = ((2.0f * ((float)rand() / RAND_MAX)) - 1.0f);
+//                _log("Zero Phase [%lld]! %f\n", _debugSampleCount, _currentRandomSample);
+            }
+            sample = _currentRandomSample;
             break;
             
         default:
             break;
     }
     
-#if DEBUG_PRINT
-    if (_debug == 1000) {
-        printf("Sample: %f\n", sample);
-        _debug = 0;
+    float softClipp = _softClipp.getCurrentValue();
+    if (softClipp != 0.0f) {
+        float prescale = tanhf(softClipp * M_PI);
+        float softClipScale = 2.0 * M_2PI * powf(1000.0f, prescale - 1.0f);
+        sample = tanhf(softClipScale * sample) / tanhf(softClipScale);
     }
-    _debug++;
-#endif
     
-    return sample;
+#if DEBUG_PRINT
+//    if (_debugID == 2) {
+//        if (_debugCount == 0) {
+//            printf("SS:%d, ShapeScale: %f, Sample: %f, Shaped: %f\n", _shouldApplyShape, shapeScale, sample, shapedSample);
+//            _debugCount = kDebugCountdown;
+//        }
+//        _debugCount--;
+//    }
+#endif
+    _debugSampleCount++;
+    
+    return (sample * amplitude);
 }
 
 void TWOscillator::release()
@@ -131,6 +157,13 @@ void TWOscillator::setPhaseOfst(float newPhaseOfst, float rampTime_ms)
     _phaseOffset.setTargetValue(newPhaseOfst, rampTime_ms);
 }
 
+void TWOscillator::setSoftClipp(float newSoftClipp, float rampTime_ms)
+{
+    newSoftClipp >= 1.0f ? newSoftClipp = 1.0f : newSoftClipp <= 0.0f ? newSoftClipp = 0.0f : newSoftClipp;
+    _softClipp.setTargetValue(newSoftClipp, (rampTime_ms / 1000.0f) * _sampleRate);
+}
+
+
 void TWOscillator::resetPhase(float rampTimeInSamples)
 {
     if (rampTimeInSamples == 0.0) {
@@ -166,6 +199,12 @@ float TWOscillator::getPhaseOfst()
     return _phaseOffset.getTargetValue();
 }
 
+float TWOscillator::getSoftClipp()
+{
+    return _softClipp.getTargetValue();
+}
+
+
 
 float TWOscillator::_getPhase()
 {
@@ -173,8 +212,14 @@ float TWOscillator::_getPhase()
         if (_isResettingPhase) {
 //            _log("Bingo! Reset Inc: %f. Act Inc: %f\n", _phaseResetIncrement, _phaseIncrement);
         }
+//        _log("Zero Cross Phase! %lld\n", _debugSampleCount);
         _isResettingPhase = false;
+        _didCyclePhase = true;
+    } else {
+        _didCyclePhase = false;
     }
+    
+    
     if (_isResettingPhase) {
         _phaseIncrement = _phaseResetIncrement;
     } else {
@@ -190,6 +235,7 @@ void TWOscillator::_setIsRunning(bool isRunning)
     _frequency.setIsRunning(isRunning);
     _amplitude.setIsRunning(isRunning);
     _dutyCycle.setIsRunning(isRunning);
+    _softClipp.setIsRunning(isRunning);
     _phaseOffset.setIsRunning(isRunning);
 }
 

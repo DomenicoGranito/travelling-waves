@@ -180,6 +180,11 @@ void TWBiquad::setLFOEnabled(bool enable)
     _lfoEnabled = enable;
 }
 
+void TWBiquad::setLFOWaveform(TWOscillator::TWWaveform waveform)
+{
+    _lfo->setWaveform(waveform);
+}
+
 void TWBiquad::setLFOFrequency(float newFc, float rampTime_ms)
 {
     _lfo->setFrequency(newFc, rampTime_ms);
@@ -206,6 +211,11 @@ void TWBiquad::resetLFOPhase(float rampTimeInSamples)
 bool TWBiquad::getLFOEnabled()
 {
     return _lfoEnabled;
+}
+
+TWOscillator::TWWaveform TWBiquad::getLFOWaveform()
+{
+    return _lfo->getWaveform();
 }
 
 float TWBiquad::getLFOFrequency()

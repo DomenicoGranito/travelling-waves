@@ -33,6 +33,7 @@ public:
     void setDutyCycle(float dutyCycle, float rampTime_ms);
     void setPhaseOffset(int channel, float phaseOffset, float rampTime_ms);
     void setMononess(float mononess, float rampTime_ms);
+    void setSoftClipp(float softClipp, float rampTime_ms);
     
     void setFMWaveform(TWOscillator::TWWaveform type);
     void setFMAmount(float fmAmount, float rampTime_ms);
@@ -48,6 +49,7 @@ public:
     float getDutyCycle();
     float getPhaseOffset(int channel);
     float getMononess();
+    float getSoftClipp();
     
     TWOscillator::TWWaveform getFMWaveform();
     float getFMAmount();

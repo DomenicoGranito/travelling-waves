@@ -58,6 +58,8 @@ TWAudioEngine::TWAudioEngine()
     _setupGain.setIsRunning(true);
     
     _synths[0].setDebugID(1);
+    _tremolos[0].setDebugID(1);
+    _shapeTremolos[0].setDebugID(2);
 }
 
 TWAudioEngine::~TWAudioEngine()
@@ -95,6 +97,7 @@ void TWAudioEngine::prepare(float sampleRate)
         _synths[sourceIdx].prepare(sampleRate);
         _biquads[sourceIdx].prepare(sampleRate);
         _tremolos[sourceIdx].prepare(sampleRate);
+        _shapeTremolos[sourceIdx].prepare(sampleRate);
         
         _memoryPlayers[sourceIdx].prepare(sampleRate);
         
@@ -130,6 +133,7 @@ void TWAudioEngine::process(float *leftBuffer, float *rightBuffer, int frameCoun
         for (int sourceIdx=0; sourceIdx < kNumSources; sourceIdx++) {
             _synths[sourceIdx].getSample(_sourceBuffers[sourceIdx].leftSample, _sourceBuffers[sourceIdx].rightSample);
             _tremolos[sourceIdx].process(_sourceBuffers[sourceIdx].leftSample, _sourceBuffers[sourceIdx].rightSample);
+            _shapeTremolos[sourceIdx].process(_sourceBuffers[sourceIdx].leftSample, _sourceBuffers[sourceIdx].rightSample);
             _biquads[sourceIdx].process(_sourceBuffers[sourceIdx].leftSample, _sourceBuffers[sourceIdx].rightSample);
             _seqEnvelopes[sourceIdx].process(_sourceBuffers[sourceIdx].leftSample, _sourceBuffers[sourceIdx].rightSample);
             
@@ -167,6 +171,7 @@ void TWAudioEngine::release()
         _synths[sourceIdx].release();
         _biquads[sourceIdx].release();
         _tremolos[sourceIdx].release();
+        _shapeTremolos[sourceIdx].release();
         _soloGains[sourceIdx].setIsRunning(false);
         _memoryPlayers[sourceIdx].release();
     }
@@ -198,6 +203,7 @@ void TWAudioEngine::resetPhase(float rampTimeInSamples)
     for (int sourceIdx=0; sourceIdx < kNumSources; sourceIdx++) {
         _synths[sourceIdx].resetPhase(rampTimeInSamples);
         _tremolos[sourceIdx].resetPhase(rampTimeInSamples);
+        _shapeTremolos[sourceIdx].resetPhase(rampTimeInSamples);
         _biquads[sourceIdx].resetLFOPhase(rampTimeInSamples);
     }
     _seqSampleCount = 0;
@@ -295,11 +301,11 @@ int TWAudioEngine::getSeqNoteForBeatAtSourceIdx(int sourceIdx, int beat)
 }
 
 
-void TWAudioEngine::setSeqParameterAtSourceIdx(int sourceIdx, int paramID, float value)
+void TWAudioEngine::setSeqParameterAtSourceIdx(int sourceIdx, TWSeqParamID paramID, float value)
 {
     switch (paramID) {
             
-        case kSeqParam_Duration_ms:
+        case TWSeqParamID_Duration_ms:
             if (value <= 0.0f) {
                 value = 1.0f;
             }
@@ -307,112 +313,112 @@ void TWAudioEngine::setSeqParameterAtSourceIdx(int sourceIdx, int paramID, float
             _seqUpdateTotalDurationSamples();
             break;
             
-        case kSeqParam_AmpAttackTime:
+        case TWSeqParamID_AmpAttackTime:
             _seqEnvelopes[sourceIdx].setAmpAttackTime_ms(value);
             break;
             
-        case kSeqParam_AmpSustainTime:
+        case TWSeqParamID_AmpSustainTime:
             _seqEnvelopes[sourceIdx].setAmpSustainTime_ms(value);
             break;
             
-        case kSeqParam_AmpReleaseTime:
+        case TWSeqParamID_AmpReleaseTime:
             _seqEnvelopes[sourceIdx].setAmpReleaseTime_ms(value);
             break;
             
-        case kSeqParam_FilterEnable:
+        case TWSeqParamID_FilterEnable:
             _seqEnvelopes[sourceIdx].setFltEnabled((bool)value);
             break;
             
-        case kSeqParam_FilterType:
+        case TWSeqParamID_FilterType:
             _seqEnvelopes[sourceIdx].setFltType((TWBiquad::TWFilterType)value);
             break;
             
-        case kSeqParam_FilterAttackTime:
+        case TWSeqParamID_FilterAttackTime:
             _seqEnvelopes[sourceIdx].setFltAttackTime_ms(value);
             break;
             
-        case kSeqParam_FilterSustainTime:
+        case TWSeqParamID_FilterSustainTime:
             _seqEnvelopes[sourceIdx].setFltSustainTime_ms(value);
             break;
             
-        case kSeqParam_FilterReleaseTime:
+        case TWSeqParamID_FilterReleaseTime:
             _seqEnvelopes[sourceIdx].setFltReleaseTime_ms(value);
             break;
             
-        case kSeqParam_FilterFromCutoff:
+        case TWSeqParamID_FilterFromCutoff:
             _seqEnvelopes[sourceIdx].setFltFromCutoff(value);
             break;
             
-        case kSeqParam_FilterToCutoff:
+        case TWSeqParamID_FilterToCutoff:
             _seqEnvelopes[sourceIdx].setFltToCutoff(value);
             break;
             
-        case kSeqParam_FilterResonance:
+        case TWSeqParamID_FilterResonance:
             _seqEnvelopes[sourceIdx].setFltResonance(value, _rampTimes[sourceIdx]);
             break;
             
         default:
-            printf("\nError(setSeqParameterAtSourceIdx): Unknown paramID: %d. For sourceIdx: %d\n", paramID, sourceIdx);
+            printf("\nError(setSeqParameterAtSourceIdx): Unknown paramID: %d. For sourceIdx: %d\n", (int)paramID, sourceIdx);
             break;
     }
 }
 
-float TWAudioEngine::getSeqParameterAtSourceIdx(int sourceIdx, int paramID)
+float TWAudioEngine::getSeqParameterAtSourceIdx(int sourceIdx, TWSeqParamID paramID)
 {
     float value = 0.0f;
     
     switch (paramID) {
             
-        case kSeqParam_Duration_ms:
+        case TWSeqParamID_Duration_ms:
             value = _seqDuration_ms;
             break;
             
-        case kSeqParam_AmpAttackTime:
+        case TWSeqParamID_AmpAttackTime:
             value = _seqEnvelopes[sourceIdx].getAmpAttackTime_ms();
             break;
             
-        case kSeqParam_AmpSustainTime:
+        case TWSeqParamID_AmpSustainTime:
             value = _seqEnvelopes[sourceIdx].getAmpSustainTime_ms();
             break;
             
-        case kSeqParam_AmpReleaseTime:
+        case TWSeqParamID_AmpReleaseTime:
             value = _seqEnvelopes[sourceIdx].getAmpReleaseTime_ms();
             break;
             
-        case kSeqParam_FilterEnable:
+        case TWSeqParamID_FilterEnable:
             value = _seqEnvelopes[sourceIdx].getFltEnabled();
             break;
             
-        case kSeqParam_FilterType:
+        case TWSeqParamID_FilterType:
             value = _seqEnvelopes[sourceIdx].getFltType();
             break;
             
-        case kSeqParam_FilterAttackTime:
+        case TWSeqParamID_FilterAttackTime:
             value = _seqEnvelopes[sourceIdx].getFltAttackTime_ms();
             break;
             
-        case kSeqParam_FilterSustainTime:
+        case TWSeqParamID_FilterSustainTime:
             value = _seqEnvelopes[sourceIdx].getFltSustainTime_ms();
             break;
             
-        case kSeqParam_FilterReleaseTime:
+        case TWSeqParamID_FilterReleaseTime:
             value = _seqEnvelopes[sourceIdx].getFltReleaseTime_ms();
             break;
             
-        case kSeqParam_FilterFromCutoff:
+        case TWSeqParamID_FilterFromCutoff:
             value = _seqEnvelopes[sourceIdx].getFltFromCutoff();
             break;
             
-        case kSeqParam_FilterToCutoff:
+        case TWSeqParamID_FilterToCutoff:
             value = _seqEnvelopes[sourceIdx].getFltToCutoff();
             break;
             
-        case kSeqParam_FilterResonance:
+        case TWSeqParamID_FilterResonance:
             value = _seqEnvelopes[sourceIdx].getFltResonance();
             break;
             
         default:
-            printf("\nError(getSeqParameterAtSourceIdx): Unknown paramID: %d. For sourceIdx: %d\n", paramID, sourceIdx);
+            printf("\nError(getSeqParameterAtSourceIdx): Unknown paramID: %d. For sourceIdx: %d\n", (int)paramID, sourceIdx);
             break;
     }
     
@@ -447,192 +453,270 @@ bool TWAudioEngine::getOscSoloEnabledAtSourceIdx(int sourceIdx)
 
 
 
-void TWAudioEngine::setOscParameterAtSourceIdx(int sourceIdx, int paramID, float value, float rampTime_ms)
+void TWAudioEngine::setOscParameterAtSourceIdx(int sourceIdx, TWOscParamID paramID, float value, float rampTime_ms)
 {
     switch (paramID) {
             
-        case kOscParam_RampTime_ms:
+            
+        case TWOscParamID_RampTime_ms:
             _rampTimes[sourceIdx] = value;
             break;
             
-        case kOscParam_OscWaveform:
+            
+            
+        case TWOscParamID_OscWaveform:
             _synths[sourceIdx].setWaveform((TWOscillator::TWWaveform)value);
             break;
             
-        case kOscParam_OscBaseFrequency:
+        case TWOscParamID_OscBaseFrequency:
             _synths[sourceIdx].setBaseFrequency(value, rampTime_ms);
             break;
             
-        case kOscParam_OscBeatFrequency:
+        case TWOscParamID_OscBeatFrequency:
             _synths[sourceIdx].setBeatFrequency(value, rampTime_ms);
             break;
             
-        case kOscParam_OscAmplitude:
+        case TWOscParamID_OscAmplitude:
             _synths[sourceIdx].setAmplitude(value, rampTime_ms);
             break;
             
-        case kOscParam_OscDutyCycle:
+        case TWOscParamID_OscDutyCycle:
             _synths[sourceIdx].setDutyCycle(value, rampTime_ms);
             break;
             
-        case kOscParam_OscMononess:
+        case TWOscParamID_OscMononess:
             _synths[sourceIdx].setMononess(value, rampTime_ms);
             break;
             
-        case kOscParam_TremoloFrequency:
+        case TWOscParamID_OscSoftClipp:
+            _synths[sourceIdx].setSoftClipp(value, rampTime_ms);
+            break;
+            
+            
+            
+        case TWOscParamID_TremoloWaveform:
+            _tremolos[sourceIdx].setWaveform((TWOscillator::TWWaveform)value);
+            break;
+            
+        case TWOscParamID_TremoloFrequency:
             _tremolos[sourceIdx].setFrequency(value, rampTime_ms);
             break;
             
-        case kOscParam_TremoloDepth:
+        case TWOscParamID_TremoloDepth:
             _tremolos[sourceIdx].setDepth(value, rampTime_ms);
             break;
             
-        case kOscParam_FilterEnable:
+            
+            
+        case TWOscParamID_ShapeTremoloFrequency:
+            _shapeTremolos[sourceIdx].setFrequency(value, rampTime_ms);
+            break;
+        
+        case TWOscParamID_ShapeTremoloDepth:
+            _shapeTremolos[sourceIdx].setDepth(value, rampTime_ms);
+            break;
+            
+        case TWOscParamID_ShapeTremoloSoftClipp:
+            _shapeTremolos[sourceIdx].setSoftClipp(value, rampTime_ms);
+            break;
+            
+            
+            
+        case TWOscParamID_FilterEnable:
             _biquads[sourceIdx].setEnabled((bool)value);
             break;
             
-        case kOscParam_FilterType:
+        case TWOscParamID_FilterType:
             _biquads[sourceIdx].setFilterType((TWBiquad::TWFilterType)value);
             break;
             
-        case kOscParam_FilterCutoff:
+        case TWOscParamID_FilterCutoff:
             _biquads[sourceIdx].setCutoffFrequency(value, rampTime_ms);
             break;
             
-        case kOscParam_FilterResonance:
+        case TWOscParamID_FilterResonance:
             _biquads[sourceIdx].setResonance(value, rampTime_ms);
             break;
             
-        case kOscParam_FilterGain:
+        case TWOscParamID_FilterGain:
             _biquads[sourceIdx].setGain(value, rampTime_ms);
             break;
             
-        case kOscParam_LFOEnable:
+            
+            
+        case TWOscParamID_FilterLFOEnable:
             _biquads[sourceIdx].setLFOEnabled((bool)value);
             break;
             
-        case kOscParam_LFOFrequency:
+        case TWOscParamID_FilterLFOWaveform:
+            _biquads[sourceIdx].setLFOWaveform((TWOscillator::TWWaveform)value);
+            break;
+            
+        case TWOscParamID_FilterLFOFrequency:
             _biquads[sourceIdx].setLFOFrequency(value, rampTime_ms);
             break;
             
-        case kOscParam_LFORange:
+        case TWOscParamID_FilterLFORange:
             _biquads[sourceIdx].setLFORange(value, rampTime_ms);
             break;
             
-        case kOscParam_LFOOffset:
+        case TWOscParamID_FilterLFOOffset:
             _biquads[sourceIdx].setLFOOffset(value, rampTime_ms);
             break;
             
-        case kOscParam_FMWaveform:
-            _synths[sourceIdx].setWaveform((TWOscillator::TWWaveform)value);
+            
+            
+        case TWOscParamID_FMWaveform:
+            _synths[sourceIdx].setFMWaveform((TWOscillator::TWWaveform)value);
             break;
             
-        case kOscParam_FMAmount:
+        case TWOscParamID_FMAmount:
             _synths[sourceIdx].setFMAmount(value, rampTime_ms);
             break;
             
-        case kOscParam_FMFrequency:
+        case TWOscParamID_FMFrequency:
             _synths[sourceIdx].setFMFrequency(value, rampTime_ms);
             break;
             
+            
+            
         default:
-            printf("\nError(setOscParameterAtSourceIdx): Unknown paramID: %d. For sourceIdx: %d\n", paramID, sourceIdx);
+            printf("\nError(setOscParameterAtSourceIdx): Unknown paramID: %d. For sourceIdx: %d\n", (int)paramID, sourceIdx);
             break;
     }
 }
 
-float TWAudioEngine::getOscParameterAtSourceIdx(int sourceIdx, int paramID)
+float TWAudioEngine::getOscParameterAtSourceIdx(int sourceIdx, TWOscParamID paramID)
 {
     float value = 0.0f;
     
     switch (paramID) {
             
-        case kOscParam_RampTime_ms:
+            
+        case TWOscParamID_RampTime_ms:
             value = _rampTimes[sourceIdx];
             break;
             
-        case kOscParam_OscWaveform:
+            
+            
+        case TWOscParamID_OscWaveform:
             value = _synths[sourceIdx].getWaveform();
             break;
             
-        case kOscParam_OscBaseFrequency:
+        case TWOscParamID_OscBaseFrequency:
             value = _synths[sourceIdx].getBaseFrequency();
             break;
             
-        case kOscParam_OscBeatFrequency:
+        case TWOscParamID_OscBeatFrequency:
             value = _synths[sourceIdx].getBeatFrequency();
             break;
             
-        case kOscParam_OscAmplitude:
+        case TWOscParamID_OscAmplitude:
             value = _synths[sourceIdx].getAmplitude();
             break;
             
-        case kOscParam_OscDutyCycle:
+        case TWOscParamID_OscDutyCycle:
             value = _synths[sourceIdx].getDutyCycle();
             break;
             
-        case kOscParam_OscMononess:
+        case TWOscParamID_OscMononess:
             value = _synths[sourceIdx].getMononess();
             break;
             
-        case kOscParam_TremoloFrequency:
+        case TWOscParamID_OscSoftClipp:
+            value = _synths[sourceIdx].getSoftClipp();
+            break;
+            
+            
+            
+        case TWOscParamID_TremoloWaveform:
+            value = (float)_tremolos[sourceIdx].getWaveform();
+            break;
+            
+        case TWOscParamID_TremoloFrequency:
             value = _tremolos[sourceIdx].getFrequency();
             break;
             
-        case kOscParam_TremoloDepth:
+        case TWOscParamID_TremoloDepth:
             value = _tremolos[sourceIdx].getDepth();
             break;
             
-        case kOscParam_FilterEnable:
+            
+            
+        case TWOscParamID_ShapeTremoloFrequency:
+            value = _shapeTremolos[sourceIdx].getFrequency();
+            break;
+            
+        case TWOscParamID_ShapeTremoloDepth:
+            value = _shapeTremolos[sourceIdx].getDepth();
+            break;
+            
+        case TWOscParamID_ShapeTremoloSoftClipp:
+            value = _shapeTremolos[sourceIdx].getSoftClipp();
+            break;
+            
+            
+            
+        case TWOscParamID_FilterEnable:
             value = _biquads[sourceIdx].getEnabled();
             break;
             
-        case kOscParam_FilterType:
+        case TWOscParamID_FilterType:
             value = _biquads[sourceIdx].getFilterType();
             break;
             
-        case kOscParam_FilterCutoff:
+        case TWOscParamID_FilterCutoff:
             value = _biquads[sourceIdx].getCutoffFrequency();
             break;
             
-        case kOscParam_FilterResonance:
+        case TWOscParamID_FilterResonance:
             value = _biquads[sourceIdx].getResonance();
             break;
             
-        case kOscParam_FilterGain:
+        case TWOscParamID_FilterGain:
             value = _biquads[sourceIdx].getGain();
             break;
             
-        case kOscParam_LFOEnable:
+        case TWOscParamID_FilterLFOEnable:
             value = _biquads[sourceIdx].getLFOEnabled();
             break;
             
-        case kOscParam_LFOFrequency:
+        case TWOscParamID_FilterLFOWaveform:
+            value = (float)_biquads[sourceIdx].getLFOWaveform();
+            break;
+            
+            
+            
+        case TWOscParamID_FilterLFOFrequency:
             value = _biquads[sourceIdx].getLFOFrequency();
             break;
             
-        case kOscParam_LFORange:
+        case TWOscParamID_FilterLFORange:
             value = _biquads[sourceIdx].getLFORange();
             break;
             
-        case kOscParam_LFOOffset:
+        case TWOscParamID_FilterLFOOffset:
             value = _biquads[sourceIdx].getLFOOffset();
             break;
             
-        case kOscParam_FMWaveform:
+            
+            
+        case TWOscParamID_FMWaveform:
             value = _synths[sourceIdx].getFMWaveform();
             break;
             
-        case kOscParam_FMAmount:
+        case TWOscParamID_FMAmount:
             value = _synths[sourceIdx].getFMAmount();
             break;
             
-        case kOscParam_FMFrequency:
+        case TWOscParamID_FMFrequency:
             value = _synths[sourceIdx].getFMFrequency();
             break;
             
+            
+            
         default:
-            printf("\nError(getOscParameterAtSourceIdx): Unknown paramID: %d. For sourceIdx: %d\n", paramID, sourceIdx);
+            printf("\nError(getOscParameterAtSourceIdx): Unknown paramID: %d. For sourceIdx: %d\n", (int)paramID, sourceIdx);
             break;
     }
     
@@ -660,67 +744,67 @@ void TWAudioEngine::stopPlaybackAtSourceIdx(int sourceIdx, float fadeOut_ms)
     _memoryPlayers[sourceIdx].stop(fadeOutInSamples);
 }
 
-void TWAudioEngine::setPlaybackParameterAtSourceIdx(int sourceIdx, int paramID, float value, float rampTime_ms = 0.0f)
+void TWAudioEngine::setPadParameterAtSourceIdx(int sourceIdx, TWPadParamID paramID, float value, float rampTime_ms = 0.0f)
 {
     switch (paramID) {
-        case kPlaybackParam_Velocity:
+        case TWPadParamID_Velocity:
             _memoryPlayers[sourceIdx].setCurrentVelocity(value, rampTime_ms);
             break;
             
-        case kPlaybackParam_MaxVolume:
+        case TWPadParamID_MaxVolume:
             _memoryPlayers[sourceIdx].setMaxVolume(value, rampTime_ms);
             break;
             
-        case kPlaybackParam_DrumPadMode:
+        case TWPadParamID_DrumPadMode:
 //            printf("DrumPadMode [%d] : %d\n", sourceIdx, (TWDrumPadMode)value);
             _memoryPlayers[sourceIdx].setDrumPadMode((TWDrumPadMode)value);
             break;
             
-        case kPlaybackParam_PlaybackDirection:
+        case TWPadParamID_PlaybackDirection:
             _memoryPlayers[sourceIdx].setPlaybackDirection((TWPlaybackDirection)value);
             break;
             
         default:
-            printf("\nError(setPlaybackParameterAtSourceIdx): Unknown paramID: %d. For sourceIdx: %d\n", paramID, sourceIdx);
+            printf("\nError(setPadParameterAtSourceIdx): Unknown paramID: %d. For sourceIdx: %d\n", (int)paramID, sourceIdx);
             break;
     }
 }
 
-float TWAudioEngine::getPlaybackParameterAtSourceIdx(int sourceIdx, int paramID)
+float TWAudioEngine::getPadParameterAtSourceIdx(int sourceIdx, TWPadParamID paramID)
 {
     float returnValue = 0.0f;
     
     switch (paramID) {
-        case kPlaybackParam_Velocity:
+        case TWPadParamID_Velocity:
             returnValue = _memoryPlayers[sourceIdx].getCurrentVelocity();
             break;
             
-        case kPlaybackParam_MaxVolume:
+        case TWPadParamID_MaxVolume:
             returnValue = _memoryPlayers[sourceIdx].getMaxVolume();
             break;
             
-        case kPlaybackParam_DrumPadMode:
+        case TWPadParamID_DrumPadMode:
             returnValue = (float)_memoryPlayers[sourceIdx].getDrumPadMode();
             break;
             
-        case kPlaybackParam_PlaybackDirection:
+        case TWPadParamID_PlaybackDirection:
             returnValue = (float)_memoryPlayers[sourceIdx].getPlaybackDirection();
             break;
             
-        case kPlaybackParam_PlaybackStatus:
+        case TWPadParamID_PlaybackStatus:
             returnValue = (float)_memoryPlayers[sourceIdx].getPlaybackStatus();
             break;
             
-        case kPlaybackParam_NormalizedProgress:
+        case TWPadParamID_NormalizedProgress:
             returnValue = _memoryPlayers[sourceIdx].getNormalizedPlaybackProgress();
             break;
             
-        case kPlaybackParam_LengthInSeconds:
+        case TWPadParamID_LengthInSeconds:
             returnValue = _memoryPlayers[sourceIdx].getLengthInSeconds();
             break;
             
         default:
-            printf("\nError(TWAudioEnging::getPlaybackParameterAtSourceIdx): Unknown paramID: %d. For sourceIdx: %d\n", paramID, sourceIdx);
+            printf("\nError(TWAudioEnging::getPadParameterAtSourceIdx): Unknown paramID: %d. For sourceIdx: %d\n", (int)paramID, sourceIdx);
             break;
     }
     

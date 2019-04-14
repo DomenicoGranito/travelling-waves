@@ -52,9 +52,9 @@ typedef enum : NSUInteger {
     [self.view addSubview:_backButton];
     
     _chartSelector = [[UISegmentedControl alloc] initWithItems:@[@"Oster Curve", @"Equal Temperament"]];
-    [_chartSelector setBackgroundColor:[UIColor segmentedControlColor]];
+    [_chartSelector setBackgroundColor:[UIColor segmentedControlBackgroundColor]];
     [_chartSelector setSelectedSegmentIndex:0];
-    [_chartSelector setTintColor:[UIColor colorWithWhite:0.5f alpha:1.0f]];
+    [_chartSelector setTintColor:[UIColor segmentedControlTintColor]];
     [_chartSelector addTarget:self action:@selector(chartSelectorChanged:) forControlEvents:UIControlEventValueChanged];
     [self.view addSubview:_chartSelector];
     

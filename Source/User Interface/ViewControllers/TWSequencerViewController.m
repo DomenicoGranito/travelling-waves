@@ -90,7 +90,7 @@ static const CGFloat kProgressBarUpdateInterval     = 0.1f;  // 50ms
     [_durationField.titleLabel setFont:[UIFont systemFontOfSize:11.0f]];
     [_durationField setBackgroundColor:[UIColor clearColor]];
     [_durationField addTarget:self action:@selector(durationFieldTapped) forControlEvents:UIControlEventTouchUpInside];
-    [_durationField setTag:(int)kSeqParam_Duration_ms];
+    [_durationField setTag:(int)TWSeqParamID_Duration_ms];
     [self.view addSubview:_durationField];
     
     _clearAllButton = [[UIButton alloc] init];
@@ -185,7 +185,7 @@ static const CGFloat kProgressBarUpdateInterval     = 0.1f;  // 50ms
         [self updateSourceEnableButton:_sourceEnableButtons[sourceIdx] withState:[[TWAudioController sharedController] getSeqEnabledAtSourceIdx:sourceIdx]];
     }
     
-    float duration_ms = [[TWAudioController sharedController] getSeqParameter:kSeqParam_Duration_ms atSourceIdx:-1];
+    float duration_ms = [[TWAudioController sharedController] getSeqParameter:TWSeqParamID_Duration_ms atSourceIdx:-1];
     [_durationField setTitle:[NSString stringWithFormat:@"%.2f", duration_ms] forState:UIControlStateNormal];
     
     
@@ -539,7 +539,7 @@ static const CGFloat kProgressBarUpdateInterval     = 0.1f;  // 50ms
     
     if (responder == _durationField) {
         float duration_ms = [inValue floatValue];
-        [[TWAudioController sharedController] setSeqParameter:kSeqParam_Duration_ms withValue:duration_ms atSourceIdx:-1];
+        [[TWAudioController sharedController] setSeqParameter:TWSeqParamID_Duration_ms withValue:duration_ms atSourceIdx:-1];
         [responder setTitle:[NSString stringWithFormat:@"%f", duration_ms] forState:UIControlStateNormal];
     }
 }
@@ -548,7 +548,7 @@ static const CGFloat kProgressBarUpdateInterval     = 0.1f;  // 50ms
 - (void)keypadCancelButtonTapped:(UIButton*)responder {
     
     if (responder == _durationField) {
-        float duration_ms = [[TWAudioController sharedController] getSeqParameter:kSeqParam_Duration_ms atSourceIdx:-1];
+        float duration_ms = [[TWAudioController sharedController] getSeqParameter:TWSeqParamID_Duration_ms atSourceIdx:-1];
         [responder setTitle:[NSString stringWithFormat:@"%.2f", duration_ms] forState:UIControlStateNormal];
     }
 }
@@ -556,7 +556,7 @@ static const CGFloat kProgressBarUpdateInterval     = 0.1f;  // 50ms
 - (void)durationFieldTapped {
     TWKeypad* keypad = [TWKeypad sharedKeypad];
     [keypad setTitle:@"Seq Duration (ms): "];
-    [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWAudioController sharedController] getSeqParameter:kSeqParam_Duration_ms atSourceIdx:-1]]];
+    [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWAudioController sharedController] getSeqParameter:TWSeqParamID_Duration_ms atSourceIdx:-1]]];
     [keypad setCurrentResponder:_durationField];
 }
 

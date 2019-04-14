@@ -13,7 +13,6 @@
 #import <MediaPlayer/MediaPlayer.h>
 
 #include "TWAudioEngine.h"
-#include "TWHeader.h"
 #include "TWUtils.h"
 
 #include <functional>
@@ -439,10 +438,10 @@ static void enginePlaybackFinishedProc(int sourceIdx, int status) {
     return _engine->getSeqNoteForBeatAtSourceIdx(sourceIdx, beat);
 }
 
-- (void)setSeqParameter:(int)paramID withValue:(float)value atSourceIdx:(int)sourceIdx {
+- (void)setSeqParameter:(TWSeqParamID)paramID withValue:(float)value atSourceIdx:(int)sourceIdx {
     _engine->setSeqParameterAtSourceIdx(sourceIdx, paramID, value);
 }
-- (float)getSeqParameter:(int)paramID atSourceIdx:(int)sourceIdx {
+- (float)getSeqParameter:(TWSeqParamID)paramID atSourceIdx:(int)sourceIdx {
     return _engine->getSeqParameterAtSourceIdx(sourceIdx, paramID);
 }
 
@@ -459,10 +458,10 @@ static void enginePlaybackFinishedProc(int sourceIdx, int status) {
     return _engine->getOscSoloEnabledAtSourceIdx(sourceIdx);
 }
 
-- (void)setOscParameter:(int)paramID withValue:(float)value atSourceIdx:(int)sourceIdx inTime:(float)rampTime_ms {
+- (void)setOscParameter:(TWOscParamID)paramID withValue:(float)value atSourceIdx:(int)sourceIdx inTime:(float)rampTime_ms {
     _engine->setOscParameterAtSourceIdx(sourceIdx, paramID, value, rampTime_ms);
 }
-- (float)getOscParameter:(int)paramID atSourceIdx:(int)sourceIdx {
+- (float)getOscParameter:(TWOscParamID)paramID atSourceIdx:(int)sourceIdx {
     return _engine->getOscParameterAtSourceIdx(sourceIdx, paramID);
 }
 
@@ -480,12 +479,12 @@ static void enginePlaybackFinishedProc(int sourceIdx, int status) {
     _engine->stopPlaybackAtSourceIdx(sourceIdx, fadeOut_ms);
 }
 
-- (void)setPlaybackParameter:(int)paramID withValue:(float)value atSourceIdx:(int)sourceIdx inTime:(float)rampTime_ms {
-    _engine->setPlaybackParameterAtSourceIdx(sourceIdx, paramID, value, rampTime_ms);
+- (void)setPadParameter:(TWPadParamID)paramID withValue:(float)value atSourceIdx:(int)sourceIdx inTime:(float)rampTime_ms {
+    _engine->setPadParameterAtSourceIdx(sourceIdx, paramID, value, rampTime_ms);
 }
 
-- (float)getPlaybackParameter:(int)paramID atSourceIdx:(int)sourceIdx {
-    return _engine->getPlaybackParameterAtSourceIdx(sourceIdx, paramID);
+- (float)getPadParameter:(TWPadParamID)paramID atSourceIdx:(int)sourceIdx {
+    return _engine->getPadParameterAtSourceIdx(sourceIdx, paramID);
 }
 
 - (NSString*)getAudioFileTitleAtSourceIdx:(int)sourceIdx {

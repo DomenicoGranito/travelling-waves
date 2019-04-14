@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#include "TWHeader.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -49,8 +50,8 @@ typedef void (^TWAudioControllerPlaybackFinishedBlock)(int sourceIdx, int status
 - (void)setSeqNote:(int)note atSourceIdx:(int)sourceIdx atBeat:(int)beat;
 - (int)getSeqNoteAtSourceIdx:(int)sourceIdx atBeat:(int)beat;
 
-- (void)setSeqParameter:(int)paramID withValue:(float)value atSourceIdx:(int)sourceIdx;
-- (float)getSeqParameter:(int)paramID atSourceIdx:(int)sourceIdx;
+- (void)setSeqParameter:(TWSeqParamID)paramID withValue:(float)value atSourceIdx:(int)sourceIdx;
+- (float)getSeqParameter:(TWSeqParamID)paramID atSourceIdx:(int)sourceIdx;
 
 - (float)getSeqNormalizedProgress;
 
@@ -59,8 +60,8 @@ typedef void (^TWAudioControllerPlaybackFinishedBlock)(int sourceIdx, int status
 - (void)setOscSoloEnabled:(BOOL)enabled atSourceIdx:(int)sourceIdx;
 - (BOOL)getOscSoloEnabledAtSourceIdx:(int)sourceIdx;
 
-- (void)setOscParameter:(int)paramID withValue:(float)value atSourceIdx:(int)sourceIdx inTime:(float)rampTime_ms;
-- (float)getOscParameter:(int)paramID atSourceIdx:(int)sourceIdx;
+- (void)setOscParameter:(TWOscParamID)paramID withValue:(float)value atSourceIdx:(int)sourceIdx inTime:(float)rampTime_ms;
+- (float)getOscParameter:(TWOscParamID)paramID atSourceIdx:(int)sourceIdx;
 
 
 
@@ -68,8 +69,8 @@ typedef void (^TWAudioControllerPlaybackFinishedBlock)(int sourceIdx, int status
 - (int)loadAudioFile:(NSString*)filepath atSourceIdx:(int)sourceIdx;
 - (void)startPlaybackAtSourceIdx:(int)sourceIdx atSampleTime:(unsigned int)sampleTime;
 - (void)stopPlaybackAtSourceIdx:(int)sourceIdx fadeOutTime:(float)fadeOut_ms;
-- (void)setPlaybackParameter:(int)paramID withValue:(float)value atSourceIdx:(int)sourceIdx inTime:(float)rampTime_ms;
-- (float)getPlaybackParameter:(int)paramID atSourceIdx:(int)sourceIdx;
+- (void)setPadParameter:(TWPadParamID)paramID withValue:(float)value atSourceIdx:(int)sourceIdx inTime:(float)rampTime_ms;
+- (float)getPadParameter:(TWPadParamID)paramID atSourceIdx:(int)sourceIdx;
 - (NSString*)getAudioFileTitleAtSourceIdx:(int)sourceIdx;
 @property(nonatomic, copy) TWAudioControllerPlaybackFinishedBlock playbackFinishedBlock;
 

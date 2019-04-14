@@ -42,7 +42,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (UIColor*)switchOnColor;
 
-+ (UIColor*)segmentedControlColor;
++ (UIColor*)segmentedControlBackgroundColor;
++ (UIColor*)segmentedControlTintColor;
 
 
 + (UIColor*)soloEnableColor;
@@ -54,6 +55,10 @@ NS_ASSUME_NONNULL_BEGIN
 + (UIColor*)valueTextDarkWhiteColor;
 + (UIColor*)valueTextLightWhiteColor;
 
+
++ (UIColor*)frequencyRatioControlBackgroundColor;
++ (NSArray<UIColor*>*)timeRatioControlTintColors;
++ (NSArray<UIColor*>*)timeRatioControlBackColors;
 
 @end
 

@@ -55,8 +55,8 @@ static const CGFloat kSoloButtonWidth       = 28.0f;
     for (int idx=0; idx < kNumSources; idx++) {
         
         UISlider* slider = [[UISlider alloc] initWithFrame:CGRectZero];
-        [slider setMinimumValue:0.0f];
-        [slider setMaximumValue:1.0f];
+        [slider setMinimumValue:kAmplitudeMin];
+        [slider setMaximumValue:kAmplitudeMax];
         [slider addTarget:self action:@selector(sliderValueChanged:) forControlEvents:UIControlEventValueChanged];
         [slider addTarget:self action:@selector(sliderEndEditing:) forControlEvents:UIControlEventTouchUpInside];
         [slider addTarget:self action:@selector(sliderEndEditing:) forControlEvents:UIControlEventTouchUpOutside];
@@ -143,7 +143,7 @@ static const CGFloat kSoloButtonWidth       = 28.0f;
 
 - (void)viewWillAppear:(BOOL)animated {
     for (int sourceIdx=0; sourceIdx < kNumSources; sourceIdx++) {
-        float amplitude = [[TWAudioController sharedController] getOscParameter:kOscParam_OscAmplitude atSourceIdx:sourceIdx];
+        float amplitude = [[TWAudioController sharedController] getOscParameter:TWOscParamID_OscAmplitude atSourceIdx:sourceIdx];
         UISlider* slider = [_sliders objectAtIndex:sourceIdx];
         UIButton* textField = [_textFields objectAtIndex:sourceIdx];
         [slider setValue:amplitude animated:animated];
@@ -260,8 +260,8 @@ static const CGFloat kSoloButtonWidth       = 28.0f;
 - (void)sliderValueChanged:(UISlider*)sender {
     float amplitude = sender.value;
     int sourceIdx = (int)sender.tag;
-    int rampTime_ms = (int)[[TWAudioController sharedController] getOscParameter:kOscParam_RampTime_ms atSourceIdx:sourceIdx];
-    [[TWAudioController sharedController] setOscParameter:kOscParam_OscAmplitude withValue:amplitude atSourceIdx:sourceIdx inTime:rampTime_ms];
+    int rampTime_ms = (int)[[TWAudioController sharedController] getOscParameter:TWOscParamID_RampTime_ms atSourceIdx:sourceIdx];
+    [[TWAudioController sharedController] setOscParameter:TWOscParamID_OscAmplitude withValue:amplitude atSourceIdx:sourceIdx inTime:rampTime_ms];
     UIButton* textField = [_textFields objectAtIndex:sourceIdx];
     [textField setTitle:[NSString stringWithFormat:@"%.2f", amplitude] forState:UIControlStateNormal];
 }
@@ -302,13 +302,20 @@ static const CGFloat kSoloButtonWidth       = 28.0f;
 #pragma mark - TWKeypad
 
 - (void)keypadDoneButtonTapped:(UIButton *)responder withValue:(NSString *)inValue {
+    
     for (UIButton* field in _textFields) {
+        
         if (responder == field) {
+            
             int sourceIdx = (int)field.tag;
             
-            int rampTime_ms = [[TWAudioController sharedController] getOscParameter:kOscParam_RampTime_ms atSourceIdx:sourceIdx];
+            int rampTime_ms = [[TWAudioController sharedController] getOscParameter:TWOscParamID_RampTime_ms atSourceIdx:sourceIdx];
+            
             float amplitude = [inValue floatValue];
-            [[TWAudioController sharedController] setOscParameter:kOscParam_OscAmplitude withValue:amplitude atSourceIdx:sourceIdx inTime:rampTime_ms];
+            amplitude >= kAmplitudeMax ? amplitude = kAmplitudeMax : amplitude <= kAmplitudeMin ? amplitude = kAmplitudeMin : amplitude;
+            
+            [[TWAudioController sharedController] setOscParameter:TWOscParamID_OscAmplitude withValue:amplitude atSourceIdx:sourceIdx inTime:rampTime_ms];
+            
             UISlider* slider = [_sliders objectAtIndex:sourceIdx];
             [slider setValue:amplitude animated:YES];
             [field setTitle:[NSString stringWithFormat:@"%.2f", amplitude] forState:UIControlStateNormal];
@@ -322,7 +329,7 @@ static const CGFloat kSoloButtonWidth       = 28.0f;
     for (UIButton* field in _textFields) {
         if (responder == field) {
             int sourceIdx = (int)field.tag;
-            float value = [[TWAudioController sharedController] getOscParameter:kOscParam_OscAmplitude atSourceIdx:sourceIdx];
+            float value = [[TWAudioController sharedController] getOscParameter:TWOscParamID_OscAmplitude atSourceIdx:sourceIdx];
             [field setTitle:[NSString stringWithFormat:@"%.2f", value] forState:UIControlStateNormal];
             [self updateOscView:sourceIdx];
         }
@@ -333,7 +340,7 @@ static const CGFloat kSoloButtonWidth       = 28.0f;
 - (void)textFieldTapped:(UIButton*)sender {
     TWKeypad* keypad = [TWKeypad sharedKeypad];
     [keypad setTitle:[NSString stringWithFormat:@"Osc[%d]. Gain:", (int)sender.tag+1]];
-    [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWAudioController sharedController] getOscParameter:kOscParam_OscAmplitude atSourceIdx:(int)sender.tag]]];
+    [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWAudioController sharedController] getOscParameter:TWOscParamID_OscAmplitude atSourceIdx:(int)sender.tag]]];
     [keypad setCurrentResponder:sender];
 }
 

@@ -124,6 +124,13 @@ void TWBinauralBiquad::setLFOEnabled(bool enabled)
     }
 }
 
+void TWBinauralBiquad::setLFOWaveform(TWOscillator::TWWaveform waveform)
+{
+    for (int i=0; i < 2; i++) {
+        _biquads[i].setLFOWaveform(waveform);
+    }
+}
+
 void TWBinauralBiquad::setLFOFrequency(float newFc, float rampTime_ms)
 {
     for (int i=0; i < 2; i++) {
@@ -155,6 +162,11 @@ void TWBinauralBiquad::resetLFOPhase(float rampTimeInSamples)
 bool TWBinauralBiquad::getLFOEnabled()
 {
     return _biquads[0].getLFOEnabled();
+}
+
+TWOscillator::TWWaveform TWBinauralBiquad::getLFOWaveform()
+{
+    return _biquads[0].getLFOWaveform();
 }
 
 float TWBinauralBiquad::getLFOFrequency()

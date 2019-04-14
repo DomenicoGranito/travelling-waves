@@ -100,18 +100,18 @@
     [_ampAttackTimeSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
     [_ampAttackTimeSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
     [_ampAttackTimeSlider setThumbTintColor:[UIColor sliderOnColor]];
-    [_ampAttackTimeSlider setTag:kSeqParam_AmpAttackTime];
-    [paramSliders setObject:_ampAttackTimeSlider forKey:@(kSeqParam_AmpAttackTime)];
+    [_ampAttackTimeSlider setTag:TWSeqParamID_AmpAttackTime];
+    [paramSliders setObject:_ampAttackTimeSlider forKey:@(TWSeqParamID_AmpAttackTime)];
     [self addSubview:_ampAttackTimeSlider];
     
     _ampAttackTimeField = [[UIButton alloc] init];
     [self setupButtonFieldProperties:_ampAttackTimeField];
     [_ampAttackTimeField addTarget:self action:@selector(buttonFieldTapped:) forControlEvents:UIControlEventTouchUpInside];
-    [_ampAttackTimeField setTag:kSeqParam_AmpAttackTime];
-    [paramFields setObject:_ampAttackTimeField forKey:@(kSeqParam_AmpAttackTime)];
+    [_ampAttackTimeField setTag:TWSeqParamID_AmpAttackTime];
+    [paramFields setObject:_ampAttackTimeField forKey:@(TWSeqParamID_AmpAttackTime)];
     [self addSubview:_ampAttackTimeField];
     
-    [paramTitles setObject:@"Amp Attack Time (ms): " forKey:@(kSeqParam_AmpAttackTime)];
+    [paramTitles setObject:@"Amp Attack Time (ms): " forKey:@(TWSeqParamID_AmpAttackTime)];
     
     
     
@@ -129,18 +129,18 @@
     [_ampSustainTimeSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
     [_ampSustainTimeSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
     [_ampSustainTimeSlider setThumbTintColor:[UIColor sliderOnColor]];
-    [_ampSustainTimeSlider setTag:kSeqParam_AmpSustainTime];
-    [paramSliders setObject:_ampSustainTimeSlider forKey:@(kSeqParam_AmpSustainTime)];
+    [_ampSustainTimeSlider setTag:TWSeqParamID_AmpSustainTime];
+    [paramSliders setObject:_ampSustainTimeSlider forKey:@(TWSeqParamID_AmpSustainTime)];
     [self addSubview:_ampSustainTimeSlider];
     
     _ampSustainTimeField = [[UIButton alloc] init];
     [self setupButtonFieldProperties:_ampSustainTimeField];
     [_ampSustainTimeField addTarget:self action:@selector(buttonFieldTapped:) forControlEvents:UIControlEventTouchUpInside];
-    [_ampSustainTimeField setTag:kSeqParam_AmpSustainTime];
-    [paramFields setObject:_ampSustainTimeField forKey:@(kSeqParam_AmpSustainTime)];
+    [_ampSustainTimeField setTag:TWSeqParamID_AmpSustainTime];
+    [paramFields setObject:_ampSustainTimeField forKey:@(TWSeqParamID_AmpSustainTime)];
     [self addSubview:_ampSustainTimeField];
     
-    [paramTitles setObject:@"Amp Sustain Time (ms): " forKey:@(kSeqParam_AmpSustainTime)];
+    [paramTitles setObject:@"Amp Sustain Time (ms): " forKey:@(TWSeqParamID_AmpSustainTime)];
     
     
     
@@ -158,18 +158,18 @@
     [_ampReleaseTimeSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
     [_ampReleaseTimeSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
     [_ampReleaseTimeSlider setThumbTintColor:[UIColor sliderOnColor]];
-    [_ampReleaseTimeSlider setTag:kSeqParam_AmpReleaseTime];
-    [paramSliders setObject:_ampReleaseTimeSlider forKey:@(kSeqParam_AmpReleaseTime)];
+    [_ampReleaseTimeSlider setTag:TWSeqParamID_AmpReleaseTime];
+    [paramSliders setObject:_ampReleaseTimeSlider forKey:@(TWSeqParamID_AmpReleaseTime)];
     [self addSubview:_ampReleaseTimeSlider];
     
     _ampReleaseTimeField = [[UIButton alloc] init];
     [self setupButtonFieldProperties:_ampReleaseTimeField];
     [_ampReleaseTimeField addTarget:self action:@selector(buttonFieldTapped:) forControlEvents:UIControlEventTouchUpInside];
-    [_ampReleaseTimeField setTag:kSeqParam_AmpReleaseTime];
-    [paramFields setObject:_ampReleaseTimeField forKey:@(kSeqParam_AmpReleaseTime)];
+    [_ampReleaseTimeField setTag:TWSeqParamID_AmpReleaseTime];
+    [paramFields setObject:_ampReleaseTimeField forKey:@(TWSeqParamID_AmpReleaseTime)];
     [self addSubview:_ampReleaseTimeField];
     
-    [paramTitles setObject:@"Amp Release Time (ms): " forKey:@(kSeqParam_AmpReleaseTime)];
+    [paramTitles setObject:@"Amp Release Time (ms): " forKey:@(TWSeqParamID_AmpReleaseTime)];
     
     
     
@@ -180,7 +180,7 @@
     [_filterEnableSwitch setTintColor:[UIColor sliderOnColor]];
     [_filterEnableSwitch setThumbTintColor:[UIColor sliderOnColor]];
     [_filterEnableSwitch addTarget:self action:@selector(filterEnableSwitchChanged) forControlEvents:UIControlEventValueChanged];
-    [_filterEnableSwitch setTag:kSeqParam_FilterEnable];
+    [_filterEnableSwitch setTag:TWSeqParamID_FilterEnable];
     [self addSubview:_filterEnableSwitch];
     
     
@@ -191,7 +191,7 @@
     [_filterSelector setTintColor:[UIColor sliderOnColor]];
     [_filterSelector setBackgroundColor:[UIColor sliderOffColor]];
     [_filterSelector addTarget:self action:@selector(filterTypeChanged) forControlEvents:UIControlEventValueChanged];
-    [_filterSelector setTag:kSeqParam_FilterType];
+    [_filterSelector setTag:TWSeqParamID_FilterType];
     [self addSubview:_filterSelector];
     
     
@@ -203,18 +203,18 @@
     [_filterResonanceSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
     [_filterResonanceSlider setThumbTintColor:[UIColor sliderOnColor]];
     [_filterResonanceSlider addTarget:self action:@selector(filterResonanceSliderChanged) forControlEvents:UIControlEventValueChanged];
-    [_filterResonanceSlider setTag:kSeqParam_FilterResonance];
-    [paramSliders setObject:_filterResonanceSlider forKey:@(kSeqParam_FilterResonance)];
+    [_filterResonanceSlider setTag:TWSeqParamID_FilterResonance];
+    [paramSliders setObject:_filterResonanceSlider forKey:@(TWSeqParamID_FilterResonance)];
     [self addSubview:_filterResonanceSlider];
     
     _filterResonanceField = [[UIButton alloc] init];
     [self setupButtonFieldProperties:_filterResonanceField];
     [_filterResonanceField addTarget:self action:@selector(buttonFieldTapped:) forControlEvents:UIControlEventTouchUpInside];
-    [_filterResonanceField setTag:kSeqParam_FilterResonance];
-    [paramFields setObject:_filterResonanceField forKey:@(kSeqParam_FilterResonance)];
+    [_filterResonanceField setTag:TWSeqParamID_FilterResonance];
+    [paramFields setObject:_filterResonanceField forKey:@(TWSeqParamID_FilterResonance)];
     [self addSubview:_filterResonanceField];
     
-    [paramTitles setObject:@"Filter Resonance (Q): " forKey:@(kSeqParam_FilterResonance)];
+    [paramTitles setObject:@"Filter Resonance (Q): " forKey:@(TWSeqParamID_FilterResonance)];
     
     
     
@@ -225,18 +225,18 @@
     [_filterFromCutoffFrequencySlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
     [_filterFromCutoffFrequencySlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
     [_filterFromCutoffFrequencySlider setThumbTintColor:[UIColor sliderOnColor]];
-    [_filterFromCutoffFrequencySlider setTag:kSeqParam_FilterFromCutoff];
-    [paramSliders setObject:_filterFromCutoffFrequencySlider forKey:@(kSeqParam_FilterFromCutoff)];
+    [_filterFromCutoffFrequencySlider setTag:TWSeqParamID_FilterFromCutoff];
+    [paramSliders setObject:_filterFromCutoffFrequencySlider forKey:@(TWSeqParamID_FilterFromCutoff)];
     [self addSubview:_filterFromCutoffFrequencySlider];
     
     _filterFromCutoffFrequencyField = [[UIButton alloc] init];
     [self setupButtonFieldProperties:_filterFromCutoffFrequencyField];
     [_filterFromCutoffFrequencyField addTarget:self action:@selector(buttonFieldTapped:) forControlEvents:UIControlEventTouchUpInside];
-    [_filterFromCutoffFrequencyField setTag:kSeqParam_FilterFromCutoff];
-    [paramFields setObject:_filterFromCutoffFrequencyField forKey:@(kSeqParam_FilterFromCutoff)];
+    [_filterFromCutoffFrequencyField setTag:TWSeqParamID_FilterFromCutoff];
+    [paramFields setObject:_filterFromCutoffFrequencyField forKey:@(TWSeqParamID_FilterFromCutoff)];
     [self addSubview:_filterFromCutoffFrequencyField];
     
-    [paramTitles setObject:@"Flt Env From Cutoff (Hz): " forKey:@(kSeqParam_FilterFromCutoff)];
+    [paramTitles setObject:@"Flt Env From Cutoff (Hz): " forKey:@(TWSeqParamID_FilterFromCutoff)];
     
     
     
@@ -247,18 +247,18 @@
     [_filterToCutoffFrequencySlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
     [_filterToCutoffFrequencySlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
     [_filterToCutoffFrequencySlider setThumbTintColor:[UIColor sliderOnColor]];
-    [_filterToCutoffFrequencySlider setTag:kSeqParam_FilterToCutoff];
-    [paramSliders setObject:_filterToCutoffFrequencySlider forKey:@(kSeqParam_FilterToCutoff)];
+    [_filterToCutoffFrequencySlider setTag:TWSeqParamID_FilterToCutoff];
+    [paramSliders setObject:_filterToCutoffFrequencySlider forKey:@(TWSeqParamID_FilterToCutoff)];
     [self addSubview:_filterToCutoffFrequencySlider];
     
     _filterToCutoffFrequencyField = [[UIButton alloc] init];
     [self setupButtonFieldProperties:_filterToCutoffFrequencyField];
     [_filterToCutoffFrequencyField addTarget:self action:@selector(buttonFieldTapped:) forControlEvents:UIControlEventTouchUpInside];
-    [_filterToCutoffFrequencyField setTag:kSeqParam_FilterToCutoff];
-    [paramFields setObject:_filterToCutoffFrequencyField forKey:@(kSeqParam_FilterToCutoff)];
+    [_filterToCutoffFrequencyField setTag:TWSeqParamID_FilterToCutoff];
+    [paramFields setObject:_filterToCutoffFrequencyField forKey:@(TWSeqParamID_FilterToCutoff)];
     [self addSubview:_filterToCutoffFrequencyField];
     
-    [paramTitles setObject:@"Flt Env To Cutoff (Hz): " forKey:@(kSeqParam_FilterToCutoff)];
+    [paramTitles setObject:@"Flt Env To Cutoff (Hz): " forKey:@(TWSeqParamID_FilterToCutoff)];
     
     
     
@@ -276,18 +276,18 @@
     [_filterAttackTimeSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
     [_filterAttackTimeSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
     [_filterAttackTimeSlider setThumbTintColor:[UIColor sliderOnColor]];
-    [_filterAttackTimeSlider setTag:kSeqParam_FilterAttackTime];
-    [paramSliders setObject:_filterAttackTimeSlider forKey:@(kSeqParam_FilterAttackTime)];
+    [_filterAttackTimeSlider setTag:TWSeqParamID_FilterAttackTime];
+    [paramSliders setObject:_filterAttackTimeSlider forKey:@(TWSeqParamID_FilterAttackTime)];
     [self addSubview:_filterAttackTimeSlider];
     
     _filterAttackTimeField = [[UIButton alloc] init];
     [self setupButtonFieldProperties:_filterAttackTimeField];
     [_filterAttackTimeField addTarget:self action:@selector(buttonFieldTapped:) forControlEvents:UIControlEventTouchUpInside];
-    [_filterAttackTimeField setTag:kSeqParam_FilterAttackTime];
-    [paramFields setObject:_filterAttackTimeField forKey:@(kSeqParam_FilterAttackTime)];
+    [_filterAttackTimeField setTag:TWSeqParamID_FilterAttackTime];
+    [paramFields setObject:_filterAttackTimeField forKey:@(TWSeqParamID_FilterAttackTime)];
     [self addSubview:_filterAttackTimeField];
     
-    [paramTitles setObject:@"Flt Attack Time (ms): " forKey:@(kSeqParam_FilterAttackTime)];
+    [paramTitles setObject:@"Flt Attack Time (ms): " forKey:@(TWSeqParamID_FilterAttackTime)];
     
     
     
@@ -305,18 +305,18 @@
     [_filterSustainTimeSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
     [_filterSustainTimeSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
     [_filterSustainTimeSlider setThumbTintColor:[UIColor sliderOnColor]];
-    [_filterSustainTimeSlider setTag:kSeqParam_FilterSustainTime];
-    [paramSliders setObject:_filterSustainTimeSlider forKey:@(kSeqParam_FilterSustainTime)];
+    [_filterSustainTimeSlider setTag:TWSeqParamID_FilterSustainTime];
+    [paramSliders setObject:_filterSustainTimeSlider forKey:@(TWSeqParamID_FilterSustainTime)];
     [self addSubview:_filterSustainTimeSlider];
     
     _filterSustainTimeField = [[UIButton alloc] init];
     [self setupButtonFieldProperties:_filterSustainTimeField];
     [_filterSustainTimeField addTarget:self action:@selector(buttonFieldTapped:) forControlEvents:UIControlEventTouchUpInside];
-    [_filterSustainTimeField setTag:kSeqParam_FilterSustainTime];
-    [paramFields setObject:_filterSustainTimeField forKey:@(kSeqParam_FilterSustainTime)];
+    [_filterSustainTimeField setTag:TWSeqParamID_FilterSustainTime];
+    [paramFields setObject:_filterSustainTimeField forKey:@(TWSeqParamID_FilterSustainTime)];
     [self addSubview:_filterSustainTimeField];
     
-    [paramTitles setObject:@"Flt Sustain Time (ms): " forKey:@(kSeqParam_FilterSustainTime)];
+    [paramTitles setObject:@"Flt Sustain Time (ms): " forKey:@(TWSeqParamID_FilterSustainTime)];
     
     
     
@@ -334,18 +334,18 @@
     [_filterReleaseTimeSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
     [_filterReleaseTimeSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
     [_filterReleaseTimeSlider setThumbTintColor:[UIColor sliderOnColor]];
-    [_filterReleaseTimeSlider setTag:kSeqParam_FilterReleaseTime];
-    [paramSliders setObject:_filterReleaseTimeSlider forKey:@(kSeqParam_FilterReleaseTime)];
+    [_filterReleaseTimeSlider setTag:TWSeqParamID_FilterReleaseTime];
+    [paramSliders setObject:_filterReleaseTimeSlider forKey:@(TWSeqParamID_FilterReleaseTime)];
     [self addSubview:_filterReleaseTimeSlider];
     
     _filterReleaseTimeField = [[UIButton alloc] init];
     [self setupButtonFieldProperties:_filterReleaseTimeField];
     [_filterReleaseTimeField addTarget:self action:@selector(buttonFieldTapped:) forControlEvents:UIControlEventTouchUpInside];
-    [_filterReleaseTimeField setTag:kSeqParam_FilterReleaseTime];
-    [paramFields setObject:_filterReleaseTimeField forKey:@(kSeqParam_FilterReleaseTime)];
+    [_filterReleaseTimeField setTag:TWSeqParamID_FilterReleaseTime];
+    [paramFields setObject:_filterReleaseTimeField forKey:@(TWSeqParamID_FilterReleaseTime)];
     [self addSubview:_filterReleaseTimeField];
     
-    [paramTitles setObject:@"Flt Release Time (ms): " forKey:@(kSeqParam_FilterReleaseTime)];
+    [paramTitles setObject:@"Flt Release Time (ms): " forKey:@(TWSeqParamID_FilterReleaseTime)];
     
     
     
@@ -503,45 +503,45 @@
     _sourceIdx = sourceIdx;
     
     // Amplitude Envelope
-    int ampAttackTime_ms = [[TWAudioController sharedController] getSeqParameter:kSeqParam_AmpAttackTime atSourceIdx:sourceIdx];
+    int ampAttackTime_ms = [[TWAudioController sharedController] getSeqParameter:TWSeqParamID_AmpAttackTime atSourceIdx:sourceIdx];
     [_ampAttackTimeSlider setValue:ampAttackTime_ms animated:NO];
     [_ampAttackTimeField setTitle:[NSString stringWithFormat:@"%d", ampAttackTime_ms] forState:UIControlStateNormal];
     
-    int ampSustainTime_ms = [[TWAudioController sharedController] getSeqParameter:kSeqParam_AmpSustainTime atSourceIdx:sourceIdx];
+    int ampSustainTime_ms = [[TWAudioController sharedController] getSeqParameter:TWSeqParamID_AmpSustainTime atSourceIdx:sourceIdx];
     [_ampSustainTimeSlider setValue:ampSustainTime_ms animated:NO];
     [_ampSustainTimeField setTitle:[NSString stringWithFormat:@"%d", ampSustainTime_ms] forState:UIControlStateNormal];
     
-    int ampReleaseTime_ms = [[TWAudioController sharedController] getSeqParameter:kSeqParam_AmpReleaseTime atSourceIdx:sourceIdx];
+    int ampReleaseTime_ms = [[TWAudioController sharedController] getSeqParameter:TWSeqParamID_AmpReleaseTime atSourceIdx:sourceIdx];
     [_ampReleaseTimeSlider setValue:ampReleaseTime_ms animated:NO];
     [_ampReleaseTimeField setTitle:[NSString stringWithFormat:@"%d", ampReleaseTime_ms] forState:UIControlStateNormal];
     
     
     // Filter Envelope
-    [_filterEnableSwitch setOn:[[TWAudioController sharedController] getSeqParameter:kSeqParam_FilterEnable atSourceIdx:sourceIdx]];
-    [_filterSelector setSelectedSegmentIndex:[[TWAudioController sharedController] getSeqParameter:kSeqParam_FilterType atSourceIdx:sourceIdx]];
+    [_filterEnableSwitch setOn:[[TWAudioController sharedController] getSeqParameter:TWSeqParamID_FilterEnable atSourceIdx:sourceIdx]];
+    [_filterSelector setSelectedSegmentIndex:[[TWAudioController sharedController] getSeqParameter:TWSeqParamID_FilterType atSourceIdx:sourceIdx]];
     
-    float resonance = [[TWAudioController sharedController] getSeqParameter:kSeqParam_FilterResonance atSourceIdx:sourceIdx];
+    float resonance = [[TWAudioController sharedController] getSeqParameter:TWSeqParamID_FilterResonance atSourceIdx:sourceIdx];
     [_filterResonanceSlider setValue:resonance animated:NO];
     [_filterResonanceField setTitle:[NSString stringWithFormat:@"%.2f", resonance] forState:UIControlStateNormal];
     
-    float fromCuttoff = [[TWAudioController sharedController] getSeqParameter:kSeqParam_FilterFromCutoff atSourceIdx:sourceIdx];
+    float fromCuttoff = [[TWAudioController sharedController] getSeqParameter:TWSeqParamID_FilterFromCutoff atSourceIdx:sourceIdx];
     [_filterFromCutoffFrequencySlider setValue:fromCuttoff animated:NO];
     [_filterFromCutoffFrequencyField setTitle:[NSString stringWithFormat:@"%.2f", fromCuttoff] forState:UIControlStateNormal];
     
-    float toCuttoff = [[TWAudioController sharedController] getSeqParameter:kSeqParam_FilterToCutoff atSourceIdx:sourceIdx];
+    float toCuttoff = [[TWAudioController sharedController] getSeqParameter:TWSeqParamID_FilterToCutoff atSourceIdx:sourceIdx];
     [_filterToCutoffFrequencySlider setValue:toCuttoff animated:NO];
     [_filterToCutoffFrequencyField setTitle:[NSString stringWithFormat:@"%.2f", toCuttoff] forState:UIControlStateNormal];
     
     
-    int fltAttackTime_ms = [[TWAudioController sharedController] getSeqParameter:kSeqParam_FilterAttackTime atSourceIdx:sourceIdx];
+    int fltAttackTime_ms = [[TWAudioController sharedController] getSeqParameter:TWSeqParamID_FilterAttackTime atSourceIdx:sourceIdx];
     [_filterAttackTimeSlider setValue:fltAttackTime_ms animated:NO];
     [_filterAttackTimeField setTitle:[NSString stringWithFormat:@"%d", fltAttackTime_ms] forState:UIControlStateNormal];
     
-    int fltSustainTime_ms = [[TWAudioController sharedController] getSeqParameter:kSeqParam_FilterSustainTime atSourceIdx:sourceIdx];
+    int fltSustainTime_ms = [[TWAudioController sharedController] getSeqParameter:TWSeqParamID_FilterSustainTime atSourceIdx:sourceIdx];
     [_filterSustainTimeSlider setValue:fltSustainTime_ms animated:NO];
     [_filterSustainTimeField setTitle:[NSString stringWithFormat:@"%d", fltSustainTime_ms] forState:UIControlStateNormal];
     
-    int fltReleaseTime_ms = [[TWAudioController sharedController] getSeqParameter:kSeqParam_FilterReleaseTime atSourceIdx:sourceIdx];
+    int fltReleaseTime_ms = [[TWAudioController sharedController] getSeqParameter:TWSeqParamID_FilterReleaseTime atSourceIdx:sourceIdx];
     [_filterReleaseTimeSlider setValue:fltReleaseTime_ms animated:NO];
     [_filterReleaseTimeField setTitle:[NSString stringWithFormat:@"%d", fltReleaseTime_ms] forState:UIControlStateNormal];
     
@@ -574,63 +574,63 @@
 
 - (void)ampAttackTimeSliderValueChanged {
     int value = _ampAttackTimeSlider.value;
-    [[TWAudioController sharedController] setSeqParameter:kSeqParam_AmpAttackTime withValue:value atSourceIdx:_sourceIdx];
+    [[TWAudioController sharedController] setSeqParameter:TWSeqParamID_AmpAttackTime withValue:value atSourceIdx:_sourceIdx];
     [_ampAttackTimeField setTitle:[NSString stringWithFormat:@"%d", value] forState:UIControlStateNormal];
 }
 
 - (void)ampSustainTimeSliderValueChanged {
     int value = _ampSustainTimeSlider.value;
-    [[TWAudioController sharedController] setSeqParameter:kSeqParam_AmpSustainTime withValue:value atSourceIdx:_sourceIdx];
+    [[TWAudioController sharedController] setSeqParameter:TWSeqParamID_AmpSustainTime withValue:value atSourceIdx:_sourceIdx];
     [_ampSustainTimeField setTitle:[NSString stringWithFormat:@"%d", value] forState:UIControlStateNormal];
 }
 
 - (void)ampReleaseTimeSliderValueChanged {
     int value = _ampReleaseTimeSlider.value;
-    [[TWAudioController sharedController] setSeqParameter:kSeqParam_AmpReleaseTime withValue:value atSourceIdx:_sourceIdx];
+    [[TWAudioController sharedController] setSeqParameter:TWSeqParamID_AmpReleaseTime withValue:value atSourceIdx:_sourceIdx];
     [_ampReleaseTimeField setTitle:[NSString stringWithFormat:@"%d", value] forState:UIControlStateNormal];
 }
 
 - (void)filterEnableSwitchChanged {
-    [[TWAudioController sharedController] setSeqParameter:kSeqParam_FilterEnable withValue:_filterEnableSwitch.on atSourceIdx:_sourceIdx];
+    [[TWAudioController sharedController] setSeqParameter:TWSeqParamID_FilterEnable withValue:_filterEnableSwitch.on atSourceIdx:_sourceIdx];
 }
 
 - (void)filterTypeChanged {
-    [[TWAudioController sharedController] setSeqParameter:kSeqParam_FilterType withValue:_filterSelector.selectedSegmentIndex atSourceIdx:_sourceIdx];
+    [[TWAudioController sharedController] setSeqParameter:TWSeqParamID_FilterType withValue:_filterSelector.selectedSegmentIndex atSourceIdx:_sourceIdx];
 }
 
 - (void)filterResonanceSliderChanged {
     float value = _filterResonanceSlider.value;
-    [[TWAudioController sharedController] setSeqParameter:kSeqParam_FilterResonance withValue:value atSourceIdx:_sourceIdx];
+    [[TWAudioController sharedController] setSeqParameter:TWSeqParamID_FilterResonance withValue:value atSourceIdx:_sourceIdx];
     [_filterResonanceField setTitle:[NSString stringWithFormat:@"%.2f", value] forState:UIControlStateNormal];
 }
 
 - (void)filterFromCuttoffSliderValueChanged {
     float value = _filterFromCutoffFrequencySlider.value;
-    [[TWAudioController sharedController] setSeqParameter:kSeqParam_FilterFromCutoff withValue:value atSourceIdx:_sourceIdx];
+    [[TWAudioController sharedController] setSeqParameter:TWSeqParamID_FilterFromCutoff withValue:value atSourceIdx:_sourceIdx];
     [_filterFromCutoffFrequencyField setTitle:[NSString stringWithFormat:@"%.2f", value] forState:UIControlStateNormal];
 }
 
 - (void)filterToCuttoffSliderValueChanged {
     float value = _filterToCutoffFrequencySlider.value;
-    [[TWAudioController sharedController] setSeqParameter:kSeqParam_FilterToCutoff withValue:value atSourceIdx:_sourceIdx];
+    [[TWAudioController sharedController] setSeqParameter:TWSeqParamID_FilterToCutoff withValue:value atSourceIdx:_sourceIdx];
     [_filterToCutoffFrequencyField setTitle:[NSString stringWithFormat:@"%.2f", value] forState:UIControlStateNormal];
 }
 
 - (void)filterAttackTimeSliderValueChanged {
     int value = _filterAttackTimeSlider.value;
-    [[TWAudioController sharedController] setSeqParameter:kSeqParam_FilterAttackTime withValue:value atSourceIdx:_sourceIdx];
+    [[TWAudioController sharedController] setSeqParameter:TWSeqParamID_FilterAttackTime withValue:value atSourceIdx:_sourceIdx];
     [_filterAttackTimeField setTitle:[NSString stringWithFormat:@"%d", value] forState:UIControlStateNormal];
 }
 
 - (void)filterSustainTimeSliderValueChanged {
     int value = _filterSustainTimeSlider.value;
-    [[TWAudioController sharedController] setSeqParameter:kSeqParam_FilterSustainTime withValue:value atSourceIdx:_sourceIdx];
+    [[TWAudioController sharedController] setSeqParameter:TWSeqParamID_FilterSustainTime withValue:value atSourceIdx:_sourceIdx];
     [_filterSustainTimeField setTitle:[NSString stringWithFormat:@"%d", value] forState:UIControlStateNormal];
 }
 
 - (void)filterReleaseTimeSliderValueChanged {
     int value = _filterReleaseTimeSlider.value;
-    [[TWAudioController sharedController] setSeqParameter:kSeqParam_FilterReleaseTime withValue:value atSourceIdx:_sourceIdx];
+    [[TWAudioController sharedController] setSeqParameter:TWSeqParamID_FilterReleaseTime withValue:value atSourceIdx:_sourceIdx];
     [_filterReleaseTimeField setTitle:[NSString stringWithFormat:@"%d", value] forState:UIControlStateNormal];
 }
 

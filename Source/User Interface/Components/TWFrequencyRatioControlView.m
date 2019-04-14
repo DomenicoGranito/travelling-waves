@@ -39,6 +39,9 @@
     
     UISegmentedControl*         _segmentedControl;
     TWTimeRatioControl          _currentControl;
+    NSArray<UIColor*>*          _segmentTintColors;
+    NSArray<UIColor*>*          _segmentBackColors;
+    UIView*                     _segmentBackView;
     
     NSArray*                    _textFields;
     
@@ -155,18 +158,23 @@
     [self addSubview:_tapTempoButton];
 
     
-    
+    _segmentTintColors = [[NSArray alloc] initWithArray:[UIColor timeRatioControlTintColors]];
     NSDictionary* attribute = [NSDictionary dictionaryWithObject:[UIFont systemFontOfSize:10.0f] forKey:NSFontAttributeName];
-    NSArray* segments = @[@"Base", @"Beat", @"Tremolo", @"Filter LFO"];
+    NSArray* segments = @[@"Base", @"Beat", @"Tremolo", @"Shape Tremolo", @"Filter LFO"];
     _segmentedControl = [[UISegmentedControl alloc] initWithItems:segments];
-    [_segmentedControl setBackgroundColor:[UIColor segmentedControlColor]];
+    [_segmentedControl setBackgroundColor:[UIColor colorWithWhite:0.16f alpha:1.0f]];
     [_segmentedControl setSelectedSegmentIndex:0];
     [_segmentedControl setTitleTextAttributes:attribute forState:UIControlStateNormal];
-    [_segmentedControl setTintColor:[UIColor colorWithWhite:0.5f alpha:1.0f]];
+    [_segmentedControl setTintColor:[UIColor segmentedControlTintColor]];
     [_segmentedControl addTarget:self action:@selector(segmentValueChanged:) forControlEvents:UIControlEventValueChanged];
     [self addSubview:_segmentedControl];
     
     
+    _segmentBackColors = [[NSArray alloc] initWithArray:[UIColor timeRatioControlBackColors]];
+    _segmentBackView = [[UIView alloc] init];
+    [_segmentBackView setBackgroundColor:[UIColor frequencyRatioControlBackgroundColor]];
+    [_segmentBackView setUserInteractionEnabled:NO];
+    [self addSubview:_segmentBackView];
     
     
     
@@ -281,7 +289,8 @@
     _denDecButtons  = [[NSArray alloc] initWithArray:denDecButtons];
     _denBorders     = [[NSArray alloc] initWithArray:denBorders];
     
-    [self setBackgroundColor:[UIColor colorWithWhite:0.16f alpha:1.0f]];
+    
+    [self setBackgroundColor:[UIColor frequencyRatioControlBackgroundColor]];
 }
 
 
@@ -363,6 +372,10 @@
     
     
     yPos += componentHeight;
+    
+    [_segmentBackView setFrame:CGRectMake(xPos, yPos - 5.0f, frame.size.width, frame.size.height - yPos)];
+    
+    
     CGFloat idLabelWidth = 12.0f;
     CGFloat textFieldWidth = 16.0f;
     CGFloat buttonYMargin = kButtonYMargin;
@@ -594,6 +607,8 @@
         UIButton* denTextField = (UIButton*)_textFields[kDenominator][idx];
         [denTextField setTitle:[NSString stringWithFormat:@"%d", denominator] forState:UIControlStateNormal];
     }
+    [_segmentedControl setTintColor:[_segmentTintColors objectAtIndex:(int)_currentControl]];
+    [_segmentBackView setBackgroundColor:[_segmentBackColors objectAtIndex:(int)_currentControl]];
 }
 
 - (void)tapTempo {

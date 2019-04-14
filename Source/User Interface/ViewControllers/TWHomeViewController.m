@@ -271,7 +271,7 @@
     CGFloat scrollViewHeight = screenHeight - yPos - componentHeight;
     [_verticalScrollView setFrame:CGRectMake(xMargin, yPos, screenWidth, scrollViewHeight)];
     
-    CGFloat scrollViewContentHeight = isLandscape ? (3.0f * kButtonYMargin) + (((kNumSources / 4.0f) + 14.0f) * componentHeight) : (4.0f * kButtonYMargin) + (((kNumSources / 2.0f) + 14.0f) * componentHeight);
+    CGFloat scrollViewContentHeight = isLandscape ? (3.0f * kButtonYMargin) + (((kNumSources / 4.0f) + 15.0f) * componentHeight) : (4.0f * kButtonYMargin) + (((kNumSources / 2.0f) + 15.0f) * componentHeight);
     [_verticalScrollView setContentSize:CGSizeMake(screenWidth, scrollViewContentHeight)];
     
     
@@ -282,7 +282,7 @@
     
     yPos += _pitchRatioControlView.frame.size.height;
     xPos = 0.0f;
-    CGFloat oscViewHeight = componentHeight * 10.0f;
+    CGFloat oscViewHeight = componentHeight * 11.0f;
     [_oscView setFrame:CGRectMake(xPos, yPos, screenWidth, oscViewHeight)];
     
     

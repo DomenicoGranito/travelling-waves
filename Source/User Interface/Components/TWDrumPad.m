@@ -208,11 +208,11 @@ static const CGFloat kFileTitleLabelHeightFraction      = 0.2f; // Fraction of h
     _touchDownCount = 0;
     _touchState = TWTouchState_Up;
     
-    _drumPadMode = (TWDrumPadMode)[[TWAudioController sharedController] getPlaybackParameter:kPlaybackParam_DrumPadMode atSourceIdx:(int)self.tag];
+    _drumPadMode = (TWDrumPadMode)[[TWAudioController sharedController] getPadParameter:TWPadParamID_DrumPadMode atSourceIdx:(int)self.tag];
     
-    _playbackDirection = (TWPlaybackDirection)[[TWAudioController sharedController] getPlaybackParameter:kPlaybackParam_PlaybackDirection atSourceIdx:(int)self.tag];
+    _playbackDirection = (TWPlaybackDirection)[[TWAudioController sharedController] getPadParameter:TWPadParamID_PlaybackDirection atSourceIdx:(int)self.tag];
     
-    _playbackStatus = [[TWAudioController sharedController] getPlaybackParameter:kPlaybackParam_PlaybackStatus atSourceIdx:(int)self.tag];
+    _playbackStatus = [[TWAudioController sharedController] getPadParameter:TWPadParamID_PlaybackStatus atSourceIdx:(int)self.tag];
     if (_playbackStatus == TWPlaybackStatus_Playing) {
         [_touchView setAlpha:1.0f];
         if (_drumPadMode == TWDrumPadMode_Toggle) {
@@ -222,7 +222,7 @@ static const CGFloat kFileTitleLabelHeightFraction      = 0.2f; // Fraction of h
         [_touchView setAlpha:0.0f];
     }
     
-    _lengthInSeconds = [[TWAudioController sharedController] getPlaybackParameter:kPlaybackParam_LengthInSeconds atSourceIdx:(int)self.tag];
+    _lengthInSeconds = [[TWAudioController sharedController] getPadParameter:TWPadParamID_LengthInSeconds atSourceIdx:(int)self.tag];
     
     [self stopProgressAnimation];
 }
@@ -358,7 +358,7 @@ static const CGFloat kFileTitleLabelHeightFraction      = 0.2f; // Fraction of h
     }
     
     
-//    [[TWAudioController sharedController] setPlaybackParameter:kPlaybackParam_Velocity withValue:velocity atSourceIdx:(int)self.tag inTime:10.0f];
+//    [[TWAudioController sharedController] setPadParameter:TWPadParamID_Velocity withValue:velocity atSourceIdx:(int)self.tag inTime:10.0f];
     [_touchView setAlpha:velocity];
 }
 
@@ -466,7 +466,7 @@ static const CGFloat kFileTitleLabelHeightFraction      = 0.2f; // Fraction of h
     CABasicAnimation* rotationAnimation;
     rotationAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
     
-    float normalizedProgress = [[TWAudioController sharedController] getPlaybackParameter:kPlaybackParam_NormalizedProgress atSourceIdx:(int)self.tag];
+    float normalizedProgress = [[TWAudioController sharedController] getPadParameter:TWPadParamID_NormalizedProgress atSourceIdx:(int)self.tag];
     
     
     NSNumber* fromValue;

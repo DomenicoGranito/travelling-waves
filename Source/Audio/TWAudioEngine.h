@@ -77,8 +77,8 @@ public:
     void setSeqNoteForBeatAtSourceIdx(int sourceIdx, int beat, int note);
     int getSeqNoteForBeatAtSourceIdx(int sourceIdx, int beat);
     
-    void setSeqParameterAtSourceIdx(int sourceIdx, int paramID, float value);
-    float getSeqParameterAtSourceIdx(int sourceIdx, int paramID);
+    void setSeqParameterAtSourceIdx(int sourceIdx, TWSeqParamID paramID, float value);
+    float getSeqParameterAtSourceIdx(int sourceIdx, TWSeqParamID paramID);
     
     
     
@@ -89,8 +89,8 @@ public:
     void setOscSoloEnabledAtSourceIdx(int sourceIdx, bool enabled);
     bool getOscSoloEnabledAtSourceIdx(int sourceIdx);
     
-    void setOscParameterAtSourceIdx(int sourceIdx, int paramID, float value, float rampTime_ms = 0.0f);
-    float getOscParameterAtSourceIdx(int sourceIdx, int paramID);
+    void setOscParameterAtSourceIdx(int sourceIdx, TWOscParamID paramID, float value, float rampTime_ms = 0.0f);
+    float getOscParameterAtSourceIdx(int sourceIdx, TWOscParamID paramID);
     
     
     
@@ -100,8 +100,8 @@ public:
     int loadAudioFileAtSourceIdx(int sourceIdx, std::string filepath);
     void startPlaybackAtSourceIdx(int sourceIdx, uint32_t sampleTime);
     void stopPlaybackAtSourceIdx(int sourceIdx, float fadeOut_ms);
-    void setPlaybackParameterAtSourceIdx(int sourceIdx, int paramID, float value, float rampTime_ms);
-    float getPlaybackParameterAtSourceIdx(int sourceIdx, int paramID);
+    void setPadParameterAtSourceIdx(int sourceIdx, TWPadParamID paramID, float value, float rampTime_ms);
+    float getPadParameterAtSourceIdx(int sourceIdx, TWPadParamID paramID);
     void setPlaybackFinishedProc(std::function<void(int,int)>finishedPlaybackProc);
     std::string getAudioFileTitleAtSourceIdx(int sourceIdx);
     
@@ -137,6 +137,7 @@ private:
     std::array<TWBinauralSynth, kNumSources>        _synths;
     std::array<TWBinauralBiquad, kNumSources>       _biquads;
     std::array<TWTremolo, kNumSources>              _tremolos;
+    std::array<TWTremolo, kNumSources>              _shapeTremolos;
     
     std::array<TWMemoryPlayer, kNumSources>         _memoryPlayers;
     dispatch_queue_t                                _notificationQueue;

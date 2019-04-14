@@ -48,12 +48,14 @@ public:
     
     
     void setLFOEnabled(bool enabled);
+    void setLFOWaveform(TWOscillator::TWWaveform waveform);
     void setLFOFrequency(float newFc, float rampTime_ms);
     void setLFORange(float newRange, float rampTime_ms);
     void setLFOOffset(float lfoOffset, float rampTime_ms);
     void resetLFOPhase(float rampTimeInSamples);
     
     bool getLFOEnabled();
+    TWOscillator::TWWaveform getLFOWaveform();
     float getLFOFrequency();
     float getLFORange();
     float getLFOOffset();

@@ -214,15 +214,15 @@
         [drumPad setFileTitleText:[[TWAudioController sharedController] getAudioFileTitleAtSourceIdx:i]];
         
         TWFillSlider* velocitySlider = (TWFillSlider*)[_velocitySliders objectAtIndex:i];
-        [velocitySlider setValue:[[TWAudioController sharedController] getPlaybackParameter:kPlaybackParam_MaxVolume atSourceIdx:i]];
+        [velocitySlider setValue:[[TWAudioController sharedController] getPadParameter:TWPadParamID_MaxVolume atSourceIdx:i]];
         
         TWCycleStateButton* drumPadModeButton = (TWCycleStateButton*)[_drumPadModeButtons objectAtIndex:i];
-        TWDrumPadMode currentMode = (TWDrumPadMode)[[TWAudioController sharedController] getPlaybackParameter:kPlaybackParam_DrumPadMode atSourceIdx:i];
+        TWDrumPadMode currentMode = (TWDrumPadMode)[[TWAudioController sharedController] getPadParameter:TWPadParamID_DrumPadMode atSourceIdx:i];
         [drumPadModeButton setCurrentState:(NSUInteger)currentMode];
         [drumPad setDrumPadMode:currentMode];
         
         TWCycleStateButton* playbackDirectionButton = (TWCycleStateButton*)[_playbackDirectionButtons objectAtIndex:i];
-        TWPlaybackDirection direction = (TWPlaybackDirection)[[TWAudioController sharedController] getPlaybackParameter:kPlaybackParam_PlaybackDirection atSourceIdx:i];
+        TWPlaybackDirection direction = (TWPlaybackDirection)[[TWAudioController sharedController] getPadParameter:TWPadParamID_PlaybackDirection atSourceIdx:i];
         [playbackDirectionButton setCurrentState:(NSUInteger)direction];
     }
     
@@ -413,11 +413,11 @@
         for (TWFillSlider* velocitySlider in _velocitySliders) {
             if (velocitySlider != sender) {
                 [velocitySlider setValue:sender.value];
-                [[TWAudioController sharedController] setPlaybackParameter:kPlaybackParam_MaxVolume withValue:sender.value atSourceIdx:(int)velocitySlider.tag inTime:0.0f];
+                [[TWAudioController sharedController] setPadParameter:TWPadParamID_MaxVolume withValue:sender.value atSourceIdx:(int)velocitySlider.tag inTime:0.0f];
             }
         }
     }
-    [[TWAudioController sharedController] setPlaybackParameter:kPlaybackParam_MaxVolume withValue:sender.value atSourceIdx:(int)sender.tag inTime:0.0f];
+    [[TWAudioController sharedController] setPadParameter:TWPadParamID_MaxVolume withValue:sender.value atSourceIdx:(int)sender.tag inTime:0.0f];
 }
 
 - (void)toggleVelocityButtonDown:(UIButton*)sender {
@@ -457,7 +457,7 @@
     [sender incrementState];
     NSUInteger currentState = [sender currentState];
     
-    [[TWAudioController sharedController] setPlaybackParameter:kPlaybackParam_DrumPadMode withValue:(float)currentState atSourceIdx:(int)sender.tag inTime:0.0f];
+    [[TWAudioController sharedController] setPadParameter:TWPadParamID_DrumPadMode withValue:(float)currentState atSourceIdx:(int)sender.tag inTime:0.0f];
     
     TWDrumPad* drumPad = [_drumPads objectAtIndex:sender.tag];
     [drumPad setDrumPadMode:(TWDrumPadMode)currentState];
@@ -466,7 +466,7 @@
         for (TWCycleStateButton* drumPadModeButton in _drumPadModeButtons) {
             if (drumPadModeButton != sender) {
                 [drumPadModeButton setCurrentState:currentState];
-                [[TWAudioController sharedController] setPlaybackParameter:kPlaybackParam_DrumPadMode withValue:(float)currentState atSourceIdx:(int)drumPadModeButton.tag inTime:0.0f];
+                [[TWAudioController sharedController] setPadParameter:TWPadParamID_DrumPadMode withValue:(float)currentState atSourceIdx:(int)drumPadModeButton.tag inTime:0.0f];
                 
                 TWDrumPad* drumPad = [_drumPads objectAtIndex:drumPadModeButton.tag];
                 [drumPad setDrumPadMode:(TWDrumPadMode)currentState];
@@ -496,7 +496,7 @@
     [sender incrementState];
     NSUInteger currentState = [sender currentState];
     
-    [[TWAudioController sharedController] setPlaybackParameter:kPlaybackParam_PlaybackDirection withValue:(float)currentState atSourceIdx:(int)sender.tag inTime:0.0f];
+    [[TWAudioController sharedController] setPadParameter:TWPadParamID_PlaybackDirection withValue:(float)currentState atSourceIdx:(int)sender.tag inTime:0.0f];
     TWDrumPad* drumPad = (TWDrumPad*)[_drumPads objectAtIndex:(int)sender.tag];
     [drumPad setPlaybackDirection:(TWPlaybackDirection)currentState];
     
@@ -504,7 +504,7 @@
         for (TWCycleStateButton* playbackDirectionButton in _playbackDirectionButtons) {
             if (playbackDirectionButton != sender) {
                 [playbackDirectionButton setCurrentState:currentState];
-                [[TWAudioController sharedController] setPlaybackParameter:kPlaybackParam_PlaybackDirection withValue:(float)currentState atSourceIdx:(int)playbackDirectionButton.tag inTime:0.0f];
+                [[TWAudioController sharedController] setPadParameter:TWPadParamID_PlaybackDirection withValue:(float)currentState atSourceIdx:(int)playbackDirectionButton.tag inTime:0.0f];
                 
                 TWDrumPad* pad = (TWDrumPad*)[_drumPads objectAtIndex:(int)playbackDirectionButton.tag];
                 [pad setPlaybackDirection:(TWPlaybackDirection)currentState];
@@ -580,7 +580,7 @@
 //    _debugCount = (_debugCount + 1) % 3;
     
 //    TWDrumPad* drumPad = (TWDrumPad*)[_drumPads objectAtIndex:0];
-//    [drumPad setLengthInSeconds:[[TWAudioController sharedController] getPlaybackParameter:kPlaybackParam_LengthInSeconds atSourceIdx:0]];
+//    [drumPad setLengthInSeconds:[[TWAudioController sharedController] getPadParameter:TWPadParamID_LengthInSeconds atSourceIdx:0]];
     
     
     
@@ -593,7 +593,7 @@
         NSLog(@"Error! SampleURL is nil!");
     }
     TWDrumPad* drumPad = (TWDrumPad*)[_drumPads objectAtIndex:0];
-    [drumPad setLengthInSeconds:[[TWAudioController sharedController] getPlaybackParameter:kPlaybackParam_LengthInSeconds atSourceIdx:0]];
+    [drumPad setLengthInSeconds:[[TWAudioController sharedController] getPadParameter:TWPadParamID_LengthInSeconds atSourceIdx:0]];
     [drumPad setFileTitleText:[[TWAudioController sharedController] getAudioFileTitleAtSourceIdx:0]];
 
 
@@ -605,7 +605,7 @@
         NSLog(@"Error! SampleURL is nil!");
     }
     drumPad = (TWDrumPad*)[_drumPads objectAtIndex:1];
-    [drumPad setLengthInSeconds:[[TWAudioController sharedController] getPlaybackParameter:kPlaybackParam_LengthInSeconds atSourceIdx:1]];
+    [drumPad setLengthInSeconds:[[TWAudioController sharedController] getPadParameter:TWPadParamID_LengthInSeconds atSourceIdx:1]];
     [drumPad setFileTitleText:[[TWAudioController sharedController] getAudioFileTitleAtSourceIdx:1]];
 
     
@@ -617,7 +617,7 @@
         NSLog(@"Error! SampleURL is nil!");
     }
     drumPad = (TWDrumPad*)[_drumPads objectAtIndex:2];
-    [drumPad setLengthInSeconds:[[TWAudioController sharedController] getPlaybackParameter:kPlaybackParam_LengthInSeconds atSourceIdx:2]];
+    [drumPad setLengthInSeconds:[[TWAudioController sharedController] getPadParameter:TWPadParamID_LengthInSeconds atSourceIdx:2]];
     [drumPad setFileTitleText:[[TWAudioController sharedController] getAudioFileTitleAtSourceIdx:2]];
 }
 

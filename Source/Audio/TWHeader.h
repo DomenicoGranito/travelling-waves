@@ -10,7 +10,7 @@
 #define TWHeader_h
 
 
-#define kNumSources                             16
+#define kNumSources                                             16
 #if (kNumSources % 2 == 1)
     #error Only even number of sources are supported
 #endif
@@ -52,7 +52,7 @@ static const float  kHitFlashTime_s                             = 0.15f;
 static const float  kDefaultRampTime_ms                         = 200.0f;
 static const float  kDefaultFrequency                           = 256.0f;
 static const float  kDefaultAmplitude                           = 0.5;
-static const float  kDefaultTempo                               = 60.0;       // BPM
+static const float  kDefaultTempo                               = 60.0;   // BPM
 
 static const float  kSoloRampTime_ms                            = 100.0f;
 static const float  kSeqEnableCrossfadeTime_ms                  = 500.0f;
@@ -66,66 +66,93 @@ static const float  kDefaultFltSustainTime_ms                   = 100.0f;
 static const float  kDefaultFltReleaseTime_ms                   = 200.0f;
 static const float  kDefaultRMSLevelWindow_ms                   = 40.0f;
 
+
+/* Parameter Ranges */
 static const float  kFrequencyMin                               = 1.0f;
 static const float  kFrequencyMax                               = 20000.0f;
 
 static const float  kResonanceMin                               = 0.4f;
 static const float  kResonanceMax                               = 36.0f;
 
+static const float  kAmplitudeMin                               = 0.0f;
+static const float  kAmplitudeMax                               = 1.0f;
+
+
+/* Audio File Playback Stream */
+static const int    kMemoryPlayerMaxSizeFrames                  = 2880000;  // 60 seconds @ 48KHz
+static const float  kAudioFilePlaybackFadeOutTime_ms            = 10.0f;
+
+
 
 //#define kShouldUpdateOscViewOnTouch     1
 
 
+
 /* Parameter IDs */
-#define kOscParam_RampTime_ms                   1
-#define kOscParam_OscWaveform                   2
-#define kOscParam_OscBaseFrequency              3
-#define kOscParam_OscBeatFrequency              4
-#define kOscParam_OscAmplitude                  5
-#define kOscParam_OscDutyCycle                  6
-#define kOscParam_OscMononess                   7
-#define kOscParam_TremoloFrequency              8
-#define kOscParam_TremoloDepth                  9
-#define kOscParam_FilterEnable                  10
-#define kOscParam_FilterType                    11
-#define kOscParam_FilterCutoff                  12
-#define kOscParam_FilterResonance               13
-#define kOscParam_FilterGain                    14
-#define kOscParam_LFOEnable                     15
-#define kOscParam_LFOFrequency                  16
-#define kOscParam_LFORange                      17
-#define kOscParam_LFOOffset                     18
-#define kOscParam_FMWaveform                    19
-#define kOscParam_FMAmount                      20
-#define kOscParam_FMFrequency                   21
-#define kOscNumParams                           22
 
-#define kSeqParam_Duration_ms                   1
-#define kSeqParam_AmpAttackTime                 2
-#define kSeqParam_AmpSustainTime                3
-#define kSeqParam_AmpReleaseTime                4
-#define kSeqParam_FilterEnable                  5
-#define kSeqParam_FilterType                    6
-#define kSeqParam_FilterAttackTime              7
-#define kSeqParam_FilterSustainTime             8
-#define kSeqParam_FilterReleaseTime             9
-#define kSeqParam_FilterFromCutoff              10
-#define kSeqParam_FilterToCutoff                11
-#define kSeqParam_FilterResonance               12
-#define kSeqNumParams                           13
+typedef enum : int {
+    TWOscParamID_RampTime_ms                                    = 1,
+    TWOscParamID_OscWaveform                                    = 2,
+    TWOscParamID_OscBaseFrequency                               = 3,
+    TWOscParamID_OscBeatFrequency                               = 4,
+    TWOscParamID_OscAmplitude                                   = 5,
+    TWOscParamID_OscDutyCycle                                   = 6,
+    TWOscParamID_OscMononess                                    = 7,
+    TWOscParamID_OscSoftClipp                                   = 8,
+    TWOscParamID_TremoloWaveform                                = 9,
+    TWOscParamID_TremoloFrequency                               = 10,
+    TWOscParamID_TremoloDepth                                   = 11,
+    TWOscParamID_ShapeTremoloFrequency                          = 12,
+    TWOscParamID_ShapeTremoloDepth                              = 13,
+    TWOscParamID_ShapeTremoloSoftClipp                          = 14,
+    TWOscParamID_FilterEnable                                   = 15,
+    TWOscParamID_FilterType                                     = 16,
+    TWOscParamID_FilterCutoff                                   = 17,
+    TWOscParamID_FilterResonance                                = 18,
+    TWOscParamID_FilterGain                                     = 19,
+    TWOscParamID_FilterLFOEnable                                = 20,
+    TWOscParamID_FilterLFOWaveform                              = 21,
+    TWOscParamID_FilterLFOFrequency                             = 22,
+    TWOscParamID_FilterLFORange                                 = 23,
+    TWOscParamID_FilterLFOOffset                                = 24,
+    TWOscParamID_FMWaveform                                     = 25,
+    TWOscParamID_FMAmount                                       = 26,
+    TWOscParamID_FMFrequency                                    = 27
+} TWOscParamID;
 
-#define kPlaybackParam_Velocity                 1
-#define kPlaybackParam_MaxVolume                2
-#define kPlaybackParam_DrumPadMode              3
-#define kPlaybackParam_PlaybackDirection        4
-#define kPlaybackParam_PlaybackStatus           5       // Readonly
-#define kPlaybackParam_NormalizedProgress       6       // Readonly
-#define kPlaybackParam_LengthInSeconds          7       // Readonly
+#define kOscNumParams                                           27
 
 
-/* Audio File Playback Stream */
-#define kMemoryPlayerMaxSizeFrames              2880000     // 60 seconds @ 48KHz
-#define kAudioFilePlaybackFadeOutTime_ms        10.0f
+typedef enum : int {
+    TWSeqParamID_Duration_ms                                    = 1,
+    TWSeqParamID_AmpAttackTime                                  = 2,
+    TWSeqParamID_AmpSustainTime                                 = 3,
+    TWSeqParamID_AmpReleaseTime                                 = 4,
+    TWSeqParamID_FilterEnable                                   = 5,
+    TWSeqParamID_FilterType                                     = 6,
+    TWSeqParamID_FilterAttackTime                               = 7,
+    TWSeqParamID_FilterSustainTime                              = 8,
+    TWSeqParamID_FilterReleaseTime                              = 9,
+    TWSeqParamID_FilterFromCutoff                               = 10,
+    TWSeqParamID_FilterToCutoff                                 = 11,
+    TWSeqParamID_FilterResonance                                = 12
+} TWSeqParamID;
+
+#define kSeqNumParams                                           12
+
+
+typedef enum : int {
+    TWPadParamID_Velocity                                       = 1,
+    TWPadParamID_MaxVolume                                      = 2,
+    TWPadParamID_DrumPadMode                                    = 3,
+    TWPadParamID_PlaybackDirection                              = 4,
+    TWPadParamID_PlaybackStatus                                 = 5,      // Readonly
+    TWPadParamID_NormalizedProgress                             = 6,      // Readonly
+    TWPadParamID_LengthInSeconds                                = 7,      // Readonly
+} TWPadParamID;
+
+#define kPadNumSetParams                                        4
+
 
 
 
@@ -136,47 +163,60 @@ struct TWFrame {
 
 
 typedef enum : int {
-    TWDrumPadMode_OneShot                       = 0,
-    TWDrumPadMode_Momentary                     = 1,
-    TWDrumPadMode_Toggle                        = 2,
-    TWDrumPadMode_NumModes                      = 3
+    TWDrumPadMode_OneShot                                       = 0,
+    TWDrumPadMode_Momentary                                     = 1,
+    TWDrumPadMode_Toggle                                        = 2,
+    TWDrumPadMode_NumModes                                      = 3
 } TWDrumPadMode;
 
 
-typedef enum {
+typedef enum : int {
     TWTouchState_Up,
     TWTouchState_Down
 } TWTouchState;
 
 
-typedef enum {
-    TWPlaybackStatus_Uninitialized              = 0,
-    TWPlaybackStatus_Stopped                    = 1,
-    TWPlaybackStatus_Playing                    = 2,
-    TWPlaybackStatus_Recording                  = 3,
+typedef enum : int {
+    TWPlaybackStatus_Uninitialized                              = 0,
+    TWPlaybackStatus_Stopped                                    = 1,
+    TWPlaybackStatus_Playing                                    = 2,
+    TWPlaybackStatus_Recording                                  = 3,
 } TWPlaybackStatus;
 
 
-typedef enum {
-    TWPlaybackDirection_Forward                 = 0,
-    TWPlaybackDirection_Reverse                 = 1
+typedef enum : int {
+    TWPlaybackDirection_Forward                                 = 0,
+    TWPlaybackDirection_Reverse                                 = 1
 } TWPlaybackDirection;
 
 
-typedef enum {
-    TWPlaybackFinishedStatus_Success            = 0,
-    TWPlaybackFinishedStatus_Uninitialized      = 1,
-    TWPlaybackFinishedStatus_NoIORunning        = 2
+typedef enum : int {
+    TWPlaybackFinishedStatus_Success                            = 0,
+    TWPlaybackFinishedStatus_Uninitialized                      = 1,
+    TWPlaybackFinishedStatus_NoIORunning                        = 2
 } TWPlaybackFinishedStatus;
 
 
-typedef enum {
-    TWTimeRatioControl_BaseFrequency            = 0,
-    TWTimeRatioControl_BeatFrequency            = 1,
-    TWTimeRatioControl_TremFrequency            = 2,
-    TWTimeRatioControl_FilterLFOFrequency       = 3
+typedef enum : int {
+    TWTimeRatioControl_BaseFrequency                            = 0,
+    TWTimeRatioControl_BeatFrequency                            = 1,
+    TWTimeRatioControl_TremFrequency                            = 2,
+    TWTimeRatioControl_ShapeTremFrequency                       = 3,
+    TWTimeRatioControl_FilterLFOFrequency                       = 4
 } TWTimeRatioControl;
 
-#define kNumTimeRatioControls                   4
+#define kNumTimeRatioControls                                   5
+
+
+typedef enum : int {
+    TWParamSliderScale_Linear                                   = 0,
+    TWParamSliderScale_Log                                      = 1
+} TWParamSliderScale;
+
+
+typedef enum : int {
+    TWParamRange_Min                                            = 0,
+    TWParamRange_Max                                            = 1
+} TWParamRange;
 
 #endif /* TWHeader_h */

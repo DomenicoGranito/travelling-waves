@@ -131,6 +131,13 @@ void TWBinauralSynth::setMononess(float mononess, float rampTime_ms)
     _mononess.setTargetValue(mononess, rampTime_ms / 1000.0f * _sampleRate);
 }
 
+void TWBinauralSynth::setSoftClipp(float softClipp, float rampTime_ms)
+{
+    for (int i=0; i < kNumberChannels; i++) {
+        _oscillators[i].setSoftClipp(softClipp, rampTime_ms);
+    }
+}
+
 
 void TWBinauralSynth::setFMWaveform(TWOscillator::TWWaveform type)
 {
@@ -198,6 +205,11 @@ float TWBinauralSynth::getPhaseOffset(int channel)
 float TWBinauralSynth::getMononess()
 {
     return _mononess.getTargetValue();
+}
+
+float TWBinauralSynth::getSoftClipp()
+{
+    return _oscillators[0].getSoftClipp();
 }
 
 

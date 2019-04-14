@@ -84,10 +84,10 @@
         }
     }
     
-    [[TWAudioController sharedController] setOscParameter:kOscParam_OscAmplitude withValue:kDefaultAmplitude atSourceIdx:0 inTime:0.0f];
+    [[TWAudioController sharedController] setOscParameter:TWOscParamID_OscAmplitude withValue:kDefaultAmplitude atSourceIdx:0 inTime:0.0f];
     
     for (int idx=1; idx < kNumSources; idx++) {
-        [[TWAudioController sharedController] setOscParameter:kOscParam_OscAmplitude withValue:0.0f atSourceIdx:idx inTime:0.0f];
+        [[TWAudioController sharedController] setOscParameter:TWOscParamID_OscAmplitude withValue:0.0f atSourceIdx:idx inTime:0.0f];
     }
 }
 
@@ -110,7 +110,7 @@
 - (void)setRampTime_ms:(int)rampTime_ms {
     _rampTime_ms = rampTime_ms;
     for (int idx=0; idx < kNumSources; idx++) {
-        [[TWAudioController sharedController] setOscParameter:kOscParam_RampTime_ms withValue:_rampTime_ms atSourceIdx:idx inTime:0.0f];
+        [[TWAudioController sharedController] setOscParameter:TWOscParamID_RampTime_ms withValue:_rampTime_ms atSourceIdx:idx inTime:0.0f];
     }
 }
 
@@ -268,12 +268,13 @@
             sourceParams[@"Tunings"] = @[@(_timeControlRatios[TWTimeRatioControl_BaseFrequency][kNumerator][sourceIdx]), @(_timeControlRatios[TWTimeRatioControl_BaseFrequency][kDenominator][sourceIdx])];
             sourceParams[@"Beat Freq Ratios"] = @[@(_timeControlRatios[TWTimeRatioControl_BeatFrequency][kNumerator][sourceIdx]), @(_timeControlRatios[TWTimeRatioControl_BeatFrequency][kDenominator][sourceIdx])];
             sourceParams[@"Trem Freq Ratios"] = @[@(_timeControlRatios[TWTimeRatioControl_TremFrequency][kNumerator][sourceIdx]), @(_timeControlRatios[TWTimeRatioControl_TremFrequency][kDenominator][sourceIdx])];
+            sourceParams[@"Shape Trem Freq Ratios"] = @[@(_timeControlRatios[TWTimeRatioControl_ShapeTremFrequency][kNumerator][sourceIdx]), @(_timeControlRatios[TWTimeRatioControl_ShapeTremFrequency][kDenominator][sourceIdx])];
             sourceParams[@"Filter LFO Freq Ratios"] = @[@(_timeControlRatios[TWTimeRatioControl_FilterLFOFrequency][kNumerator][sourceIdx]), @(_timeControlRatios[TWTimeRatioControl_FilterLFOFrequency][kDenominator][sourceIdx])];
             for (int paramID = 1; paramID < kOscNumParams; paramID++) {
-                NSString* key = [self keyForOscParamID:paramID];
-                sourceParams[key] = @([[TWAudioController sharedController] getOscParameter:paramID atSourceIdx:sourceIdx]);
+                NSString* key = [self keyForOscParamID:(TWOscParamID)paramID];
+                sourceParams[key] = @([[TWAudioController sharedController] getOscParameter:(TWOscParamID)paramID atSourceIdx:sourceIdx]);
             }
-            sourceParams[@"RampTime_ms"] = @((int)[[TWAudioController sharedController] getOscParameter:kOscParam_RampTime_ms atSourceIdx:sourceIdx]);
+            sourceParams[@"RampTime_ms"] = @((int)[[TWAudioController sharedController] getOscParameter:TWOscParamID_RampTime_ms atSourceIdx:sourceIdx]);
             [sources addObject:sourceParams];
         }
         parameters[@"Sources"] = sources;
@@ -288,8 +289,8 @@
             envelope[@"Interval"] = @(interval);
             envelope[@"Enable"] = @([[TWAudioController sharedController] getSeqEnabledAtSourceIdx:sourceIdx]);
             for (int paramID=1; paramID < kSeqNumParams; paramID++) {
-                NSString* key = [self keyForSeqParamID:paramID];
-                envelope[key] = @([[TWAudioController sharedController] getSeqParameter:paramID atSourceIdx:sourceIdx]);
+                NSString* key = [self keyForSeqParamID:(TWSeqParamID)paramID];
+                envelope[key] = @([[TWAudioController sharedController] getSeqParameter:(TWSeqParamID)paramID atSourceIdx:sourceIdx]);
             }
             [envelopes addObject:envelope];
             for (int beat=0; beat < interval; beat++) {
@@ -300,7 +301,7 @@
         }
         sequencer[@"Envelopes"] = envelopes;
         sequencer[@"Events"] = events;
-        sequencer[@"Duration_ms"] = @([[TWAudioController sharedController] getSeqParameter:kSeqParam_Duration_ms atSourceIdx:-1]);
+        sequencer[@"Duration_ms"] = @([[TWAudioController sharedController] getSeqParameter:TWSeqParamID_Duration_ms atSourceIdx:-1]);
         
         parameters[@"Sequencer"] = sequencer;
         
@@ -353,6 +354,7 @@
                     continue;
                 }
                 
+                
                 if ([sourceParams objectForKey:@"Tunings"]) {
                     _timeControlRatios[TWTimeRatioControl_BaseFrequency][kNumerator][sourceIdx] = [sourceParams[@"Tunings"][kNumerator] intValue];
                     _timeControlRatios[TWTimeRatioControl_BaseFrequency][kDenominator][sourceIdx] = [sourceParams[@"Tunings"][kDenominator] intValue];
@@ -373,15 +375,21 @@
                     _timeControlRatios[TWTimeRatioControl_TremFrequency][kDenominator][sourceIdx] = [sourceParams[@"Filter LFO Freq Ratios"][kDenominator] intValue];
                 }
                 
+                if ([sourceParams objectForKey:@"Shape Trem Freq Ratios"]) {
+                    _timeControlRatios[TWTimeRatioControl_ShapeTremFrequency][kNumerator][sourceIdx] = [sourceParams[@"Shape Trem Freq Ratios"][kNumerator] intValue];
+                    _timeControlRatios[TWTimeRatioControl_ShapeTremFrequency][kDenominator][sourceIdx] = [sourceParams[@"Shape Trem Freq Ratios"][kDenominator] intValue];
+                }
                 
-                int rampTime_ms = (int)[[TWAudioController sharedController] getOscParameter:kOscParam_RampTime_ms atSourceIdx:sourceIdx];
+                
+                
+                int rampTime_ms = (int)[[TWAudioController sharedController] getOscParameter:TWOscParamID_RampTime_ms atSourceIdx:sourceIdx];
                 if ([sourceParams objectForKey:@"RampTime_ms"]) {
                     rampTime_ms = [sourceParams[@"RampTime_ms"] intValue];
                 }
-                [[TWAudioController sharedController] setOscParameter:kOscParam_RampTime_ms withValue:rampTime_ms atSourceIdx:sourceIdx inTime:0.0f];
+                [[TWAudioController sharedController] setOscParameter:TWOscParamID_RampTime_ms withValue:rampTime_ms atSourceIdx:sourceIdx inTime:0.0f];
                 
                 for (int paramID = 1; paramID < kOscNumParams; paramID++) {
-                    [self setOscParamValue:paramID fromDictionary:sourceParams atSourceIdx:sourceIdx inTime:rampTime_ms];
+                    [self setOscParamValue:(TWOscParamID)paramID fromDictionary:sourceParams atSourceIdx:sourceIdx inTime:rampTime_ms];
                 }
     
                 for (int control=0; control < kNumTimeRatioControls; control++) {
@@ -396,7 +404,7 @@
             NSDictionary* sequencer = parameters[@"Sequencer"];
             
             if ([sequencer objectForKey:@"Duration_ms"]) {
-                [[TWAudioController sharedController] setSeqParameter:kSeqParam_Duration_ms withValue:[sequencer[@"Duration_ms"] floatValue] atSourceIdx:-1];
+                [[TWAudioController sharedController] setSeqParameter:TWSeqParamID_Duration_ms withValue:[sequencer[@"Duration_ms"] floatValue] atSourceIdx:-1];
             }
             
             if ([sequencer objectForKey:@"Events"] != nil) {
@@ -423,7 +431,7 @@
                         [[TWAudioController sharedController] setSeqEnabled:[envelope[@"Enable"] boolValue] atSourceIdx:sourceIdx];
                     }
                     for (int paramID = 1; paramID < kSeqNumParams; paramID++) {
-                        [self setSeqParamValue:paramID fromDictionary:envelope atSourceIdx:sourceIdx];
+                        [self setSeqParamValue:(TWSeqParamID)paramID fromDictionary:envelope atSourceIdx:sourceIdx];
                     }
                 }
             }
@@ -448,14 +456,14 @@
 #pragma mark - Helper Methods
 
 
-- (void)setOscParamValue:(int)paramID fromDictionary:(NSDictionary*)sourceDictionary atSourceIdx:(int)sourceIdx inTime:(float)rampTime_ms {
+- (void)setOscParamValue:(TWOscParamID)paramID fromDictionary:(NSDictionary*)sourceDictionary atSourceIdx:(int)sourceIdx inTime:(float)rampTime_ms {
     NSString* key = [self keyForOscParamID:paramID];
     if ([sourceDictionary objectForKey:key]) {
         [[TWAudioController sharedController] setOscParameter:paramID withValue:[sourceDictionary[key] floatValue] atSourceIdx:sourceIdx inTime:rampTime_ms];
     }
 }
 
-- (void)setSeqParamValue:(int)paramID fromDictionary:(NSDictionary*)sourceDictionary atSourceIdx:(int)sourceIdx {
+- (void)setSeqParamValue:(TWSeqParamID)paramID fromDictionary:(NSDictionary*)sourceDictionary atSourceIdx:(int)sourceIdx {
     NSString* key = [self keyForSeqParamID:paramID];
     if ([sourceDictionary objectForKey:key]) {
         [[TWAudioController sharedController] setSeqParameter:paramID withValue:[sourceDictionary[key] floatValue] atSourceIdx:sourceIdx];
@@ -464,76 +472,100 @@
 
 
 
-- (NSString*)keyForOscParamID:(int)paramID {
+- (NSString*)keyForOscParamID:(TWOscParamID)paramID {
     
     NSString* key;
     
     switch (paramID) {
-        case kOscParam_OscWaveform:
+        case TWOscParamID_OscWaveform:
             key = @"Osc Wave";
             break;
             
-        case kOscParam_OscBaseFrequency:
+        case TWOscParamID_OscBaseFrequency:
             key = @"Osc Base Frequency";
             break;
             
-        case kOscParam_OscBeatFrequency:
+        case TWOscParamID_OscBeatFrequency:
             key = @"Osc Beat Frequency";
             break;
             
-        case kOscParam_OscAmplitude:
+        case TWOscParamID_OscAmplitude:
             key = @"Osc Amplitude";
             break;
             
-        case kOscParam_OscDutyCycle:
+        case TWOscParamID_OscDutyCycle:
             key = @"Osc Duty Cycle";
             break;
             
-        case kOscParam_OscMononess:
+        case TWOscParamID_OscMononess:
             key = @"Osc Mononess";
             break;
             
-        case kOscParam_TremoloFrequency:
+        case TWOscParamID_OscSoftClipp:
+            key = @"Osc Soft Clipp";
+            break;
+            
+        case TWOscParamID_TremoloWaveform:
+            key = @"Tremolo Waveform";
+            break;
+            
+        case TWOscParamID_TremoloFrequency:
             key = @"Tremolo Frequency";
             break;
             
-        case kOscParam_TremoloDepth:
+        case TWOscParamID_TremoloDepth:
             key = @"Tremolo Depth";
             break;
             
-        case kOscParam_FilterEnable:
+        case TWOscParamID_ShapeTremoloFrequency:
+            key = @"Shape Tremolo Frequency";
+            break;
+            
+        case TWOscParamID_ShapeTremoloDepth:
+            key = @"Shape Tremolo Depth";
+            break;
+            
+        case TWOscParamID_ShapeTremoloSoftClipp:
+            key = @"Shape Tremolo Soft Clipp";
+            break;
+            
+        case TWOscParamID_FilterEnable:
             key = @"Filter Enable";
             break;
             
-        case kOscParam_FilterType:
+        case TWOscParamID_FilterType:
             key = @"Filter Type";
             break;
             
-        case kOscParam_FilterCutoff:
+        case TWOscParamID_FilterCutoff:
             key = @"Filter Cutoff";
             break;
             
-        case kOscParam_FilterResonance:
+        case TWOscParamID_FilterResonance:
             key = @"Filter Q";
             break;
             
-        case kOscParam_FilterGain:
+        case TWOscParamID_FilterGain:
             key = @"Filter G";
             break;
             
-        case kOscParam_LFOEnable:
+        case TWOscParamID_FilterLFOEnable:
             key = @"Filter LFO Enable";
             break;
             
-        case kOscParam_LFOFrequency:
+        case TWOscParamID_FilterLFOWaveform:
+            key = @"Filter LFO Waveform";
+            break;
+            
+        case TWOscParamID_FilterLFOFrequency:
             key = @"Filter LFO Rate";
             break;
             
-        case kOscParam_LFORange:
+        case TWOscParamID_FilterLFORange:
             key = @"Filter LFO Range";
             break;
             
-        case kOscParam_LFOOffset:
+        case TWOscParamID_FilterLFOOffset:
             key = @"Filter LFO Offset";
             break;
             
@@ -546,52 +578,52 @@
 }
 
 
-- (NSString*)keyForSeqParamID:(int)paramID {
+- (NSString*)keyForSeqParamID:(TWSeqParamID)paramID {
     
     NSString* key;
     
     switch (paramID) {
-        case kSeqParam_AmpAttackTime:
+        case TWSeqParamID_AmpAttackTime:
             key = @"AmpAttackTime_ms";
             break;
             
-        case kSeqParam_AmpSustainTime:
+        case TWSeqParamID_AmpSustainTime:
             key = @"AmpSustainTime_ms";
             break;
             
-        case kSeqParam_AmpReleaseTime:
+        case TWSeqParamID_AmpReleaseTime:
             key = @"AmpReleaseTime_ms";
             break;
             
-        case kSeqParam_FilterEnable:
+        case TWSeqParamID_FilterEnable:
             key = @"FltEnable";
             break;
             
-        case kSeqParam_FilterType:
+        case TWSeqParamID_FilterType:
             key = @"FltType";
             break;
             
-        case kSeqParam_FilterAttackTime:
+        case TWSeqParamID_FilterAttackTime:
             key = @"FltAttackTime_ms";
             break;
             
-        case kSeqParam_FilterSustainTime:
+        case TWSeqParamID_FilterSustainTime:
             key = @"FltSustainTime_ms";
             break;
             
-        case kSeqParam_FilterReleaseTime:
+        case TWSeqParamID_FilterReleaseTime:
             key = @"FltReleaseTime_ms";
             break;
             
-        case kSeqParam_FilterFromCutoff:
+        case TWSeqParamID_FilterFromCutoff:
             key = @"FltFromCutoff";
             break;
             
-        case kSeqParam_FilterToCutoff:
+        case TWSeqParamID_FilterToCutoff:
             key = @"FltToCutoff";
             break;
             
-        case kSeqParam_FilterResonance:
+        case TWSeqParamID_FilterResonance:
             key = @"FltQ";
             break;
             
@@ -604,33 +636,38 @@
 }
 
 
-- (void)setValueForTimeControl:(TWTimeRatioControl)control atSourceIdx:(int)idx {
+- (void)setValueForTimeControl:(TWTimeRatioControl)control atSourceIdx:(int)sourceIdx {
     
-    float numerator = (float)_timeControlRatios[control][kNumerator][idx];
-    float denominator = (float)_timeControlRatios[control][kDenominator][idx];
-    int rampTime_ms = (int)[[TWAudioController sharedController] getOscParameter:kOscParam_RampTime_ms atSourceIdx:idx];
+    float numerator = (float)_timeControlRatios[control][kNumerator][sourceIdx];
+    float denominator = (float)_timeControlRatios[control][kDenominator][sourceIdx];
+    int rampTime_ms = (int)[[TWAudioController sharedController] getOscParameter:TWOscParamID_RampTime_ms atSourceIdx:sourceIdx];
     float value = 0.0f;
     
     switch (control) {
             
         case TWTimeRatioControl_BaseFrequency:
             value = _rootFrequency * numerator / denominator;
-            [[TWAudioController sharedController] setOscParameter:kOscParam_OscBaseFrequency withValue:value atSourceIdx:idx inTime:rampTime_ms];
+            [[TWAudioController sharedController] setOscParameter:TWOscParamID_OscBaseFrequency withValue:value atSourceIdx:sourceIdx inTime:rampTime_ms];
             break;
             
         case TWTimeRatioControl_BeatFrequency:
             value = (_tempo / 60.0f) * numerator / denominator;
-            [[TWAudioController sharedController] setOscParameter:kOscParam_OscBeatFrequency withValue:value atSourceIdx:idx inTime:rampTime_ms];
+            [[TWAudioController sharedController] setOscParameter:TWOscParamID_OscBeatFrequency withValue:value atSourceIdx:sourceIdx inTime:rampTime_ms];
             break;
             
         case TWTimeRatioControl_TremFrequency:
             value = (_tempo / 60.0f) * numerator / denominator;
-            [[TWAudioController sharedController] setOscParameter:kOscParam_TremoloFrequency withValue:value atSourceIdx:idx inTime:rampTime_ms];
+            [[TWAudioController sharedController] setOscParameter:TWOscParamID_TremoloFrequency withValue:value atSourceIdx:sourceIdx inTime:rampTime_ms];
+            break;
+            
+        case TWTimeRatioControl_ShapeTremFrequency:
+            value = (_tempo / 60.0f) * numerator / denominator;
+            [[TWAudioController sharedController] setOscParameter:TWOscParamID_ShapeTremoloFrequency withValue:value atSourceIdx:sourceIdx inTime:rampTime_ms];
             break;
             
         case TWTimeRatioControl_FilterLFOFrequency:
             value = (_tempo / 60.0f) * numerator / denominator;
-            [[TWAudioController sharedController] setOscParameter:kOscParam_LFOFrequency withValue:value atSourceIdx:idx inTime:rampTime_ms];
+            [[TWAudioController sharedController] setOscParameter:TWOscParamID_FilterLFOFrequency withValue:value atSourceIdx:sourceIdx inTime:rampTime_ms];
             break;
     }
 }

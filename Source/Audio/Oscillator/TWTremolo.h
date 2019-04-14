@@ -24,20 +24,28 @@ public:
     void process(float& leftSample, float& rightSample);
     void release();
     
+    void setWaveform(TWOscillator::TWWaveform waveform);
     void setFrequency(float newFrequency, float rampTime_ms);
     void setDepth(float newDepth, float rampTime_ms);
+    void setSoftClipp(float newSoftClipp, float rampTime_ms);
     
+    TWOscillator::TWWaveform getWaveform();
     float getFrequency();
     float getDepth();
+    float getSoftClipp();
     
     void resetPhase(float rampTimeInSamples);
     
+    void setDebugID(int debugID);
     
 private:
     
     float           _sampleRate;
     TWParameter     _depth;
     TWOscillator*   _lfo;
+    
+    long            _debugCount;
+    int             _debugID;
 };
 
 
