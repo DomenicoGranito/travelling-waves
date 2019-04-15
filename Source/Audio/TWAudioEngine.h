@@ -117,6 +117,7 @@ private:
     TWParameter                                     _setupGain;
     
     float                                           _seqDuration_ms;
+    float                                           _beatsPerBar;
     uint64_t                                        _seqDurationSamples;
     uint64_t                                        _seqSampleCount;
     bool                                            _seqEditingEvents;

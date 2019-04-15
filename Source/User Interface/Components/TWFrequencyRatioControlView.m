@@ -69,7 +69,7 @@
 
 - (void)initialize {
 
-    [[TWKeypad sharedKeypad] addToDelegates:self];
+//    [[TWKeypad sharedKeypad] addToDelegates:self];
     
     
     _rootFreqLabel = [[UILabel alloc] init];
@@ -736,6 +736,7 @@
     TWKeypad* keypad = [TWKeypad sharedKeypad];
     [keypad setTitle:@"Root Frequency (Hz): "];
     [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWMasterController sharedController] rootFrequency]]];
+    [keypad setCurrentDelegate:self];
     [keypad setCurrentResponder:_rootFreqField];
 }
 
@@ -743,6 +744,7 @@
     TWKeypad* keypad = [TWKeypad sharedKeypad];
     [keypad setTitle:@"Ramp Time (ms): "];
     [keypad setValue:[NSString stringWithFormat:@"%d", [[TWMasterController sharedController] rampTime_ms]]];
+    [keypad setCurrentDelegate:self];
     [keypad setCurrentResponder:_rampTimeField];
 }
 
@@ -750,6 +752,7 @@
     TWKeypad* keypad = [TWKeypad sharedKeypad];
     [keypad setTitle:@"Tempo: "];
     [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWMasterController sharedController] tempo]]];
+    [keypad setCurrentDelegate:self];
     [keypad setCurrentResponder:_tempoField];
 }
 
@@ -798,6 +801,7 @@
     
     [keypad setValue:[NSString stringWithFormat:@"%d", value]];
     
+    [keypad setCurrentDelegate:self];
     [keypad setCurrentResponder:sender];
 }
 

@@ -566,15 +566,15 @@ void TWAudioEngine::setOscParameterAtSourceIdx(int sourceIdx, TWOscParamID param
             
             
             
-        case TWOscParamID_FMWaveform:
+        case TWOscParamID_OscFMWaveform:
             _synths[sourceIdx].setFMWaveform((TWOscillator::TWWaveform)value);
             break;
             
-        case TWOscParamID_FMAmount:
+        case TWOscParamID_OscFMAmount:
             _synths[sourceIdx].setFMAmount(value, rampTime_ms);
             break;
             
-        case TWOscParamID_FMFrequency:
+        case TWOscParamID_OscFMFrequency:
             _synths[sourceIdx].setFMFrequency(value, rampTime_ms);
             break;
             
@@ -701,15 +701,15 @@ float TWAudioEngine::getOscParameterAtSourceIdx(int sourceIdx, TWOscParamID para
             
             
             
-        case TWOscParamID_FMWaveform:
+        case TWOscParamID_OscFMWaveform:
             value = _synths[sourceIdx].getFMWaveform();
             break;
             
-        case TWOscParamID_FMAmount:
+        case TWOscParamID_OscFMAmount:
             value = _synths[sourceIdx].getFMAmount();
             break;
             
-        case TWOscParamID_FMFrequency:
+        case TWOscParamID_OscFMFrequency:
             value = _synths[sourceIdx].getFMFrequency();
             break;
             

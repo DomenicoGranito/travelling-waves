@@ -200,9 +200,9 @@ typedef enum : NSUInteger {
         [[cell textLabel] setFont:[UIFont systemFontOfSize:12.0f]];
         [cell setBackgroundColor:[UIColor clearColor]];
         
-        UIView* selectionColor = [[UIView alloc] init];
-        [selectionColor setBackgroundColor:[UIColor colorWithWhite:1.0f alpha:0.15f]];
-        [cell setSelectedBackgroundView: selectionColor];
+        UIView* selectionView = [[UIView alloc] init];
+        [selectionView setBackgroundColor:[UIColor colorWithWhite:1.0f alpha:0.15f]];
+        [cell setSelectedBackgroundView: selectionView];
     }
     
     if (_currentLibrary == LocalLibrary) {
@@ -213,7 +213,7 @@ typedef enum : NSUInteger {
     return cell;
 }
 
-#pragma mark = UITableViewDelegate
+#pragma mark - UITableViewDelegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     NSString* filename = _currentLocalList[indexPath.row];
@@ -271,9 +271,9 @@ typedef enum : NSUInteger {
     NSURL* fileUrl = [NSURL fileURLWithPath:filepath isDirectory:NO];
     NSArray* items = @[message, fileUrl];
     
-    UIActivityViewController* controller = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
+    UIActivityViewController* activityController = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
     
-    controller.excludedActivityTypes = @[UIActivityTypePostToFacebook,
+    activityController.excludedActivityTypes = @[UIActivityTypePostToFacebook,
                                          UIActivityTypePostToTwitter,
                                          UIActivityTypeAddToReadingList,
                                          UIActivityTypeAssignToContact,
@@ -283,7 +283,15 @@ typedef enum : NSUInteger {
                                          UIActivityTypeSaveToCameraRoll,
                                          UIActivityTypeMarkupAsPDF];
     
-    [self presentViewController:controller animated:YES completion:nil];
+    
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        [activityController setModalPresentationStyle:UIModalPresentationPopover];
+        [activityController.popoverPresentationController setPermittedArrowDirections:UIPopoverArrowDirectionUp];
+        [activityController.popoverPresentationController setSourceView:self.view];
+        [activityController.popoverPresentationController setSourceRect:CGRectMake(0.0, 40.0f, self.view.frame.size.width - 0.0f, self.view.frame.size.height - 80.0f)];
+    }
+    
+    [self presentViewController:activityController animated:YES completion:nil];
 }
 
 - (void)updateLocalProjectsList {

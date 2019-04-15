@@ -512,14 +512,16 @@ void TWMemoryPlayer::_updateFileTitleFromFilepath(std::string filepath)
     std::size_t startPosition = filepath.find_last_of("/") + 1;
     std::size_t endPosition = filepath.length() - startPosition - 4;
     std::string substring = filepath.substr(startPosition, endPosition);
-    
-    // Replace %20s with spaces
-    // TODO: Loop for multiple occurences.
-    std::size_t spaceStart = substring.find_first_of("%20");
-    if (spaceStart < substring.length()) {
-        substring.replace(spaceStart, 3, " ");
-    }
+//
+//    //--- Replace %20s with spaces
+//    //--- TODO: Loop for multiple occurences.
+//    std::size_t spaceStart = substring.find_first_of("%20");
+//    if (spaceStart < substring.length()) {
+//        substring.replace(spaceStart, 3, " ");
+//    }
     _fileTitle = substring;
+    
+//    _fileTitle = filepath;
    
 //    printf("\n\nFile Title [%d] : %s. Size(%lu)\n\n", _sourceIdx, _fileTitle.c_str(), _fileTitle.length());
 }

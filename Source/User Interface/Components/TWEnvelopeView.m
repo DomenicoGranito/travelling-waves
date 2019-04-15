@@ -106,7 +106,7 @@
     
     _ampAttackTimeField = [[UIButton alloc] init];
     [self setupButtonFieldProperties:_ampAttackTimeField];
-    [_ampAttackTimeField addTarget:self action:@selector(buttonFieldTapped:) forControlEvents:UIControlEventTouchUpInside];
+    [_ampAttackTimeField addTarget:self action:@selector(paramFieldTapped:) forControlEvents:UIControlEventTouchUpInside];
     [_ampAttackTimeField setTag:TWSeqParamID_AmpAttackTime];
     [paramFields setObject:_ampAttackTimeField forKey:@(TWSeqParamID_AmpAttackTime)];
     [self addSubview:_ampAttackTimeField];
@@ -135,7 +135,7 @@
     
     _ampSustainTimeField = [[UIButton alloc] init];
     [self setupButtonFieldProperties:_ampSustainTimeField];
-    [_ampSustainTimeField addTarget:self action:@selector(buttonFieldTapped:) forControlEvents:UIControlEventTouchUpInside];
+    [_ampSustainTimeField addTarget:self action:@selector(paramFieldTapped:) forControlEvents:UIControlEventTouchUpInside];
     [_ampSustainTimeField setTag:TWSeqParamID_AmpSustainTime];
     [paramFields setObject:_ampSustainTimeField forKey:@(TWSeqParamID_AmpSustainTime)];
     [self addSubview:_ampSustainTimeField];
@@ -164,7 +164,7 @@
     
     _ampReleaseTimeField = [[UIButton alloc] init];
     [self setupButtonFieldProperties:_ampReleaseTimeField];
-    [_ampReleaseTimeField addTarget:self action:@selector(buttonFieldTapped:) forControlEvents:UIControlEventTouchUpInside];
+    [_ampReleaseTimeField addTarget:self action:@selector(paramFieldTapped:) forControlEvents:UIControlEventTouchUpInside];
     [_ampReleaseTimeField setTag:TWSeqParamID_AmpReleaseTime];
     [paramFields setObject:_ampReleaseTimeField forKey:@(TWSeqParamID_AmpReleaseTime)];
     [self addSubview:_ampReleaseTimeField];
@@ -209,7 +209,7 @@
     
     _filterResonanceField = [[UIButton alloc] init];
     [self setupButtonFieldProperties:_filterResonanceField];
-    [_filterResonanceField addTarget:self action:@selector(buttonFieldTapped:) forControlEvents:UIControlEventTouchUpInside];
+    [_filterResonanceField addTarget:self action:@selector(paramFieldTapped:) forControlEvents:UIControlEventTouchUpInside];
     [_filterResonanceField setTag:TWSeqParamID_FilterResonance];
     [paramFields setObject:_filterResonanceField forKey:@(TWSeqParamID_FilterResonance)];
     [self addSubview:_filterResonanceField];
@@ -231,7 +231,7 @@
     
     _filterFromCutoffFrequencyField = [[UIButton alloc] init];
     [self setupButtonFieldProperties:_filterFromCutoffFrequencyField];
-    [_filterFromCutoffFrequencyField addTarget:self action:@selector(buttonFieldTapped:) forControlEvents:UIControlEventTouchUpInside];
+    [_filterFromCutoffFrequencyField addTarget:self action:@selector(paramFieldTapped:) forControlEvents:UIControlEventTouchUpInside];
     [_filterFromCutoffFrequencyField setTag:TWSeqParamID_FilterFromCutoff];
     [paramFields setObject:_filterFromCutoffFrequencyField forKey:@(TWSeqParamID_FilterFromCutoff)];
     [self addSubview:_filterFromCutoffFrequencyField];
@@ -253,7 +253,7 @@
     
     _filterToCutoffFrequencyField = [[UIButton alloc] init];
     [self setupButtonFieldProperties:_filterToCutoffFrequencyField];
-    [_filterToCutoffFrequencyField addTarget:self action:@selector(buttonFieldTapped:) forControlEvents:UIControlEventTouchUpInside];
+    [_filterToCutoffFrequencyField addTarget:self action:@selector(paramFieldTapped:) forControlEvents:UIControlEventTouchUpInside];
     [_filterToCutoffFrequencyField setTag:TWSeqParamID_FilterToCutoff];
     [paramFields setObject:_filterToCutoffFrequencyField forKey:@(TWSeqParamID_FilterToCutoff)];
     [self addSubview:_filterToCutoffFrequencyField];
@@ -282,7 +282,7 @@
     
     _filterAttackTimeField = [[UIButton alloc] init];
     [self setupButtonFieldProperties:_filterAttackTimeField];
-    [_filterAttackTimeField addTarget:self action:@selector(buttonFieldTapped:) forControlEvents:UIControlEventTouchUpInside];
+    [_filterAttackTimeField addTarget:self action:@selector(paramFieldTapped:) forControlEvents:UIControlEventTouchUpInside];
     [_filterAttackTimeField setTag:TWSeqParamID_FilterAttackTime];
     [paramFields setObject:_filterAttackTimeField forKey:@(TWSeqParamID_FilterAttackTime)];
     [self addSubview:_filterAttackTimeField];
@@ -311,7 +311,7 @@
     
     _filterSustainTimeField = [[UIButton alloc] init];
     [self setupButtonFieldProperties:_filterSustainTimeField];
-    [_filterSustainTimeField addTarget:self action:@selector(buttonFieldTapped:) forControlEvents:UIControlEventTouchUpInside];
+    [_filterSustainTimeField addTarget:self action:@selector(paramFieldTapped:) forControlEvents:UIControlEventTouchUpInside];
     [_filterSustainTimeField setTag:TWSeqParamID_FilterSustainTime];
     [paramFields setObject:_filterSustainTimeField forKey:@(TWSeqParamID_FilterSustainTime)];
     [self addSubview:_filterSustainTimeField];
@@ -340,7 +340,7 @@
     
     _filterReleaseTimeField = [[UIButton alloc] init];
     [self setupButtonFieldProperties:_filterReleaseTimeField];
-    [_filterReleaseTimeField addTarget:self action:@selector(buttonFieldTapped:) forControlEvents:UIControlEventTouchUpInside];
+    [_filterReleaseTimeField addTarget:self action:@selector(paramFieldTapped:) forControlEvents:UIControlEventTouchUpInside];
     [_filterReleaseTimeField setTag:TWSeqParamID_FilterReleaseTime];
     [paramFields setObject:_filterReleaseTimeField forKey:@(TWSeqParamID_FilterReleaseTime)];
     [self addSubview:_filterReleaseTimeField];
@@ -388,7 +388,7 @@
     [self addSubview:_intervalSelectorRow2];
     
     
-    [[TWKeypad sharedKeypad] addToDelegates:self];
+//    [[TWKeypad sharedKeypad] addToDelegates:self];
     
     [self setBackgroundColor:[UIColor colorWithWhite:0.1f alpha:1.0f]];
 }
@@ -657,7 +657,8 @@
 #pragma mark - TWKeypad
 
 - (void)keypadDoneButtonTapped:(UIButton *)responder withValue:(NSString *)inValue {
-    int paramID = (int)responder.tag;
+    TWSeqParamID paramID = (TWSeqParamID)responder.tag;
+    
     float value = [inValue floatValue];
     [[TWAudioController sharedController] setSeqParameter:paramID withValue:value atSourceIdx:_sourceIdx];
     
@@ -676,11 +677,12 @@
     [field setTitle:[NSString stringWithFormat:@"%.2f", value] forState:UIControlStateNormal];
 }
 
-- (void)buttonFieldTapped:(UIButton*)sender {
+- (void)paramFieldTapped:(UIButton*)sender {
     TWKeypad* keypad = [TWKeypad sharedKeypad];
     int paramID = (int)sender.tag;
     [keypad setTitle:(NSString*)[_paramTitles objectForKey:@(paramID)]];
     [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWAudioController sharedController] getSeqParameter:paramID atSourceIdx:_sourceIdx]]];
+    [keypad setCurrentDelegate:self];
     [keypad setCurrentResponder:sender];
 }
 

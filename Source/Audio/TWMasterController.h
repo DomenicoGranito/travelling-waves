@@ -25,7 +25,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign) float rootFrequency;
 @property (nonatomic, assign) float tempo;
+@property (nonatomic, assign) float beatsPerBar;
 @property (nonatomic, assign) int   rampTime_ms;
+
+
+//--- FrequencyChartViewController Caches ---//
+@property (nonatomic, strong) NSIndexPath* equalTemperamentSelectedIndexPath;
+@property (nonatomic, assign) CGPoint equalTemparementSelectedScrollPosition;
+@property (nonatomic, assign) NSInteger frequencyChartSelectedSegmentIndex;
+
 
 - (int)incNumeratorRatioForControl:(TWTimeRatioControl)control atSourceIdx:(int)idx;
 - (int)decNumeratorRatioForControl:(TWTimeRatioControl)control atSourceIdx:(int)idx;
@@ -44,6 +52,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray<NSString*>*)getListOfSavedFilenames;
 @property (nonatomic, readonly)NSString* projectsDirectory;
 @property (nonatomic, strong)NSString* projectName;
+
+
+- (NSArray<NSString*>*)getListOfPresetDrumPadSets;
+
 
 @property (nonatomic, readonly)NSArray* osterCurve;
 

@@ -45,6 +45,24 @@
 		FC3A29F7224DC9A500767E1B /* TWTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC3A29F6224DC9A500767E1B /* TWTestViewController.m */; };
 		FC42C72B224A34AB003253EF /* Embryo Synth.wav in Resources */ = {isa = PBXBuildFile; fileRef = FC42C72A224A34AB003253EF /* Embryo Synth.wav */; };
 		FC42C72D224A39FF003253EF /* LRTest.wav in Resources */ = {isa = PBXBuildFile; fileRef = FC42C72C224A39FF003253EF /* LRTest.wav */; };
+		FC5C9BCC2263F52F006B535D /* TWDrumPadLoadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC5C9BCB2263F52F006B535D /* TWDrumPadLoadViewController.m */; };
+		FC5C9BCF226408B2006B535D /* Minimal Percs.plist in Resources */ = {isa = PBXBuildFile; fileRef = FC5C9BCE226408B2006B535D /* Minimal Percs.plist */; };
+		FC5C9BE0226412FA006B535D /* MP 14 Mid Tom Light.wav in Resources */ = {isa = PBXBuildFile; fileRef = FC5C9BD0226412F9006B535D /* MP 14 Mid Tom Light.wav */; };
+		FC5C9BE1226412FA006B535D /* MP 06 Clap Light.wav in Resources */ = {isa = PBXBuildFile; fileRef = FC5C9BD1226412F9006B535D /* MP 06 Clap Light.wav */; };
+		FC5C9BE2226412FA006B535D /* MP 03 Low Kick.wav in Resources */ = {isa = PBXBuildFile; fileRef = FC5C9BD2226412F9006B535D /* MP 03 Low Kick.wav */; };
+		FC5C9BE3226412FA006B535D /* MP 16 E-Clav.wav in Resources */ = {isa = PBXBuildFile; fileRef = FC5C9BD3226412F9006B535D /* MP 16 E-Clav.wav */; };
+		FC5C9BE4226412FA006B535D /* MP 12 High Perc Light.wav in Resources */ = {isa = PBXBuildFile; fileRef = FC5C9BD4226412F9006B535D /* MP 12 High Perc Light.wav */; };
+		FC5C9BE5226412FA006B535D /* MP 05 Snare Light.wav in Resources */ = {isa = PBXBuildFile; fileRef = FC5C9BD5226412F9006B535D /* MP 05 Snare Light.wav */; };
+		FC5C9BE6226412FA006B535D /* MP 07 E-Snare Airy Light.wav in Resources */ = {isa = PBXBuildFile; fileRef = FC5C9BD6226412F9006B535D /* MP 07 E-Snare Airy Light.wav */; };
+		FC5C9BE7226412FA006B535D /* MP 10 Closed Hat Heavy.wav in Resources */ = {isa = PBXBuildFile; fileRef = FC5C9BD7226412F9006B535D /* MP 10 Closed Hat Heavy.wav */; };
+		FC5C9BE8226412FA006B535D /* MP 02 Light Airy Kick.wav in Resources */ = {isa = PBXBuildFile; fileRef = FC5C9BD8226412F9006B535D /* MP 02 Light Airy Kick.wav */; };
+		FC5C9BE9226412FA006B535D /* MP 11 Open Hat Light.wav in Resources */ = {isa = PBXBuildFile; fileRef = FC5C9BD9226412F9006B535D /* MP 11 Open Hat Light.wav */; };
+		FC5C9BEA226412FA006B535D /* MP 04 High Kick.wav in Resources */ = {isa = PBXBuildFile; fileRef = FC5C9BDA226412FA006B535D /* MP 04 High Kick.wav */; };
+		FC5C9BEB226412FA006B535D /* MP 01 Kick Heavy.wav in Resources */ = {isa = PBXBuildFile; fileRef = FC5C9BDB226412FA006B535D /* MP 01 Kick Heavy.wav */; };
+		FC5C9BEC226412FA006B535D /* MP 13 E-Clav Light.wav in Resources */ = {isa = PBXBuildFile; fileRef = FC5C9BDC226412FA006B535D /* MP 13 E-Clav Light.wav */; };
+		FC5C9BED226412FA006B535D /* MP 08 E-Clap Airy Light.wav in Resources */ = {isa = PBXBuildFile; fileRef = FC5C9BDD226412FA006B535D /* MP 08 E-Clap Airy Light.wav */; };
+		FC5C9BEE226412FA006B535D /* MP 15 Clav Light.wav in Resources */ = {isa = PBXBuildFile; fileRef = FC5C9BDE226412FA006B535D /* MP 15 Clav Light.wav */; };
+		FC5C9BEF226412FA006B535D /* MP 09 Closed Hat Light.wav in Resources */ = {isa = PBXBuildFile; fileRef = FC5C9BDF226412FA006B535D /* MP 09 Closed Hat Light.wav */; };
 		FC896F0D2252DC3E00063F02 /* TWMemoryPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC896F0B2252DC3E00063F02 /* TWMemoryPlayer.cpp */; };
 		FCBDC336218462CA00E7695C /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCBDC335218462CA00E7695C /* AudioToolbox.framework */; };
 		FCBDC344218463A700E7695C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FCBDC33D218463A700E7695C /* main.m */; };
@@ -156,6 +174,25 @@
 		FC3A29F6224DC9A500767E1B /* TWTestViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TWTestViewController.m; sourceTree = "<group>"; };
 		FC42C72A224A34AB003253EF /* Embryo Synth.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "Embryo Synth.wav"; sourceTree = "<group>"; };
 		FC42C72C224A39FF003253EF /* LRTest.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = LRTest.wav; sourceTree = "<group>"; };
+		FC5C9BCA2263F52F006B535D /* TWDrumPadLoadViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TWDrumPadLoadViewController.h; sourceTree = "<group>"; };
+		FC5C9BCB2263F52F006B535D /* TWDrumPadLoadViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TWDrumPadLoadViewController.m; sourceTree = "<group>"; };
+		FC5C9BCE226408B2006B535D /* Minimal Percs.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Minimal Percs.plist"; sourceTree = "<group>"; };
+		FC5C9BD0226412F9006B535D /* MP 14 Mid Tom Light.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "MP 14 Mid Tom Light.wav"; sourceTree = "<group>"; };
+		FC5C9BD1226412F9006B535D /* MP 06 Clap Light.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "MP 06 Clap Light.wav"; sourceTree = "<group>"; };
+		FC5C9BD2226412F9006B535D /* MP 03 Low Kick.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "MP 03 Low Kick.wav"; sourceTree = "<group>"; };
+		FC5C9BD3226412F9006B535D /* MP 16 E-Clav.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "MP 16 E-Clav.wav"; sourceTree = "<group>"; };
+		FC5C9BD4226412F9006B535D /* MP 12 High Perc Light.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "MP 12 High Perc Light.wav"; sourceTree = "<group>"; };
+		FC5C9BD5226412F9006B535D /* MP 05 Snare Light.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "MP 05 Snare Light.wav"; sourceTree = "<group>"; };
+		FC5C9BD6226412F9006B535D /* MP 07 E-Snare Airy Light.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "MP 07 E-Snare Airy Light.wav"; sourceTree = "<group>"; };
+		FC5C9BD7226412F9006B535D /* MP 10 Closed Hat Heavy.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "MP 10 Closed Hat Heavy.wav"; sourceTree = "<group>"; };
+		FC5C9BD8226412F9006B535D /* MP 02 Light Airy Kick.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "MP 02 Light Airy Kick.wav"; sourceTree = "<group>"; };
+		FC5C9BD9226412F9006B535D /* MP 11 Open Hat Light.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "MP 11 Open Hat Light.wav"; sourceTree = "<group>"; };
+		FC5C9BDA226412FA006B535D /* MP 04 High Kick.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "MP 04 High Kick.wav"; sourceTree = "<group>"; };
+		FC5C9BDB226412FA006B535D /* MP 01 Kick Heavy.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "MP 01 Kick Heavy.wav"; sourceTree = "<group>"; };
+		FC5C9BDC226412FA006B535D /* MP 13 E-Clav Light.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "MP 13 E-Clav Light.wav"; sourceTree = "<group>"; };
+		FC5C9BDD226412FA006B535D /* MP 08 E-Clap Airy Light.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "MP 08 E-Clap Airy Light.wav"; sourceTree = "<group>"; };
+		FC5C9BDE226412FA006B535D /* MP 15 Clav Light.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "MP 15 Clav Light.wav"; sourceTree = "<group>"; };
+		FC5C9BDF226412FA006B535D /* MP 09 Closed Hat Light.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "MP 09 Closed Hat Light.wav"; sourceTree = "<group>"; };
 		FC896F0B2252DC3E00063F02 /* TWMemoryPlayer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TWMemoryPlayer.cpp; sourceTree = "<group>"; };
 		FC896F0C2252DC3E00063F02 /* TWMemoryPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TWMemoryPlayer.h; sourceTree = "<group>"; };
 		FCBDC2FE2184626F00E7695C /* Travelling Waves.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Travelling Waves.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -316,6 +353,8 @@
 				FC356C7A2223D8C400B93F5C /* TWSequencerViewController.m */,
 				FC3A29F5224DC9A500767E1B /* TWTestViewController.h */,
 				FC3A29F6224DC9A500767E1B /* TWTestViewController.m */,
+				FC5C9BCA2263F52F006B535D /* TWDrumPadLoadViewController.h */,
+				FC5C9BCB2263F52F006B535D /* TWDrumPadLoadViewController.m */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -323,6 +362,7 @@
 		FC42C726224A187F003253EF /* Samples */ = {
 			isa = PBXGroup;
 			children = (
+				FC5C9BCD2264089B006B535D /* Minimal Percs */,
 				FC42C727224A187F003253EF /* E-Drums */,
 			);
 			path = Samples;
@@ -336,6 +376,30 @@
 				FC42C72A224A34AB003253EF /* Embryo Synth.wav */,
 			);
 			path = "E-Drums";
+			sourceTree = "<group>";
+		};
+		FC5C9BCD2264089B006B535D /* Minimal Percs */ = {
+			isa = PBXGroup;
+			children = (
+				FC5C9BDB226412FA006B535D /* MP 01 Kick Heavy.wav */,
+				FC5C9BD8226412F9006B535D /* MP 02 Light Airy Kick.wav */,
+				FC5C9BD2226412F9006B535D /* MP 03 Low Kick.wav */,
+				FC5C9BDA226412FA006B535D /* MP 04 High Kick.wav */,
+				FC5C9BD5226412F9006B535D /* MP 05 Snare Light.wav */,
+				FC5C9BD1226412F9006B535D /* MP 06 Clap Light.wav */,
+				FC5C9BD6226412F9006B535D /* MP 07 E-Snare Airy Light.wav */,
+				FC5C9BDD226412FA006B535D /* MP 08 E-Clap Airy Light.wav */,
+				FC5C9BDF226412FA006B535D /* MP 09 Closed Hat Light.wav */,
+				FC5C9BD7226412F9006B535D /* MP 10 Closed Hat Heavy.wav */,
+				FC5C9BD9226412F9006B535D /* MP 11 Open Hat Light.wav */,
+				FC5C9BD4226412F9006B535D /* MP 12 High Perc Light.wav */,
+				FC5C9BDC226412FA006B535D /* MP 13 E-Clav Light.wav */,
+				FC5C9BD0226412F9006B535D /* MP 14 Mid Tom Light.wav */,
+				FC5C9BDE226412FA006B535D /* MP 15 Clav Light.wav */,
+				FC5C9BD3226412F9006B535D /* MP 16 E-Clav.wav */,
+				FC5C9BCE226408B2006B535D /* Minimal Percs.plist */,
+			);
+			path = "Minimal Percs";
 			sourceTree = "<group>";
 		};
 		FCBDC2F52184626F00E7695C = {
@@ -605,14 +669,31 @@
 				FCD6046B2223E4F2004164AC /* Triplet Fifths.json in Resources */,
 				FC3A29D3224CC9A100767E1B /* TestKick.wav in Resources */,
 				FC42C72B224A34AB003253EF /* Embryo Synth.wav in Resources */,
+				FC5C9BEA226412FA006B535D /* MP 04 High Kick.wav in Resources */,
 				FCD604692223E4F2004164AC /* Dorianish Movement.json in Resources */,
+				FC5C9BE7226412FA006B535D /* MP 10 Closed Hat Heavy.wav in Resources */,
+				FC5C9BE5226412FA006B535D /* MP 05 Snare Light.wav in Resources */,
+				FC5C9BCF226408B2006B535D /* Minimal Percs.plist in Resources */,
 				FCD6045E2223E0D5004164AC /* OsterCurve.json in Resources */,
 				FCD6045D2223E0D5004164AC /* EqualTemperament.json in Resources */,
 				FCD6046A2223E4F2004164AC /* Some Moving Fifths.json in Resources */,
+				FC5C9BE6226412FA006B535D /* MP 07 E-Snare Airy Light.wav in Resources */,
+				FC5C9BE3226412FA006B535D /* MP 16 E-Clav.wav in Resources */,
+				FC5C9BEB226412FA006B535D /* MP 01 Kick Heavy.wav in Resources */,
+				FC5C9BE0226412FA006B535D /* MP 14 Mid Tom Light.wav in Resources */,
+				FC5C9BE4226412FA006B535D /* MP 12 High Perc Light.wav in Resources */,
 				FCD6046C2223E4F2004164AC /* Test Movement.json in Resources */,
+				FC5C9BEE226412FA006B535D /* MP 15 Clav Light.wav in Resources */,
+				FC5C9BE2226412FA006B535D /* MP 03 Low Kick.wav in Resources */,
+				FC5C9BE9226412FA006B535D /* MP 11 Open Hat Light.wav in Resources */,
+				FC5C9BED226412FA006B535D /* MP 08 E-Clap Airy Light.wav in Resources */,
 				FCD604672223E4F2004164AC /* Organ-like.json in Resources */,
+				FC5C9BE8226412FA006B535D /* MP 02 Light Airy Kick.wav in Resources */,
+				FC5C9BE1226412FA006B535D /* MP 06 Clap Light.wav in Resources */,
 				FC42C72D224A39FF003253EF /* LRTest.wav in Resources */,
 				FCD604682223E4F2004164AC /* Dorianish.json in Resources */,
+				FC5C9BEC226412FA006B535D /* MP 13 E-Clav Light.wav in Resources */,
+				FC5C9BEF226412FA006B535D /* MP 09 Closed Hat Light.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -675,6 +756,7 @@
 				FC0D2E722254945A00A68D58 /* TWMixerView.m in Sources */,
 				FC0D2E6F2254945A00A68D58 /* TWEnvelopeView.m in Sources */,
 				FC1B308E225F0832003ED2E7 /* TWKeypad.m in Sources */,
+				FC5C9BCC2263F52F006B535D /* TWDrumPadLoadViewController.m in Sources */,
 				FC356C6A2223D10400B93F5C /* TWParameter.cpp in Sources */,
 				FCBDC364218532D400E7695C /* TWAudioController.mm in Sources */,
 			);

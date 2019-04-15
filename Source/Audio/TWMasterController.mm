@@ -47,6 +47,8 @@
         
         [self loadOsterCurve];
         
+        [self resetFrequencyChartCaches];
+        
         _projectName = @"Default";
     }
     
@@ -89,6 +91,9 @@
     for (int idx=1; idx < kNumSources; idx++) {
         [[TWAudioController sharedController] setOscParameter:TWOscParamID_OscAmplitude withValue:0.0f atSourceIdx:idx inTime:0.0f];
     }
+    
+    _beatsPerBar = kDefaultBeatsPerBar;
+    [self setSeqDurationFromTempo];
 }
 
 
@@ -122,8 +127,13 @@
             [self setValueForTimeControl:(TWTimeRatioControl)control atSourceIdx:idx];
         }
     }
+    [self setSeqDurationFromTempo];
 }
 
+- (void)setBeatsPerBar:(float)beatsPerBar {
+    _beatsPerBar = beatsPerBar;
+    [self setSeqDurationFromTempo];
+}
 
 
 
@@ -215,6 +225,7 @@
             return NO;
         }
         [self loadParametersFromDictionary:dictionary];
+        [self resetFrequencyChartCaches];
         return YES;
     }
     return NO;
@@ -239,6 +250,12 @@
         return YES;
     }
     return NO;
+}
+
+
+- (NSArray<NSString*>*)getListOfPresetDrumPadSets {
+    NSArray* array = [[NSArray alloc] initWithObjects:@"Minimal Percs", nil];
+    return array;
 }
 
 #pragma mark - Private
@@ -304,6 +321,31 @@
         sequencer[@"Duration_ms"] = @([[TWAudioController sharedController] getSeqParameter:TWSeqParamID_Duration_ms atSourceIdx:-1]);
         
         parameters[@"Sequencer"] = sequencer;
+        
+        
+        NSMutableDictionary* drumPad = [[NSMutableDictionary alloc] init];
+        NSMutableArray* drumPadSourceParams = [[NSMutableArray alloc] init];
+        
+        for (int sourceIdx=0; sourceIdx < kNumSources; sourceIdx++) {
+            
+            NSMutableDictionary* padParams = [[NSMutableDictionary alloc] init];
+            
+            for (int paramID = 1; paramID < kPadNumSetParams; paramID++) {
+                NSString* key = [self keyForPadParamID:(TWPadParamID)paramID];
+                if (key != nil) {
+                    padParams[key] = @([[TWAudioController sharedController] getPadParameter:(TWPadParamID)paramID atSourceIdx:sourceIdx]);
+                }
+            }
+            
+            NSString* filename = [[TWAudioController sharedController] getAudioFileTitleAtSourceIdx:sourceIdx];
+            padParams[@"Filename"] = [filename stringByReplacingOccurrencesOfString:@"%20" withString:@" "];
+            
+            [drumPadSourceParams addObject:padParams];
+        }
+        drumPad[@"Sources"] = drumPadSourceParams;
+        
+        parameters[@"DrumPad"] = drumPad;
+        
         
         dictionary[@"Parameters"] = parameters;
     }
@@ -371,8 +413,8 @@
                 }
                 
                 if ([sourceParams objectForKey:@"Filter LFO Freq Ratios"]) {
-                    _timeControlRatios[TWTimeRatioControl_TremFrequency][kNumerator][sourceIdx] = [sourceParams[@"Filter LFO Freq Ratios"][kNumerator] intValue];
-                    _timeControlRatios[TWTimeRatioControl_TremFrequency][kDenominator][sourceIdx] = [sourceParams[@"Filter LFO Freq Ratios"][kDenominator] intValue];
+                    _timeControlRatios[TWTimeRatioControl_FilterLFOFrequency][kNumerator][sourceIdx] = [sourceParams[@"Filter LFO Freq Ratios"][kNumerator] intValue];
+                    _timeControlRatios[TWTimeRatioControl_FilterLFOFrequency][kDenominator][sourceIdx] = [sourceParams[@"Filter LFO Freq Ratios"][kDenominator] intValue];
                 }
                 
                 if ([sourceParams objectForKey:@"Shape Trem Freq Ratios"]) {
@@ -436,6 +478,32 @@
                 }
             }
         }
+        
+        
+        if ([parameters objectForKey:@"DrumPad"] != nil) {
+            
+            NSDictionary* drumPad = parameters[@"DrumPad"];
+            NSArray* drumPadSources = (NSArray*)drumPad[@"Sources"];
+            
+            for (int sourceIdx=0; sourceIdx < numSources; sourceIdx++) {
+                
+                NSDictionary* padParams = [drumPadSources objectAtIndex:sourceIdx];
+                
+                for (int i=1; i < kPadNumSetParams; i++) {
+                    [self setPadParamValue:(TWPadParamID)i fromDictionary:padParams atSourceIdx:sourceIdx];
+                }
+                
+                
+                if ([padParams objectForKey:@"Filename"]) {
+                    NSString* filename = padParams[@"Filename"];
+                    if ((filename != nil) && (![filename isEqualToString:@""])) {
+                        NSString* filepath = [[NSBundle mainBundle] pathForResource:filename ofType:@"wav"];
+                        NSString* outfilepath = [filepath stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
+                        [[TWAudioController sharedController] loadAudioFile:outfilepath atSourceIdx:sourceIdx];
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -470,11 +538,18 @@
     }
 }
 
+- (void)setPadParamValue:(TWPadParamID)paramID fromDictionary:(NSDictionary*)sourceDictionary atSourceIdx:(int)sourceIdx {
+    NSString* key = [self keyForPadParamID:paramID];
+    if ([sourceDictionary objectForKey:key]) {
+        [[TWAudioController sharedController] setPadParameter:paramID withValue:[sourceDictionary[key] floatValue] atSourceIdx:sourceIdx inTime:0.0];
+    }
+}
+
 
 
 - (NSString*)keyForOscParamID:(TWOscParamID)paramID {
     
-    NSString* key;
+    NSString* key = nil;
     
     switch (paramID) {
         case TWOscParamID_OscWaveform:
@@ -569,8 +644,20 @@
             key = @"Filter LFO Offset";
             break;
             
+        case TWOscParamID_OscFMAmount:
+            key = @"Osc FM Amount";
+            break;
+            
+        case TWOscParamID_OscFMFrequency:
+            key = @"Osc FM Frequency";
+            break;
+            
+        case TWOscParamID_OscFMWaveform:
+            key = @"Osc FM Waveform";
+            break;
+            
         default:
-            key = @"Error";
+            key = nil;
             break;
     }
     
@@ -580,7 +667,7 @@
 
 - (NSString*)keyForSeqParamID:(TWSeqParamID)paramID {
     
-    NSString* key;
+    NSString* key = nil;
     
     switch (paramID) {
         case TWSeqParamID_AmpAttackTime:
@@ -628,7 +715,31 @@
             break;
             
         default:
-            key = @"Error";
+            key = nil;
+            break;
+    }
+    
+    return key;
+}
+
+- (NSString*)keyForPadParamID:(TWPadParamID)paramID {
+    
+    NSString* key = nil;
+    
+    switch (paramID) {
+        case TWPadParamID_DrumPadMode:
+            key = @"Pad Mode";
+            break;
+            
+        case TWPadParamID_MaxVolume:
+            key = @"Pad Max Volume";
+            break;
+            
+        case TWPadParamID_PlaybackDirection:
+            key = @"Pad Direction";
+            break;
+            
+        default:
             break;
     }
     
@@ -670,6 +781,34 @@
             [[TWAudioController sharedController] setOscParameter:TWOscParamID_FilterLFOFrequency withValue:value atSourceIdx:sourceIdx inTime:rampTime_ms];
             break;
     }
+}
+
+
+- (void)setSeqDurationFromTempo {
+    float duration_ms = 60000.0f * _beatsPerBar / _tempo;
+    [[TWAudioController sharedController] setSeqParameter:TWSeqParamID_Duration_ms withValue:duration_ms atSourceIdx:-1];
+}
+
+
+
+//#pragma mark - Drum Pad Projects
+//
+//- (BOOL)saveDrumPadProjectWithFilename:(NSString*)filename {
+//
+//}
+//
+//- (BOOL)loadDrumPadProjectWithFilename:(NSString*)filename {
+//
+//}
+//
+//- (NSArray<NSString*>*)getListOfSavedDrumPadProjects {
+//
+//}
+
+- (void)resetFrequencyChartCaches {
+    _equalTemperamentSelectedIndexPath = nil;
+    _frequencyChartSelectedSegmentIndex = 0;
+    _equalTemparementSelectedScrollPosition = CGPointMake(0.0f, 0.0f);
 }
 
 @end

@@ -26,6 +26,7 @@ typedef enum : NSUInteger {
 @interface TWFrequencyChartViewController () <UITableViewDelegate, UITableViewDataSource>
 {
     UISegmentedControl*         _chartSelector;
+    
     UITableView*                _tableView;
     
     NSArray*                    _equalTemperamentArray;
@@ -63,9 +64,10 @@ typedef enum : NSUInteger {
     [_tableView setDelegate:self];
     [_tableView setBackgroundColor:[UIColor clearColor]];
     [_tableView setTableFooterView:[[UIView alloc] initWithFrame:CGRectZero]];
-    [_tableView setAllowsSelection:NO];
+    [_tableView setAllowsSelection:YES];
     [_tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     [self.view addSubview:_tableView];
+    
     
     // Equal Temperament Chart
     [self loadEqualTemperamentChart];
@@ -74,9 +76,24 @@ typedef enum : NSUInteger {
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    
     [super viewWillAppear:animated];
-    [_chartSelector setSelectedSegmentIndex:kOsterCurveChart];
+    
+    [_chartSelector setSelectedSegmentIndex:[[TWMasterController sharedController] frequencyChartSelectedSegmentIndex]];
+    
     [_tableView reloadData];
+    
+    if (_chartSelector.selectedSegmentIndex == kEqualTemperamentChart) {
+        NSIndexPath* indexPath = [[TWMasterController sharedController] equalTemperamentSelectedIndexPath];
+        if (indexPath != nil) {
+            [_tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+            
+            CGPoint selectedRowPosition = [[TWMasterController sharedController] equalTemparementSelectedScrollPosition];
+            CGFloat xPos = selectedRowPosition.x;
+            CGFloat yPos = selectedRowPosition.y - (self.view.frame.size.height / 2.0f);
+            [_tableView setContentOffset:CGPointMake(xPos, yPos)];
+        }
+    }
 }
 
 
@@ -132,6 +149,7 @@ typedef enum : NSUInteger {
 }
 
 - (void)chartSelectorChanged:(UISegmentedControl*)sender {
+    [[TWMasterController sharedController] setFrequencyChartSelectedSegmentIndex:sender.selectedSegmentIndex];
     [_tableView reloadData];
 }
 
@@ -168,8 +186,8 @@ typedef enum : NSUInteger {
     
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
-        [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
         [cell setIndentationLevel:2];
+        [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
         [[cell textLabel] setTextColor:[UIColor colorWithWhite:0.64f alpha:1.0f]];
         [[cell textLabel] setFont:[UIFont systemFontOfSize:12.0f]];
         [cell setBackgroundColor:[UIColor clearColor]];
@@ -180,31 +198,65 @@ typedef enum : NSUInteger {
         [section0Label setTextAlignment:NSTextAlignmentCenter];
         [section0Label setFont:[UIFont systemFontOfSize:12.0f]];
         [section0Label setTextColor:[UIColor colorWithWhite:0.64f alpha:1.0f]];
-        [section0Label setBackgroundColor:[UIColor colorWithWhite:0.3f alpha:0.25f]];
-        [section0Label setTag:0];
+//        [section0Label setBackgroundColor:[UIColor colorWithWhite:0.3f alpha:0.25f]];
+        [section0Label setTag:1];
         [cell addSubview:section0Label];
         
         UILabel* section1Label = [[UILabel alloc] initWithFrame:CGRectMake(labelWidth, 0.0f, labelWidth, cell.frame.size.height)];
         [section1Label setTextAlignment:NSTextAlignmentCenter];
         [section1Label setFont:[UIFont systemFontOfSize:12.0f]];
         [section1Label setTextColor:[UIColor colorWithWhite:0.64f alpha:1.0f]];
-        [section1Label setBackgroundColor:[UIColor colorWithWhite:0.1f alpha:0.25f]];
-        [section1Label setTag:1];
+//        [section1Label setBackgroundColor:[UIColor colorWithWhite:0.1f alpha:0.25f]];
+        [section1Label setTag:2];
         [cell addSubview:section1Label];
+        
+        
+        UIView* selectionView = [[UIView alloc] init];
+        [selectionView setBackgroundColor:[UIColor colorWithWhite:1.0f alpha:0.15f]];
+        [cell setSelectedBackgroundView: selectionView];
     }
     
     
-    UILabel* section0Label = [cell viewWithTag:0];
-    UILabel* section1Label = [cell viewWithTag:1];
+    
+    UILabel* section0Label = [cell viewWithTag:1];
+    UILabel* section1Label = [cell viewWithTag:2];
+    
     if (_chartSelector.selectedSegmentIndex == kOsterCurveChart) {
+        [section0Label setBackgroundColor:[UIColor colorWithWhite:0.3f alpha:0.25f]];
+        [section1Label setBackgroundColor:[UIColor colorWithWhite:0.1f alpha:0.25f]];
+        
         [section0Label setText:[NSString stringWithFormat:@"%.3f", [[[TWMasterController sharedController] osterCurve][indexPath.row][0] floatValue]]];
         [section1Label setText:[NSString stringWithFormat:@"%.3f", [[[TWMasterController sharedController] osterCurve][indexPath.row][1] floatValue]]];
-    } else if (_chartSelector.selectedSegmentIndex == kEqualTemperamentChart) {
+        [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
+    }
+    
+    else if (_chartSelector.selectedSegmentIndex == kEqualTemperamentChart) {
+        
+        float keyColor = [_equalTemperamentArray[indexPath.row][2] floatValue];
+        float keyBackground = (keyColor * 0.2f) + 0.1f;
+        
+        [section0Label setBackgroundColor:[UIColor colorWithWhite:keyBackground alpha:0.25f]];
+        [section1Label setBackgroundColor:[UIColor colorWithWhite:keyBackground alpha:0.25f]];
+        
         [section0Label setText:(NSString*)_equalTemperamentArray[indexPath.row][0]];
         [section1Label setText:[NSString stringWithFormat:@"%.3f", [_equalTemperamentArray[indexPath.row][1] floatValue]]];
+        [cell setSelectionStyle:UITableViewCellSelectionStyleGray];
     }
     
     return cell;
+}
+
+
+#pragma mark - UITableViewDelegate
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (_chartSelector.selectedSegmentIndex == kEqualTemperamentChart) {
+        [[TWMasterController sharedController] setEqualTemperamentSelectedIndexPath:indexPath];
+        [[TWMasterController sharedController] setEqualTemparementSelectedScrollPosition:tableView.contentOffset];
+        
+        float rootFrequency = [_equalTemperamentArray[indexPath.row][1] floatValue];
+        [[TWMasterController sharedController] setRootFrequency:rootFrequency];
+    }
 }
 
 

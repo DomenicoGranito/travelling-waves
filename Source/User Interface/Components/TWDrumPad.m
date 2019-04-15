@@ -12,7 +12,7 @@
 
 
 static const CGFloat kHitViewAreaInset                  = 0.05f;
-static const CGFloat kTickViewWidth                     = 2.0f;
+static const CGFloat kTickViewWidth                     = 5.0f;
 static const CGFloat kSourceIdxLabelSizeFraction        = 0.2f; // Fraction of frame
 static const CGFloat kFileTitleLabelWidthFraction       = 1.0f; // Fraction of width
 static const CGFloat kFileTitleLabelHeightFraction      = 0.2f; // Fraction of height
@@ -65,8 +65,12 @@ static const CGFloat kFileTitleLabelHeightFraction      = 0.2f; // Fraction of h
 @implementation TWTickView
 
 - (void)drawRect:(CGRect)rect {
-    UIBezierPath* path = [UIBezierPath bezierPathWithRect:CGRectMake((rect.size.width - kTickViewWidth) / 2.0f, 0.0f, kTickViewWidth, rect.size.height / 2.0f)];
-    [[UIColor colorWithWhite:0.4f alpha:0.8f] set];
+    UIBezierPath* path = [UIBezierPath bezierPath];
+    [path moveToPoint:CGPointMake((rect.size.width - kTickViewWidth) / 2.0f, (rect.size.height / 2.0f))];
+    [path addLineToPoint:CGPointMake((rect.size.width + kTickViewWidth) / 2.0f, (rect.size.height / 2.0f))];
+    [path addLineToPoint:CGPointMake(rect.size.width / 2.0f, 0.0f)];
+    [path closePath];
+    [[UIColor colorWithWhite:0.4f alpha:0.8f] setFill];
     [path fill];
 }
 
@@ -240,7 +244,7 @@ static const CGFloat kFileTitleLabelHeightFraction      = 0.2f; // Fraction of h
 }
 
 - (void)setFileTitleText:(NSString *)fileTitleText {
-    _fileTitleText = fileTitleText;
+    _fileTitleText = [fileTitleText stringByReplacingOccurrencesOfString:@"%20" withString:@" "];
     [_fileTitleLabel setText:_fileTitleText];
 }
 

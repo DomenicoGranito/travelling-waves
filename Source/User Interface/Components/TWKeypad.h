@@ -21,12 +21,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)sharedKeypad;
 
-- (void)addToDelegates:(id<TWKeypadDelegate>)delegate;
+//- (void)addToDelegates:(id<TWKeypadDelegate>)delegate;
 
 @property (nonatomic, strong) NSString* title;
 @property (nonatomic, strong) NSString* value;
 
 @property (nonatomic, weak) UIButton* currentResponder;
+@property (nonatomic, weak) id<TWKeypadDelegate> currentDelegate;
 
 @property (nonatomic, assign) CGRect showFrame;
 @property (nonatomic, assign) CGRect hideFrame;

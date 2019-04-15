@@ -223,7 +223,7 @@
     
     [self startLevelMeterTimer];
     
-    [[TWKeypad sharedKeypad] addToDelegates:self];
+//    [[TWKeypad sharedKeypad] addToDelegates:self];
     
     [self.view setBackgroundColor:[UIColor colorWithWhite:0.12f alpha:1.0f]];
 }
@@ -271,7 +271,8 @@
     CGFloat scrollViewHeight = screenHeight - yPos - componentHeight;
     [_verticalScrollView setFrame:CGRectMake(xMargin, yPos, screenWidth, scrollViewHeight)];
     
-    CGFloat scrollViewContentHeight = isLandscape ? (3.0f * kButtonYMargin) + (((kNumSources / 4.0f) + 15.0f) * componentHeight) : (4.0f * kButtonYMargin) + (((kNumSources / 2.0f) + 15.0f) * componentHeight);
+    CGFloat numComponentRows = 16.0f;
+    CGFloat scrollViewContentHeight = isLandscape ? (3.0f * kButtonYMargin) + (((kNumSources / 4.0f) + numComponentRows) * componentHeight) : (4.0f * kButtonYMargin) + (((kNumSources / 2.0f) + numComponentRows) * componentHeight);
     [_verticalScrollView setContentSize:CGSizeMake(screenWidth, scrollViewContentHeight)];
     
     
@@ -360,6 +361,7 @@
     
     [_mixerView viewWillAppear:animated];
     [_pitchRatioControlView viewWillAppear:animated];
+    [_oscView refreshParametersWithAnimation:animated];
     
     CGFloat masterLeftGain = [[TWAudioController sharedController] getMasterGainOnChannel:kLeftChannel];
     [_masterLeftSlider setValue:masterLeftGain animated:animated];
@@ -606,7 +608,6 @@
 #pragma mark - TWKeypad
 
 - (void)keypadDoneButtonTapped:(UIButton *)responder withValue:(NSString *)inValue {
-    
     if (responder == _masterLeftField) {
         float gain = [inValue floatValue];
         [[TWAudioController sharedController] setMasterGain:gain onChannel:kLeftChannel inTime:kDefaultRampTime_ms];
@@ -643,6 +644,7 @@
     TWKeypad* keypad = [TWKeypad sharedKeypad];
     [keypad setTitle:@"Left Master: "];
     [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWAudioController sharedController] getMasterGainOnChannel:kLeftChannel]]];
+    [keypad setCurrentDelegate:self];
     [keypad setCurrentResponder:_masterLeftField];
 }
 
@@ -650,6 +652,7 @@
     TWKeypad* keypad = [TWKeypad sharedKeypad];
     [keypad setTitle:@"Right Master: "];
     [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWAudioController sharedController] getMasterGainOnChannel:kRightChannel]]];
+    [keypad setCurrentDelegate:self];
     [keypad setCurrentResponder:_masterRightField];
 }
 

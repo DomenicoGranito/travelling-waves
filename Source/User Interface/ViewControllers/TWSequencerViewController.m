@@ -8,6 +8,7 @@
 
 #import "TWSequencerViewController.h"
 #import "TWHeader.h"
+#import "TWMasterController.h"
 #import "TWAudioController.h"
 #import "TWSeqNoteButton.h"
 #import "TWEnvelopeView.h"
@@ -32,6 +33,8 @@ static const CGFloat kProgressBarUpdateInterval     = 0.1f;  // 50ms
     UIColor*                    _seqNoteButtonOnColor;
     
     UIButton*                   _durationField;
+    UIButton*                   _beatsPerBarField;
+    UIView*                     _beatsPerBarBackView;
     
     NSArray*                    _sourceEnableButtons;
     
@@ -41,7 +44,7 @@ static const CGFloat kProgressBarUpdateInterval     = 0.1f;  // 50ms
     CGFloat                     _seqNoteButtonHeight;
     CGFloat                     _seqScrollWidth;
     
-    NSMutableArray*            _seqNoteButtons;
+    NSMutableArray*             _seqNoteButtons;
     
     
     TWEnvelopeView*             _floatingEnvelopeView;
@@ -89,9 +92,22 @@ static const CGFloat kProgressBarUpdateInterval     = 0.1f;  // 50ms
     [_durationField setTitleColor:[UIColor valueTextDarkWhiteColor] forState:UIControlStateNormal];
     [_durationField.titleLabel setFont:[UIFont systemFontOfSize:11.0f]];
     [_durationField setBackgroundColor:[UIColor clearColor]];
-    [_durationField addTarget:self action:@selector(durationFieldTapped) forControlEvents:UIControlEventTouchUpInside];
     [_durationField setTag:(int)TWSeqParamID_Duration_ms];
+    [_durationField addTarget:self action:@selector(durationFieldTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_durationField];
+    
+    
+    _beatsPerBarBackView = [[UIView alloc] init];
+    [_beatsPerBarBackView setUserInteractionEnabled:NO];
+    [_beatsPerBarBackView setBackgroundColor:[UIColor colorWithWhite:0.1f alpha:0.8f]];
+    [self.view addSubview:_beatsPerBarBackView];
+    
+    _beatsPerBarField = [[UIButton alloc] init];
+    [_beatsPerBarField setTitleColor:[UIColor valueTextDarkWhiteColor] forState:UIControlStateNormal];
+    [_beatsPerBarField.titleLabel setFont:[UIFont systemFontOfSize:11.0f]];
+    [_beatsPerBarField setBackgroundColor:[UIColor clearColor]];
+    [_beatsPerBarField addTarget:self action:@selector(beatsPerBarFieldTapped) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:_beatsPerBarField];
     
     _clearAllButton = [[UIButton alloc] init];
     [_clearAllButton setBackgroundColor:[UIColor colorWithWhite:0.06 alpha:1.0f]];
@@ -170,7 +186,7 @@ static const CGFloat kProgressBarUpdateInterval     = 0.1f;  // 50ms
     
     [[TWAudioController sharedController] addToDelegates:self];
     
-    [[TWKeypad sharedKeypad] addToDelegates:self];
+//    [[TWKeypad sharedKeypad] addToDelegates:self];
     
     [self.view setBackgroundColor:[UIColor colorWithWhite:0.12f alpha:1.0f]];
 }
@@ -187,6 +203,9 @@ static const CGFloat kProgressBarUpdateInterval     = 0.1f;  // 50ms
     
     float duration_ms = [[TWAudioController sharedController] getSeqParameter:TWSeqParamID_Duration_ms atSourceIdx:-1];
     [_durationField setTitle:[NSString stringWithFormat:@"%.2f", duration_ms] forState:UIControlStateNormal];
+    
+    float beatsPerBar = [[TWMasterController sharedController] beatsPerBar];
+    [_beatsPerBarField setTitle:[NSString stringWithFormat:@"%.2f", beatsPerBar] forState:UIControlStateNormal];
     
     
     if ([[TWAudioController sharedController] isRunning]) {
@@ -213,7 +232,7 @@ static const CGFloat kProgressBarUpdateInterval     = 0.1f;  // 50ms
     CGFloat screenWidth     = self.view.frame.size.width - self.view.safeAreaInsets.right - self.view.safeAreaInsets.left;
     CGFloat screenHeight    = self.view.frame.size.height - self.view.safeAreaInsets.bottom;
     
-    CGFloat titleButtonWidth = screenWidth / 4.0f;
+    CGFloat titleButtonWidth = screenWidth / 5.0f;
     
     bool isIPad = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
     UIInterfaceOrientation orienation = [[UIApplication sharedApplication] statusBarOrientation];
@@ -229,6 +248,10 @@ static const CGFloat kProgressBarUpdateInterval     = 0.1f;  // 50ms
     
     xPos += titleButtonWidth;
     [_durationField setFrame:CGRectMake(xPos, yPos, titleButtonWidth, componentHeight)];
+    
+    xPos += titleButtonWidth;
+    [_beatsPerBarField setFrame:CGRectMake(xPos, yPos, titleButtonWidth, componentHeight)];
+    [_beatsPerBarBackView setFrame:_beatsPerBarField.frame];
     
     xPos += titleButtonWidth;
     [_clearAllButton setFrame:CGRectMake(xPos, yPos, titleButtonWidth, componentHeight)];
@@ -300,6 +323,35 @@ static const CGFloat kProgressBarUpdateInterval     = 0.1f;  // 50ms
     
     [_progressBarView setFrame:CGRectMake(0.0f, 0.0f, kProgressBarWidth, _scrollView.frame.size.height)];
     _progressRect = _progressBarView.frame;
+    
+    
+    
+    
+    
+    CGFloat keypadHeight;
+    CGFloat keypadShowYOffset;
+    if (isIPad) {
+        keypadHeight = 3.5f * componentHeight;
+        keypadShowYOffset = 0.0f;
+    } else if (isLandscape) {
+        keypadHeight = 3.5f * componentHeight;
+        keypadShowYOffset = 0.5 * componentHeight;
+    } else {
+        keypadHeight = 6.0f * componentHeight;
+        keypadShowYOffset = 0.0f;
+    }
+    
+    CGRect keypadHideFrame = CGRectMake(xMargin, self.view.frame.size.height, screenWidth, keypadHeight);
+    CGRect keypadShowFrame = CGRectMake(keypadHideFrame.origin.x, keypadHideFrame.origin.y - keypadHeight - keypadShowYOffset, keypadHideFrame.size.width, keypadHideFrame.size.height);
+    
+    [[TWKeypad sharedKeypad] setHideFrame:keypadHideFrame];
+    [[TWKeypad sharedKeypad] setShowFrame:keypadShowFrame];
+    
+    if ([[TWKeypad sharedKeypad] keypadIsShowing]) {
+        [[TWKeypad sharedKeypad] setFrame:keypadShowFrame];
+    } else {
+        [[TWKeypad sharedKeypad] setFrame:keypadHideFrame];
+    }
 }
 
 
@@ -540,7 +592,14 @@ static const CGFloat kProgressBarUpdateInterval     = 0.1f;  // 50ms
     if (responder == _durationField) {
         float duration_ms = [inValue floatValue];
         [[TWAudioController sharedController] setSeqParameter:TWSeqParamID_Duration_ms withValue:duration_ms atSourceIdx:-1];
-        [responder setTitle:[NSString stringWithFormat:@"%f", duration_ms] forState:UIControlStateNormal];
+        [responder setTitle:[NSString stringWithFormat:@"%.2f", duration_ms] forState:UIControlStateNormal];
+    }
+    
+    else if (responder == _beatsPerBarField) {
+        float beatsPerBar = [inValue floatValue];
+        [[TWMasterController sharedController] setBeatsPerBar:beatsPerBar];
+        [responder setTitle:[NSString stringWithFormat:@"%.2f", beatsPerBar] forState:UIControlStateNormal];
+        [self updateSeqDurationFieldWithValue:[[TWAudioController sharedController] getSeqParameter:TWSeqParamID_Duration_ms atSourceIdx:-1]];
     }
 }
 
@@ -551,15 +610,32 @@ static const CGFloat kProgressBarUpdateInterval     = 0.1f;  // 50ms
         float duration_ms = [[TWAudioController sharedController] getSeqParameter:TWSeqParamID_Duration_ms atSourceIdx:-1];
         [responder setTitle:[NSString stringWithFormat:@"%.2f", duration_ms] forState:UIControlStateNormal];
     }
+    
+    else if (responder == _beatsPerBarField) {
+        float beatsPerBar = [[TWMasterController sharedController] beatsPerBar];
+        [responder setTitle:[NSString stringWithFormat:@"%.2f", beatsPerBar] forState:UIControlStateNormal];
+    }
 }
 
 - (void)durationFieldTapped {
     TWKeypad* keypad = [TWKeypad sharedKeypad];
     [keypad setTitle:@"Seq Duration (ms): "];
     [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWAudioController sharedController] getSeqParameter:TWSeqParamID_Duration_ms atSourceIdx:-1]]];
+    [keypad setCurrentDelegate:self];
     [keypad setCurrentResponder:_durationField];
 }
 
+- (void)beatsPerBarFieldTapped {
+    TWKeypad* keypad = [TWKeypad sharedKeypad];
+    [keypad setTitle:@"Beats Per Bar: "];
+    [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWMasterController sharedController] beatsPerBar]]];
+    [keypad setCurrentDelegate:self];
+    [keypad setCurrentResponder:_beatsPerBarField];
+}
+
+- (void)updateSeqDurationFieldWithValue:(float)value {
+    [_durationField setTitle:[NSString stringWithFormat:@"%.2f", value] forState:UIControlStateNormal];
+}
 
 #pragma mark - TWAudioController Delegate
 

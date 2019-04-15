@@ -34,7 +34,7 @@ static const float      kKeypadAnimationTime_s              = 0.15f;
     BOOL                                    _isFirstNumeral;
     BOOL                                    _decimalPointAlreadyTyped;
     
-    NSMutableArray<id<TWKeypadDelegate>>*   _delegates;
+//    NSMutableArray<id<TWKeypadDelegate>>*   _delegates;
 }
 @end
 
@@ -132,13 +132,16 @@ static const float      kKeypadAnimationTime_s              = 0.15f;
 //        [_valueLabel setBackgroundColor:[UIColor blueColor]];
         [self addSubview:_valueLabel];
         
-        _delegates = [[NSMutableArray alloc] init];
+//        _delegates = [[NSMutableArray alloc] init];
         
         _currentValue = [[NSMutableString alloc] init];
         
         _keypadIsShowing = NO;
         _isFirstNumeral = YES;
         _decimalPointAlreadyTyped = NO;
+        
+        _currentResponder = nil;
+        _currentDelegate = nil;
         
         [self setBackgroundColor:[UIColor colorWithWhite:0.117 alpha:1.0f]];
     }
@@ -156,9 +159,9 @@ static const float      kKeypadAnimationTime_s              = 0.15f;
 }
 
 
-- (void)addToDelegates:(id<TWKeypadDelegate>)delegate {
-    [_delegates addObject:delegate];
-}
+//- (void)addToDelegates:(id<TWKeypadDelegate>)delegate {
+//    [_delegates addObject:delegate];
+//}
 
 
 - (void)setFrame:(CGRect)frame {
@@ -363,10 +366,13 @@ static const float      kKeypadAnimationTime_s              = 0.15f;
 
 - (void)doneButtonUp:(UIButton*)sender {
     _value = _currentValue;
-    for (id<TWKeypadDelegate> delegate in _delegates) {
-        if ([delegate respondsToSelector:@selector(keypadDoneButtonTapped:withValue:)]) {
-            [delegate keypadDoneButtonTapped:_currentResponder withValue:_value];
-        }
+//    for (id<TWKeypadDelegate> delegate in _delegates) {
+//        if ([delegate respondsToSelector:@selector(keypadDoneButtonTapped:withValue:)]) {
+//            [delegate keypadDoneButtonTapped:_currentResponder withValue:_value];
+//        }
+//    }
+    if ((_currentDelegate != nil) && ([_currentDelegate respondsToSelector:@selector(keypadDoneButtonTapped:withValue:)])) {
+        [_currentDelegate keypadDoneButtonTapped:_currentResponder withValue:_value];
     }
     [_currentResponder setBackgroundColor:[UIColor clearColor]];
     [self hideKeypad];
@@ -379,10 +385,13 @@ static const float      kKeypadAnimationTime_s              = 0.15f;
 }
 
 - (void)cancelButtonUp:(UIButton*)sender {
-    for (id<TWKeypadDelegate> delegate in _delegates) {
-        if ([delegate respondsToSelector:@selector(keypadCancelButtonTapped:)]) {
-            [delegate keypadCancelButtonTapped:_currentResponder];
-        }
+//    for (id<TWKeypadDelegate> delegate in _delegates) {
+//        if ([delegate respondsToSelector:@selector(keypadCancelButtonTapped:)]) {
+//            [delegate keypadCancelButtonTapped:_currentResponder];
+//        }
+//    }
+    if ((_currentDelegate != nil) && ([_currentDelegate respondsToSelector:@selector(keypadCancelButtonTapped:)])) {
+        [_currentDelegate keypadCancelButtonTapped:_currentResponder];
     }
     [_currentResponder setBackgroundColor:[UIColor clearColor]];
     [self hideKeypad];

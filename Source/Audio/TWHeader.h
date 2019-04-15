@@ -58,6 +58,7 @@ static const float  kSoloRampTime_ms                            = 100.0f;
 static const float  kSeqEnableCrossfadeTime_ms                  = 500.0f;
 
 static const float  kDefaultSeqDuration_ms                      = 2000.0f;
+static const float  kDefaultBeatsPerBar                         = 4.0f;
 static const float  kDefaultEnvAttackTime_ms                    = 10.0f;
 static const float  kDefaultEnvSustainTime_ms                   = 0.0f;
 static const float  kDefaultEnvReleaseTime_ms                   = 100.0f;
@@ -76,6 +77,9 @@ static const float  kResonanceMax                               = 36.0f;
 
 static const float  kAmplitudeMin                               = 0.0f;
 static const float  kAmplitudeMax                               = 1.0f;
+
+static const float  kLFORateMin                                 = 0.0f;
+static const float  kLFORateMax                                 = 36.0f;
 
 
 /* Audio File Playback Stream */
@@ -115,9 +119,9 @@ typedef enum : int {
     TWOscParamID_FilterLFOFrequency                             = 22,
     TWOscParamID_FilterLFORange                                 = 23,
     TWOscParamID_FilterLFOOffset                                = 24,
-    TWOscParamID_FMWaveform                                     = 25,
-    TWOscParamID_FMAmount                                       = 26,
-    TWOscParamID_FMFrequency                                    = 27
+    TWOscParamID_OscFMWaveform                                  = 25,
+    TWOscParamID_OscFMAmount                                    = 26,
+    TWOscParamID_OscFMFrequency                                 = 27
 } TWOscParamID;
 
 #define kOscNumParams                                           27
@@ -142,10 +146,10 @@ typedef enum : int {
 
 
 typedef enum : int {
-    TWPadParamID_Velocity                                       = 1,
-    TWPadParamID_MaxVolume                                      = 2,
-    TWPadParamID_DrumPadMode                                    = 3,
-    TWPadParamID_PlaybackDirection                              = 4,
+    TWPadParamID_MaxVolume                                      = 1,
+    TWPadParamID_DrumPadMode                                    = 2,
+    TWPadParamID_PlaybackDirection                              = 3,
+    TWPadParamID_Velocity                                       = 4,
     TWPadParamID_PlaybackStatus                                 = 5,      // Readonly
     TWPadParamID_NormalizedProgress                             = 6,      // Readonly
     TWPadParamID_LengthInSeconds                                = 7,      // Readonly

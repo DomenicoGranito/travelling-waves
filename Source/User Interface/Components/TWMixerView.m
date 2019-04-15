@@ -45,7 +45,7 @@ static const CGFloat kSoloButtonWidth       = 28.0f;
     
     
     
-    [[TWKeypad sharedKeypad] addToDelegates:self];
+//    [[TWKeypad sharedKeypad] addToDelegates:self];
     
     
 //    CGFloat yPos = 0.0f;
@@ -341,6 +341,7 @@ static const CGFloat kSoloButtonWidth       = 28.0f;
     TWKeypad* keypad = [TWKeypad sharedKeypad];
     [keypad setTitle:[NSString stringWithFormat:@"Osc[%d]. Gain:", (int)sender.tag+1]];
     [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWAudioController sharedController] getOscParameter:TWOscParamID_OscAmplitude atSourceIdx:(int)sender.tag]]];
+    [keypad setCurrentDelegate:self];
     [keypad setCurrentResponder:sender];
 }
 

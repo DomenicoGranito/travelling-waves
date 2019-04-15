@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Title</key>
+	<string>Minimal Percs</string>
+	<key>Samples</key>
+	<array>
+		<string>MP 01 Kick Heavy</string>
+		<string>MP 02 Light Airy Kick</string>
+		<string>MP 03 Low Kick</string>
+		<string>MP 04 High Kick</string>
+		<string>MP 05 Snare Light</string>
+		<string>MP 06 Clap Light</string>
+		<string>MP 07 E-Snare Airy Light</string>
+		<string>MP 08 E-Clap Airy Light</string>
+		<string>MP 09 Closed Hat Light</string>
+		<string>MP 10 Closed Hat Heavy</string>
+		<string>MP 11 Open Hat Light</string>
+		<string>MP 12 High Perc Light</string>
+		<string>MP 13 E-Clav Light</string>
+		<string>MP 14 Mid Tom Light</string>
+		<string>MP 15 Clav Light</string>
+		<string>MP 16 E-Clav</string>
+	</array>
+</dict>
+</plist>
