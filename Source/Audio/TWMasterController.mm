@@ -289,7 +289,9 @@
             sourceParams[@"Filter LFO Freq Ratios"] = @[@(_timeControlRatios[TWTimeRatioControl_FilterLFOFrequency][kNumerator][sourceIdx]), @(_timeControlRatios[TWTimeRatioControl_FilterLFOFrequency][kDenominator][sourceIdx])];
             for (int paramID = 1; paramID < kOscNumParams; paramID++) {
                 NSString* key = [self keyForOscParamID:(TWOscParamID)paramID];
-                sourceParams[key] = @([[TWAudioController sharedController] getOscParameter:(TWOscParamID)paramID atSourceIdx:sourceIdx]);
+                if ((key != nil) && (![key isEqualToString:@""])) {
+                    sourceParams[key] = @([[TWAudioController sharedController] getOscParameter:(TWOscParamID)paramID atSourceIdx:sourceIdx]);
+                }
             }
             sourceParams[@"RampTime_ms"] = @((int)[[TWAudioController sharedController] getOscParameter:TWOscParamID_RampTime_ms atSourceIdx:sourceIdx]);
             [sources addObject:sourceParams];
@@ -307,7 +309,9 @@
             envelope[@"Enable"] = @([[TWAudioController sharedController] getSeqEnabledAtSourceIdx:sourceIdx]);
             for (int paramID=1; paramID < kSeqNumParams; paramID++) {
                 NSString* key = [self keyForSeqParamID:(TWSeqParamID)paramID];
-                envelope[key] = @([[TWAudioController sharedController] getSeqParameter:(TWSeqParamID)paramID atSourceIdx:sourceIdx]);
+                if ((key != nil) && (![key isEqualToString:@""])) {
+                    envelope[key] = @([[TWAudioController sharedController] getSeqParameter:(TWSeqParamID)paramID atSourceIdx:sourceIdx]);
+                }
             }
             [envelopes addObject:envelope];
             for (int beat=0; beat < interval; beat++) {
@@ -332,7 +336,7 @@
             
             for (int paramID = 1; paramID < kPadNumSetParams; paramID++) {
                 NSString* key = [self keyForPadParamID:(TWPadParamID)paramID];
-                if (key != nil) {
+                if ((key != nil) && (![key isEqualToString:@""])) {
                     padParams[key] = @([[TWAudioController sharedController] getPadParameter:(TWPadParamID)paramID atSourceIdx:sourceIdx]);
                 }
             }
