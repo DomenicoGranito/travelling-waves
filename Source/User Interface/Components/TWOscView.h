@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)refreshParametersWithAnimation:(BOOL)animated;
 
+@property(nonatomic, weak) id mixerView;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -133,6 +133,7 @@
     _oscView = [[TWOscView alloc] init];
     [_verticalScrollView addSubview:_oscView];
     [_mixerView setOscView:_oscView];
+    [_oscView setMixerView:_mixerView];
     [_pitchRatioControlView setOscView:_oscView];
     
     
@@ -359,8 +360,8 @@
     
     [self updateIOButtonState:[[TWAudioController sharedController] isRunning]];
     
-    [_mixerView viewWillAppear:animated];
-    [_pitchRatioControlView viewWillAppear:animated];
+    [_mixerView refreshParametersWithAnimation:animated];
+    [_pitchRatioControlView refreshParametersWithAnimation:animated];
     [_oscView refreshParametersWithAnimation:animated];
     
     CGFloat masterLeftGain = [[TWAudioController sharedController] getMasterGainOnChannel:kLeftChannel];

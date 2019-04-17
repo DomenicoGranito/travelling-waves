@@ -131,4 +131,17 @@
     return array;
 }
 
+
++ (UIColor*)cancelButtonColor {
+    return [UIColor colorWithWhite:0.08f alpha:1.0f];
+}
+
++ (UIColor*)copyButtonColor {
+    return [UIColor colorWithWhite:0.1f alpha:1.0f];
+}
+
++ (UIColor*)pasteButtonColor {
+    return [UIColor colorWithWhite:0.12f alpha:1.0f];
+}
+
 @end

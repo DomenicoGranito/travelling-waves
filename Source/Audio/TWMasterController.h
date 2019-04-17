@@ -56,6 +56,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSArray<NSString*>*)getListOfPresetDrumPadSets;
 
+- (void)copyOscParamsAtSourceIdx:(int)sourceIdx;
+- (void)pasteOscParamsAtSourceIdx:(int)sourceIdx;
 
 @property (nonatomic, readonly)NSArray* osterCurve;
 

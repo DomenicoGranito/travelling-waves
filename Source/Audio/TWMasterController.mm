@@ -12,7 +12,8 @@
 
 @interface TWMasterController()
 {
-    int         _timeControlRatios[kNumTimeRatioControls][2][kNumSources];
+    int             _timeControlRatios[kNumTimeRatioControls][2][kNumSources];
+    NSDictionary*   _copyOscDictionary;
 }
 @end
 
@@ -50,6 +51,8 @@
         [self resetFrequencyChartCaches];
         
         _projectName = @"Default";
+        
+        _copyOscDictionary = nil;
     }
     
     return self;
@@ -281,22 +284,32 @@
         
         for (int sourceIdx=0; sourceIdx < kNumSources; sourceIdx++) {
             NSMutableDictionary* sourceParams = [[NSMutableDictionary alloc] init];
+            
             sourceParams[@"Idx"] = @(sourceIdx);
-            sourceParams[@"Tunings"] = @[@(_timeControlRatios[TWTimeRatioControl_BaseFrequency][kNumerator][sourceIdx]), @(_timeControlRatios[TWTimeRatioControl_BaseFrequency][kDenominator][sourceIdx])];
-            sourceParams[@"Beat Freq Ratios"] = @[@(_timeControlRatios[TWTimeRatioControl_BeatFrequency][kNumerator][sourceIdx]), @(_timeControlRatios[TWTimeRatioControl_BeatFrequency][kDenominator][sourceIdx])];
-            sourceParams[@"Trem Freq Ratios"] = @[@(_timeControlRatios[TWTimeRatioControl_TremFrequency][kNumerator][sourceIdx]), @(_timeControlRatios[TWTimeRatioControl_TremFrequency][kDenominator][sourceIdx])];
-            sourceParams[@"Shape Trem Freq Ratios"] = @[@(_timeControlRatios[TWTimeRatioControl_ShapeTremFrequency][kNumerator][sourceIdx]), @(_timeControlRatios[TWTimeRatioControl_ShapeTremFrequency][kDenominator][sourceIdx])];
-            sourceParams[@"Filter LFO Freq Ratios"] = @[@(_timeControlRatios[TWTimeRatioControl_FilterLFOFrequency][kNumerator][sourceIdx]), @(_timeControlRatios[TWTimeRatioControl_FilterLFOFrequency][kDenominator][sourceIdx])];
-            for (int paramID = 1; paramID < kOscNumParams; paramID++) {
-                NSString* key = [self keyForOscParamID:(TWOscParamID)paramID];
+            
+            for (int paramID = 0; paramID < kNumTimeRatioControls; paramID++) {
+                NSString* key = [self keyForTimeRatioControlParamID:(TWTimeRatioControl)paramID];
                 if ((key != nil) && (![key isEqualToString:@""])) {
-                    sourceParams[key] = @([[TWAudioController sharedController] getOscParameter:(TWOscParamID)paramID atSourceIdx:sourceIdx]);
+                    sourceParams[key] = @[@(_timeControlRatios[paramID][kNumerator][sourceIdx]), @(_timeControlRatios[paramID][kDenominator][sourceIdx])];
                 }
             }
-            sourceParams[@"RampTime_ms"] = @((int)[[TWAudioController sharedController] getOscParameter:TWOscParamID_RampTime_ms atSourceIdx:sourceIdx]);
+            
+            [sourceParams addEntriesFromDictionary:[self getOscParamsAsDictionaryForSourceIdx:sourceIdx]];
+            
+//            for (int paramID = 1; paramID < kOscNumParams; paramID++) {
+//                NSString* key = [self keyForOscParamID:(TWOscParamID)paramID];
+//                if ((key != nil) && (![key isEqualToString:@""])) {
+//                    sourceParams[key] = @([[TWAudioController sharedController] getOscParameter:(TWOscParamID)paramID atSourceIdx:sourceIdx]);
+//                }
+//            }
+//
+//            sourceParams[@"RampTime_ms"] = @((int)[[TWAudioController sharedController] getOscParameter:TWOscParamID_RampTime_ms atSourceIdx:sourceIdx]);
+            
             [sources addObject:sourceParams];
         }
+        
         parameters[@"Sources"] = sources;
+        
         
         
         NSMutableDictionary* sequencer = [[NSMutableDictionary alloc] init];
@@ -357,6 +370,7 @@
     return dictionary;
 }
 
+
 - (void)loadParametersFromDictionary:(NSDictionary*)dictionary {
     
     // Name
@@ -401,31 +415,15 @@
                 }
                 
                 
-                if ([sourceParams objectForKey:@"Tunings"]) {
-                    _timeControlRatios[TWTimeRatioControl_BaseFrequency][kNumerator][sourceIdx] = [sourceParams[@"Tunings"][kNumerator] intValue];
-                    _timeControlRatios[TWTimeRatioControl_BaseFrequency][kDenominator][sourceIdx] = [sourceParams[@"Tunings"][kDenominator] intValue];
+                for (int paramID = 0; paramID < kNumTimeRatioControls; paramID++) {
+                    NSString* key = [self keyForTimeRatioControlParamID:(TWTimeRatioControl)paramID];
+                    if ((key != nil) && (![key isEqualToString:@""])) {
+                        if ([sourceParams objectForKey:key]) {
+                            _timeControlRatios[paramID][kNumerator][sourceIdx] = [sourceParams[key][kNumerator] intValue];
+                            _timeControlRatios[paramID][kDenominator][sourceIdx] = [sourceParams[key][kDenominator] intValue];
+                        }
+                    }
                 }
-                
-                if ([sourceParams objectForKey:@"Beat Freq Ratios"]) {
-                    _timeControlRatios[TWTimeRatioControl_BeatFrequency][kNumerator][sourceIdx] = [sourceParams[@"Beat Freq Ratios"][kNumerator] intValue];
-                    _timeControlRatios[TWTimeRatioControl_BeatFrequency][kDenominator][sourceIdx] = [sourceParams[@"Beat Freq Ratios"][kDenominator] intValue];
-                }
-                
-                if ([sourceParams objectForKey:@"Trem Freq Ratios"]) {
-                    _timeControlRatios[TWTimeRatioControl_TremFrequency][kNumerator][sourceIdx] = [sourceParams[@"Trem Freq Ratios"][kNumerator] intValue];
-                    _timeControlRatios[TWTimeRatioControl_TremFrequency][kDenominator][sourceIdx] = [sourceParams[@"Trem Freq Ratios"][kDenominator] intValue];
-                }
-                
-                if ([sourceParams objectForKey:@"Filter LFO Freq Ratios"]) {
-                    _timeControlRatios[TWTimeRatioControl_FilterLFOFrequency][kNumerator][sourceIdx] = [sourceParams[@"Filter LFO Freq Ratios"][kNumerator] intValue];
-                    _timeControlRatios[TWTimeRatioControl_FilterLFOFrequency][kDenominator][sourceIdx] = [sourceParams[@"Filter LFO Freq Ratios"][kDenominator] intValue];
-                }
-                
-                if ([sourceParams objectForKey:@"Shape Trem Freq Ratios"]) {
-                    _timeControlRatios[TWTimeRatioControl_ShapeTremFrequency][kNumerator][sourceIdx] = [sourceParams[@"Shape Trem Freq Ratios"][kNumerator] intValue];
-                    _timeControlRatios[TWTimeRatioControl_ShapeTremFrequency][kDenominator][sourceIdx] = [sourceParams[@"Shape Trem Freq Ratios"][kDenominator] intValue];
-                }
-                
                 
                 
                 int rampTime_ms = (int)[[TWAudioController sharedController] getOscParameter:TWOscParamID_RampTime_ms atSourceIdx:sourceIdx];
@@ -434,12 +432,13 @@
                 }
                 [[TWAudioController sharedController] setOscParameter:TWOscParamID_RampTime_ms withValue:rampTime_ms atSourceIdx:sourceIdx inTime:0.0f];
                 
-                for (int paramID = 1; paramID < kOscNumParams; paramID++) {
-                    [self setOscParamValue:(TWOscParamID)paramID fromDictionary:sourceParams atSourceIdx:sourceIdx inTime:rampTime_ms];
-                }
-    
+                
                 for (int control=0; control < kNumTimeRatioControls; control++) {
                     [self setValueForTimeControl:(TWTimeRatioControl)control atSourceIdx:sourceIdx];
+                }
+                
+                for (int paramID = 1; paramID < kOscNumParams; paramID++) {
+                    [self setOscParamValue:(TWOscParamID)paramID fromDictionary:sourceParams atSourceIdx:sourceIdx inTime:rampTime_ms];
                 }
             }
         }
@@ -513,6 +512,7 @@
 
 
 
+
 - (void)loadOsterCurve {
     NSString* filepath = [[NSBundle mainBundle] pathForResource:@"OsterCurve" ofType:@"json"];
     NSData* data = [NSData dataWithContentsOfFile:filepath];
@@ -535,12 +535,14 @@
     }
 }
 
+
 - (void)setSeqParamValue:(TWSeqParamID)paramID fromDictionary:(NSDictionary*)sourceDictionary atSourceIdx:(int)sourceIdx {
     NSString* key = [self keyForSeqParamID:paramID];
     if ([sourceDictionary objectForKey:key]) {
         [[TWAudioController sharedController] setSeqParameter:paramID withValue:[sourceDictionary[key] floatValue] atSourceIdx:sourceIdx];
     }
 }
+
 
 - (void)setPadParamValue:(TWPadParamID)paramID fromDictionary:(NSDictionary*)sourceDictionary atSourceIdx:(int)sourceIdx {
     NSString* key = [self keyForPadParamID:paramID];
@@ -549,6 +551,124 @@
     }
 }
 
+
+- (void)setValueForTimeControl:(TWTimeRatioControl)control atSourceIdx:(int)sourceIdx {
+    
+    float numerator = (float)_timeControlRatios[control][kNumerator][sourceIdx];
+    float denominator = (float)_timeControlRatios[control][kDenominator][sourceIdx];
+    int rampTime_ms = (int)[[TWAudioController sharedController] getOscParameter:TWOscParamID_RampTime_ms atSourceIdx:sourceIdx];
+    float value = 0.0f;
+    
+    switch (control) {
+            
+        case TWTimeRatioControl_BaseFrequency:
+            value = _rootFrequency * numerator / denominator;
+            [[TWAudioController sharedController] setOscParameter:TWOscParamID_OscBaseFrequency withValue:value atSourceIdx:sourceIdx inTime:rampTime_ms];
+            break;
+            
+        case TWTimeRatioControl_BeatFrequency:
+            value = (_tempo / 60.0f) * numerator / denominator;
+            [[TWAudioController sharedController] setOscParameter:TWOscParamID_OscBeatFrequency withValue:value atSourceIdx:sourceIdx inTime:rampTime_ms];
+            break;
+            
+        case TWTimeRatioControl_TremFrequency:
+            value = (_tempo / 60.0f) * numerator / denominator;
+            [[TWAudioController sharedController] setOscParameter:TWOscParamID_TremoloFrequency withValue:value atSourceIdx:sourceIdx inTime:rampTime_ms];
+            break;
+            
+        case TWTimeRatioControl_ShapeTremFrequency:
+            value = (_tempo / 60.0f) * numerator / denominator;
+            [[TWAudioController sharedController] setOscParameter:TWOscParamID_ShapeTremoloFrequency withValue:value atSourceIdx:sourceIdx inTime:rampTime_ms];
+            break;
+            
+        case TWTimeRatioControl_FilterLFOFrequency:
+            value = (_tempo / 60.0f) * numerator / denominator;
+            [[TWAudioController sharedController] setOscParameter:TWOscParamID_FilterLFOFrequency withValue:value atSourceIdx:sourceIdx inTime:rampTime_ms];
+            break;
+    }
+}
+
+
+
+- (void)setSeqDurationFromTempo {
+    float duration_ms = 60000.0f * _beatsPerBar / _tempo;
+    [[TWAudioController sharedController] setSeqParameter:TWSeqParamID_Duration_ms withValue:duration_ms atSourceIdx:-1];
+}
+
+
+
+- (NSDictionary*)getOscParamsAsDictionaryForSourceIdx:(int)sourceIdx {
+    NSMutableDictionary* dictionary = [[NSMutableDictionary alloc] init];
+    for (int paramID = 1; paramID < kOscNumParams; paramID++) {
+        NSString* key = [self keyForOscParamID:(TWOscParamID)paramID];
+        if ((key != nil) && (![key isEqualToString:@""])) {
+            dictionary[key] = @([[TWAudioController sharedController] getOscParameter:(TWOscParamID)paramID atSourceIdx:sourceIdx]);
+        }
+    }
+    dictionary[@"RampTime_ms"] = @((int)[[TWAudioController sharedController] getOscParameter:TWOscParamID_RampTime_ms atSourceIdx:sourceIdx]);
+    return dictionary;
+}
+
+
+- (void)copyOscParamsAtSourceIdx:(int)sourceIdx {
+    if (_copyOscDictionary) {
+        _copyOscDictionary = nil;
+    }
+    _copyOscDictionary = [[NSDictionary alloc] initWithDictionary:[self getOscParamsAsDictionaryForSourceIdx:sourceIdx]];
+}
+
+- (void)pasteOscParamsAtSourceIdx:(int)sourceIdx {
+    
+    if (_copyOscDictionary == nil) {
+        return;
+    }
+    
+    int rampTime_ms = (int)[[TWAudioController sharedController] getOscParameter:TWOscParamID_RampTime_ms atSourceIdx:sourceIdx];
+    if ([_copyOscDictionary objectForKey:@"RampTime_ms"]) {
+        rampTime_ms = [_copyOscDictionary[@"RampTime_ms"] intValue];
+    }
+    [[TWAudioController sharedController] setOscParameter:TWOscParamID_RampTime_ms withValue:rampTime_ms atSourceIdx:sourceIdx inTime:0.0f];
+    
+    for (int paramID = 1; paramID < kOscNumParams; paramID++) {
+        [self setOscParamValue:(TWOscParamID)paramID fromDictionary:_copyOscDictionary atSourceIdx:sourceIdx inTime:rampTime_ms];
+    }
+}
+
+
+#pragma mark - Dictionary Param Keys
+
+
+- (NSString*)keyForTimeRatioControlParamID:(TWTimeRatioControl)paramID {
+    
+    NSString* key = nil;
+    
+    switch (paramID) {
+        case TWTimeRatioControl_BaseFrequency:
+            key = @"Tunings";
+            break;
+            
+        case TWTimeRatioControl_BeatFrequency:
+            key = @"Beat Freq Ratios";
+            break;
+            
+        case TWTimeRatioControl_TremFrequency:
+            key = @"Trem Freq Ratios";
+            break;
+            
+        case TWTimeRatioControl_ShapeTremFrequency:
+            key = @"Shape Trem Freq Ratios";
+            break;
+            
+        case TWTimeRatioControl_FilterLFOFrequency:
+            key = @"Filter LFO Freq Ratios";
+            break;
+            
+        default:
+            break;
+    }
+    
+    return key;
+}
 
 
 - (NSString*)keyForOscParamID:(TWOscParamID)paramID {
@@ -751,63 +871,6 @@
 }
 
 
-- (void)setValueForTimeControl:(TWTimeRatioControl)control atSourceIdx:(int)sourceIdx {
-    
-    float numerator = (float)_timeControlRatios[control][kNumerator][sourceIdx];
-    float denominator = (float)_timeControlRatios[control][kDenominator][sourceIdx];
-    int rampTime_ms = (int)[[TWAudioController sharedController] getOscParameter:TWOscParamID_RampTime_ms atSourceIdx:sourceIdx];
-    float value = 0.0f;
-    
-    switch (control) {
-            
-        case TWTimeRatioControl_BaseFrequency:
-            value = _rootFrequency * numerator / denominator;
-            [[TWAudioController sharedController] setOscParameter:TWOscParamID_OscBaseFrequency withValue:value atSourceIdx:sourceIdx inTime:rampTime_ms];
-            break;
-            
-        case TWTimeRatioControl_BeatFrequency:
-            value = (_tempo / 60.0f) * numerator / denominator;
-            [[TWAudioController sharedController] setOscParameter:TWOscParamID_OscBeatFrequency withValue:value atSourceIdx:sourceIdx inTime:rampTime_ms];
-            break;
-            
-        case TWTimeRatioControl_TremFrequency:
-            value = (_tempo / 60.0f) * numerator / denominator;
-            [[TWAudioController sharedController] setOscParameter:TWOscParamID_TremoloFrequency withValue:value atSourceIdx:sourceIdx inTime:rampTime_ms];
-            break;
-            
-        case TWTimeRatioControl_ShapeTremFrequency:
-            value = (_tempo / 60.0f) * numerator / denominator;
-            [[TWAudioController sharedController] setOscParameter:TWOscParamID_ShapeTremoloFrequency withValue:value atSourceIdx:sourceIdx inTime:rampTime_ms];
-            break;
-            
-        case TWTimeRatioControl_FilterLFOFrequency:
-            value = (_tempo / 60.0f) * numerator / denominator;
-            [[TWAudioController sharedController] setOscParameter:TWOscParamID_FilterLFOFrequency withValue:value atSourceIdx:sourceIdx inTime:rampTime_ms];
-            break;
-    }
-}
-
-
-- (void)setSeqDurationFromTempo {
-    float duration_ms = 60000.0f * _beatsPerBar / _tempo;
-    [[TWAudioController sharedController] setSeqParameter:TWSeqParamID_Duration_ms withValue:duration_ms atSourceIdx:-1];
-}
-
-
-
-//#pragma mark - Drum Pad Projects
-//
-//- (BOOL)saveDrumPadProjectWithFilename:(NSString*)filename {
-//
-//}
-//
-//- (BOOL)loadDrumPadProjectWithFilename:(NSString*)filename {
-//
-//}
-//
-//- (NSArray<NSString*>*)getListOfSavedDrumPadProjects {
-//
-//}
 
 - (void)resetFrequencyChartCaches {
     _equalTemperamentSelectedIndexPath = nil;

@@ -60,6 +60,10 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSArray<UIColor*>*)timeRatioControlTintColors;
 + (NSArray<UIColor*>*)timeRatioControlBackColors;
 
++ (UIColor*)cancelButtonColor;
++ (UIColor*)copyButtonColor;
++ (UIColor*)pasteButtonColor;
+
 @end
 
 NS_ASSUME_NONNULL_END

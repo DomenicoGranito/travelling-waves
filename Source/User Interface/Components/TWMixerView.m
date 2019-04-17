@@ -10,6 +10,7 @@
 #import "TWHeader.h"
 #import "TWAudioController.h"
 #import "TWKeypad.h"
+#import "TWOscView.h"
 #import "UIColor+Additions.h"
 
 static const CGFloat kGainValueLabelWidth   = 28.0f;
@@ -141,7 +142,7 @@ static const CGFloat kSoloButtonWidth       = 28.0f;
     [self setBackgroundColor:[UIColor colorWithWhite:0.12f alpha:1.0f]];
 }
 
-- (void)viewWillAppear:(BOOL)animated {
+- (void)refreshParametersWithAnimation:(BOOL)animated {
     for (int sourceIdx=0; sourceIdx < kNumSources; sourceIdx++) {
         float amplitude = [[TWAudioController sharedController] getOscParameter:TWOscParamID_OscAmplitude atSourceIdx:sourceIdx];
         UISlider* slider = [_sliders objectAtIndex:sourceIdx];
@@ -297,6 +298,9 @@ static const CGFloat kSoloButtonWidth       = 28.0f;
     }
 }
 
+- (void)setOscView:(id)oscView {
+    _oscView = (TWOscView*)oscView;
+}
 
 
 #pragma mark - TWKeypad

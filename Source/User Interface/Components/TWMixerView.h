@@ -7,15 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "TWOscView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface TWMixerView : UIView
 
-- (void)viewWillAppear:(BOOL)animated;
+- (void)refreshParametersWithAnimation:(BOOL)animated;
 
-@property(nonatomic, weak)TWOscView* oscView;
+@property(nonatomic, weak) id oscView;
 
 @end
 

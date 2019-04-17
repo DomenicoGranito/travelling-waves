@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface TWFrequencyRatioControlView : UIView
 
-- (void)viewWillAppear:(BOOL)animated;
+- (void)refreshParametersWithAnimation:(BOOL)animated;
 @property(nonatomic, weak)TWOscView* oscView;
 
 @end

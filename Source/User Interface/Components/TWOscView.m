@@ -9,15 +9,26 @@
 #import "TWOscView.h"
 #import "TWHeader.h"
 #import "TWAudioController.h"
+#import "TWMasterController.h"
 #import "TWKeypad.h"
 #import "TWUtils.h"
+#import "TWMixerView.h"
 #import "UIColor+Additions.h"
 
 
-@interface TWOscView() <TWKeypadDelegate>
+@interface TWOscView() <TWKeypadDelegate, UIGestureRecognizerDelegate>
 {
     
-    UISegmentedControl*         _segmentedControl;
+    UISegmentedControl*         _sourceIdxSelector;
+    
+    // Copy Paste View
+    UIView*                     _editActionView;
+    UILabel*                    _editSourceLabel;
+    UIButton*                   _copyButton;
+    UIButton*                   _pasteButton;
+    UIButton*                   _cancelButton;
+    int                         _editActionSourceIdx;
+//    CGRect                      _editActionRect;
     
     
     // Oscillator
@@ -144,12 +155,59 @@
     for (int i=0; i < kNumSources; i++) {
         [segments addObject:[NSString stringWithFormat:@"%d", i+1]];
     }
-    _segmentedControl = [[UISegmentedControl alloc] initWithItems:segments];
-    [_segmentedControl setBackgroundColor:[UIColor segmentedControlBackgroundColor]];
-    [_segmentedControl setSelectedSegmentIndex:0];
-    [_segmentedControl setTintColor:[UIColor segmentedControlTintColor]];
-    [_segmentedControl addTarget:self action:@selector(segmentValueChanged:) forControlEvents:UIControlEventValueChanged];
-    [self addSubview:_segmentedControl];
+    _sourceIdxSelector = [[UISegmentedControl alloc] initWithItems:segments];
+    [_sourceIdxSelector setBackgroundColor:[UIColor segmentedControlBackgroundColor]];
+    [_sourceIdxSelector setSelectedSegmentIndex:0];
+    [_sourceIdxSelector setTintColor:[UIColor segmentedControlTintColor]];
+    [_sourceIdxSelector addTarget:self action:@selector(sourceIdxSelectorChanged:) forControlEvents:UIControlEventValueChanged];
+    [self addSubview:_sourceIdxSelector];
+    
+    UITapGestureRecognizer* tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(sourceIdxDoubleTap:)];
+    [tapGestureRecognizer setNumberOfTapsRequired:2];
+    [_sourceIdxSelector addGestureRecognizer:tapGestureRecognizer];
+    [tapGestureRecognizer setDelegate:self];
+    
+    
+    _editActionView = [[UIView alloc] init];
+    [_editActionView setBackgroundColor:[UIColor colorWithWhite:0.26f alpha:1.0f]];
+    [self addSubview:_editActionView];
+    
+    _editSourceLabel = [[UILabel alloc] init];
+    [_editSourceLabel setText:@"[x] : "];
+    [_editSourceLabel setTextColor:[UIColor colorWithWhite:0.8f alpha:1.0f]];
+    [_editSourceLabel setFont:[UIFont systemFontOfSize:12.0f]];
+    [_editSourceLabel setTextAlignment:NSTextAlignmentCenter];
+    [_editSourceLabel setBackgroundColor:[UIColor copyButtonColor]];
+    [_editActionView addSubview:_editSourceLabel];
+    
+    _cancelButton = [[UIButton alloc] init];
+    [_cancelButton setTitle:@"Cancel" forState:UIControlStateNormal];
+    [_cancelButton setTitleColor:[UIColor valueTextLightWhiteColor] forState:UIControlStateNormal];
+    [_cancelButton.titleLabel setFont:[UIFont systemFontOfSize:10.0f]];
+    [_cancelButton setBackgroundColor:[UIColor cancelButtonColor]];
+    [_cancelButton addTarget:self action:@selector(cancelButtonDown:) forControlEvents:UIControlEventTouchDown];
+    [_cancelButton addTarget:self action:@selector(cancelButtonUp:) forControlEvents:UIControlEventTouchUpInside];
+    [_editActionView addSubview:_cancelButton];
+    
+    _copyButton = [[UIButton alloc] init];
+    [_copyButton setTitle:@"Copy" forState:UIControlStateNormal];
+    [_copyButton setTitleColor:[UIColor valueTextLightWhiteColor] forState:UIControlStateNormal];
+    [_copyButton.titleLabel setFont:[UIFont systemFontOfSize:10.0f]];
+    [_copyButton setBackgroundColor:[UIColor copyButtonColor]];
+    [_copyButton addTarget:self action:@selector(copyButtonDown:) forControlEvents:UIControlEventTouchDown];
+    [_copyButton addTarget:self action:@selector(copyButtonUp:) forControlEvents:UIControlEventTouchUpInside];
+    [_editActionView addSubview:_copyButton];
+    
+    _pasteButton = [[UIButton alloc] init];
+    [_pasteButton setTitle:@"Paste" forState:UIControlStateNormal];
+    [_pasteButton setTitleColor:[UIColor valueTextLightWhiteColor] forState:UIControlStateNormal];
+    [_pasteButton.titleLabel setFont:[UIFont systemFontOfSize:10.0f]];
+    [_pasteButton setBackgroundColor:[UIColor pasteButtonColor]];
+    [_pasteButton addTarget:self action:@selector(pasteButtonDown:) forControlEvents:UIControlEventTouchDown];
+    [_pasteButton addTarget:self action:@selector(pasteButtonUp:) forControlEvents:UIControlEventTouchUpInside];
+    [_pasteButton setAlpha:0.1f];
+    [_pasteButton setUserInteractionEnabled:NO];
+    [_editActionView addSubview:_pasteButton];
     
     
     
@@ -744,9 +802,12 @@
     _paramRanges = [[NSDictionary alloc] initWithDictionary:paramRanges];
     
     
+    [self bringSubviewToFront:_editActionView];
+    [_editActionView setAlpha:0.0f];
 //    [[TWKeypad sharedKeypad] addToDelegates:self];
     
     _sourceIdx = 0;
+    _editActionSourceIdx = 0;
     
     [self setBackgroundColor:[UIColor colorWithWhite:0.2f alpha:1.0]];
 }
@@ -765,7 +826,7 @@
     CGFloat sliderWidth = (frame.size.width - kTitleLabelWidth - (2.0f * kValueLabelWidth)) / 2.0f;
     
     
-    [_segmentedControl setFrame:CGRectMake(xPos, yPos, frame.size.width, componentHeight)];
+    [_sourceIdxSelector setFrame:CGRectMake(xPos, yPos, frame.size.width, componentHeight)];
     
     
     // Oscillator
@@ -999,17 +1060,44 @@
     
     xPos += _oscFMFreqSlider.frame.size.width;
     [_oscFMFreqField setFrame:CGRectMake(xPos, yPos, kValueLabelWidth, componentHeight)];
+    
+    
+    
+    
+    CGFloat editActionViewWidth = sliderWidth;
+    CGFloat editActionViewHeight = componentHeight;
+//    _editActionRect = CGRectMake((frame.size.width - editActionViewWidth) / 2.0f, componentHeight, editActionViewWidth, editActionViewHeight);
+    [_editActionView setFrame:CGRectMake((frame.size.width - editActionViewWidth) / 2.0f, componentHeight, editActionViewWidth, editActionViewHeight)];
+    
+    CGFloat editActionMargin = 2.0f;
+    xPos = editActionMargin;
+    yPos = editActionMargin;
+    
+    CGFloat editSourceLabelWidth = 0.5f; // 50%
+    // width = 5*m + 3*b + e*b
+    // width = 5*m + b*(3+e)
+    // b = width - 5m / (3 + e)
+    CGFloat editActionButtonWidth = (editActionViewWidth - (5.0f * editActionMargin)) / (3.0f + editSourceLabelWidth);
+    CGFloat editActionButtonHeight = editActionViewHeight - (2.0f * editActionMargin);
+    
+    [_editSourceLabel setFrame:CGRectMake(xPos, yPos, editSourceLabelWidth * editActionButtonWidth, editActionButtonHeight)];
+    xPos += editActionMargin + (editSourceLabelWidth * editActionButtonWidth);
+    [_cancelButton setFrame:CGRectMake(xPos, yPos, editActionButtonWidth, editActionButtonHeight)];
+    xPos += editActionMargin + editActionButtonWidth;
+    [_copyButton setFrame:CGRectMake(xPos, yPos, editActionButtonWidth, editActionButtonHeight)];
+    xPos += editActionMargin + editActionButtonWidth;
+    [_pasteButton setFrame:CGRectMake(xPos, yPos, editActionButtonWidth, editActionButtonHeight)];
 }
 
 
 - (void)setSourceIdx:(int)sourceIdx {
     _sourceIdx = sourceIdx;
-    [_segmentedControl setSelectedSegmentIndex:_sourceIdx];
+    [_sourceIdxSelector setSelectedSegmentIndex:_sourceIdx];
     [self refreshParametersWithAnimation:YES];
 }
 
 
-- (void)segmentValueChanged:(UISegmentedControl*)sender {
+- (void)sourceIdxSelectorChanged:(UISegmentedControl*)sender {
     _sourceIdx = (int)sender.selectedSegmentIndex;
     [self refreshParametersWithAnimation:YES];
 }
@@ -1096,7 +1184,58 @@
 }
 
 
+- (void)sourceIdxDoubleTap:(UITapGestureRecognizer*)recognizer {
+    
+    CGPoint location = [recognizer locationInView:_sourceIdxSelector];
+    CGFloat boxWidth = _sourceIdxSelector.frame.size.width / kNumSources;
+    _editActionSourceIdx = (int)floorf(location.x / boxWidth);
+    [_editSourceLabel setText:[NSString stringWithFormat:@"%d", _editActionSourceIdx+1]];
+//    CGRect outRect = CGRectMake(location.x, _editActionRect.origin.y, _editActionRect.size.width, _editActionRect.size.height);
+//    [_editActionView setFrame:outRect];
+    [self toggleEditActionView:YES];
+}
 
+
+
+
+- (void)cancelButtonDown:(UIButton*)sender {
+    [sender setBackgroundColor:[UIColor colorFromUIColor:[UIColor cancelButtonColor] withBrightnessOffset:0.01f]];
+}
+
+- (void)cancelButtonUp:(UIButton*)sender {
+    [self toggleEditActionView:NO];
+    [sender setBackgroundColor:[UIColor cancelButtonColor]];
+}
+
+- (void)copyButtonDown:(UIButton*)sender {
+    [sender setBackgroundColor:[UIColor colorFromUIColor:[UIColor copyButtonColor] withBrightnessOffset:0.01f]];
+}
+- (void)copyButtonUp:(UIButton*)sender {
+    [[TWMasterController sharedController] copyOscParamsAtSourceIdx:_editActionSourceIdx];
+    [_pasteButton setAlpha:1.0f];
+    [_pasteButton setUserInteractionEnabled:YES];
+    [self toggleEditActionView:NO];
+    [sender setBackgroundColor:[UIColor copyButtonColor]];
+}
+
+- (void)pasteButtonDown:(UIButton*)sender {
+    [sender setBackgroundColor:[UIColor colorFromUIColor:[UIColor pasteButtonColor] withBrightnessOffset:0.01f]];
+}
+- (void)pasteButtonUp:(UIButton*)sender {
+    [[TWMasterController sharedController] pasteOscParamsAtSourceIdx:_editActionSourceIdx];
+    [_mixerView refreshParametersWithAnimation:YES];
+    [self toggleEditActionView:NO];
+    [sender setBackgroundColor:[UIColor pasteButtonColor]];
+}
+
+
+
+- (void)setMixerView:(id)mixerView {
+    _mixerView = (TWMixerView*)mixerView;
+}
+//- (void)sourceIdxSelectorLongPress:(UILongPressGestureRecognizer*)gestureRecognizer {
+//    gestureRecognizer.loca
+//}
 
 
 
@@ -1147,6 +1286,7 @@
 - (void)waveformComponentChanged {
     [self updateWaveformFromComponent];
 }
+
 
 
 
@@ -1805,6 +1945,11 @@
 //}
 
 
+- (void)toggleEditActionView:(BOOL)toggle {
+    [UIView animateWithDuration:0.1f delay:0.0f options:UIViewAnimationOptionCurveEaseIn animations:^{
+        [self->_editActionView setAlpha:(CGFloat)toggle];
+    } completion:^(BOOL finished) {}];
+}
 
     
 @end

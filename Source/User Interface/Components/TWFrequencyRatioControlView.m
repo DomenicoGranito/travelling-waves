@@ -294,7 +294,7 @@
 }
 
 
-- (void)viewWillAppear:(BOOL)animated {
+- (void)refreshParametersWithAnimation:(BOOL)animated {
     float frequency = [[TWMasterController sharedController] rootFrequency];
     [self setRootFrequencySlider:frequency];
     [_rootFreqField setTitle:[NSString stringWithFormat:@"%.2f", frequency] forState:UIControlStateNormal];
@@ -651,6 +651,7 @@
         [[TWMasterController sharedController] setRootFrequency:frequency];
         [_rootFreqField setTitle:[NSString stringWithFormat:@"%.2f", frequency] forState:UIControlStateNormal];
         [self setRootFrequencySlider:frequency];
+        [_oscView refreshParametersWithAnimation:YES];
     }
     
     else if (responder == _rampTimeField) {
@@ -658,6 +659,7 @@
         [[TWMasterController sharedController] setRampTime_ms:rampTime_ms];
         [_rampTimeField setTitle:[NSString stringWithFormat:@"%d", rampTime_ms] forState:UIControlStateNormal];
         [_rampTimeSlider setValue:rampTime_ms animated:YES];
+        [_oscView refreshParametersWithAnimation:YES];
     }
     
     else if (responder == _tempoField) {
@@ -665,6 +667,7 @@
         [[TWMasterController sharedController] setTempo:tempo];
         [_tempoField setTitle:[NSString stringWithFormat:@"%.2f", tempo] forState:UIControlStateNormal];
         [_tempoSlider setValue:tempo animated:YES];
+        [_oscView refreshParametersWithAnimation:YES];
     }
     
     else {
