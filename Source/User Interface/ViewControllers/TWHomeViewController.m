@@ -26,6 +26,7 @@
 #import "TWKeypad.h"
 #import "UIColor+Additions.h"
 
+static const NSInteger  kFrequencyRatioControlViewTag   = 9876;
 
 @interface TWHomeScrollView : UIScrollView
 @end
@@ -60,9 +61,9 @@
     
     TWHomeScrollView*               _verticalScrollView;
     
-    TWOscView*                      _oscView;
+    TWFrequencyRatioControlView*    _frequencyRatioControlView;
     
-    TWFrequencyRatioControlView*    _pitchRatioControlView;
+    TWOscView*                      _oscView;
     
     UIButton*                       _loadFreqChartButton;
     UIButton*                       _saveProjectButton;
@@ -119,22 +120,22 @@
     _verticalScrollView = [[TWHomeScrollView alloc] init];
     [_verticalScrollView setScrollsToTop:NO];
     [_verticalScrollView setBounces:YES];
-    [_verticalScrollView setShowsVerticalScrollIndicator:NO];
-//    [_verticalScrollView setDelaysContentTouches:YES];
-    [_verticalScrollView setBackgroundColor:[UIColor colorWithWhite:0.26f alpha:1.0f]];
+    [_verticalScrollView setShowsVerticalScrollIndicator:YES];
+    [_verticalScrollView setBackgroundColor:[UIColor colorWithWhite:0.2f alpha:1.0f]];
     [self.view addSubview:_verticalScrollView];
     
     
     // Enter Vertical Scroll View
     
-     _pitchRatioControlView = [[TWFrequencyRatioControlView alloc] init];
-    [_verticalScrollView addSubview:_pitchRatioControlView];
+     _frequencyRatioControlView = [[TWFrequencyRatioControlView alloc] init];
+    [_frequencyRatioControlView setTag:kFrequencyRatioControlViewTag];
+    [_verticalScrollView addSubview:_frequencyRatioControlView];
     
     _oscView = [[TWOscView alloc] init];
     [_verticalScrollView addSubview:_oscView];
     [_mixerView setOscView:_oscView];
     [_oscView setMixerView:_mixerView];
-    [_pitchRatioControlView setOscView:_oscView];
+    [_frequencyRatioControlView setOscView:_oscView];
     
     
     _loadFreqChartButton = [[UIButton alloc] init];
@@ -189,7 +190,7 @@
     
     _masterLeftSlider = [[UISlider alloc] init];
     [_masterLeftSlider setMinimumValue:0.0f];
-    [_masterLeftSlider setMaximumValue:1.0f];
+    [_masterLeftSlider setMaximumValue:2.0f];
     [_masterLeftSlider addTarget:self action:@selector(masterLeftSliderValueChanged:) forControlEvents:UIControlEventValueChanged];
     [_masterLeftSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
     [_masterLeftSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
@@ -198,7 +199,7 @@
     
     _masterRightSlider = [[UISlider alloc] init];
     [_masterRightSlider setMinimumValue:0.0f];
-    [_masterRightSlider setMaximumValue:1.0f];
+    [_masterRightSlider setMaximumValue:2.0f];
     [_masterRightSlider addTarget:self action:@selector(masterRightSliderValueChanged:) forControlEvents:UIControlEventValueChanged];
     [_masterRightSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
     [_masterRightSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
@@ -280,9 +281,9 @@
     // Enter Vertical Scroll View
     yPos = 0.0f;
     CGFloat pitchRatioControlViewHeight = isLandscape ? ((3.0f * kButtonYMargin) + (componentHeight * ((kNumSources / 4.0f) + 3))) : ((4.0f * kButtonYMargin) + (componentHeight * ((kNumSources / 2.0f) + 3)));
-    [_pitchRatioControlView setFrame:CGRectMake(0.0f, yPos, screenWidth, pitchRatioControlViewHeight)];
+    [_frequencyRatioControlView setFrame:CGRectMake(0.0f, yPos, screenWidth, pitchRatioControlViewHeight)];
     
-    yPos += _pitchRatioControlView.frame.size.height;
+    yPos += _frequencyRatioControlView.frame.size.height;
     xPos = 0.0f;
     CGFloat oscViewHeight = componentHeight * 11.0f;
     [_oscView setFrame:CGRectMake(xPos, yPos, screenWidth, oscViewHeight)];
@@ -361,7 +362,7 @@
     [self updateIOButtonState:[[TWAudioController sharedController] isRunning]];
     
     [_mixerView refreshParametersWithAnimation:animated];
-    [_pitchRatioControlView refreshParametersWithAnimation:animated];
+    [_frequencyRatioControlView refreshParametersWithAnimation:animated];
     [_oscView refreshParametersWithAnimation:animated];
     
     CGFloat masterLeftGain = [[TWAudioController sharedController] getMasterGainOnChannel:kLeftChannel];
@@ -608,7 +609,8 @@
 
 #pragma mark - TWKeypad
 
-- (void)keypadDoneButtonTapped:(UIButton *)responder withValue:(NSString *)inValue {
+- (void)keypadDoneButtonTapped:(id)senderKeypad forComponent:(UIView*)responder withValue:(NSString *)inValue {
+    
     if (responder == _masterLeftField) {
         float gain = [inValue floatValue];
         [[TWAudioController sharedController] setMasterGain:gain onChannel:kLeftChannel inTime:kDefaultRampTime_ms];
@@ -622,10 +624,14 @@
         [_masterRightField setTitle:[NSString stringWithFormat:@"%.2f", gain] forState:UIControlStateNormal];
         [_masterRightSlider setValue:gain animated:YES];
     }
+    
+    [responder setBackgroundColor:[UIColor clearColor]];
+    
+    TWKeypad* keypad = (TWKeypad*)senderKeypad;
+    [keypad hideKeypad];
 }
 
-
-- (void)keypadCancelButtonTapped:(UIButton*)responder {
+- (void)keypadCancelButtonTapped:(id)senderKeypad forComponent:(UIView*)responder {
     
     if (responder == _masterLeftField) {
         float gain = [[TWAudioController sharedController] getMasterGainOnChannel:kLeftChannel];
@@ -636,6 +642,11 @@
         float gain = [[TWAudioController sharedController] getMasterGainOnChannel:kRightChannel];
         [_masterRightField setTitle:[NSString stringWithFormat:@"%.2f", gain] forState:UIControlStateNormal];
     }
+    
+    [responder setBackgroundColor:[UIColor clearColor]];
+    
+    TWKeypad* keypad = (TWKeypad*)senderKeypad;
+    [keypad hideKeypad];
 }
 
 
@@ -647,6 +658,8 @@
     [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWAudioController sharedController] getMasterGainOnChannel:kLeftChannel]]];
     [keypad setCurrentDelegate:self];
     [keypad setCurrentResponder:_masterLeftField];
+//    [_masterLeftField setBackgroundColor:[UIColor textFieldEditingColor]];
+//    [keypad showKeypad];
 }
 
 - (void)masterRightFieldTapped {
@@ -655,6 +668,8 @@
     [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWAudioController sharedController] getMasterGainOnChannel:kRightChannel]]];
     [keypad setCurrentDelegate:self];
     [keypad setCurrentResponder:_masterRightField];
+//    [_masterRightField setBackgroundColor:[UIColor textFieldEditingColor]];
+//    [keypad showKeypad];
 }
 
 

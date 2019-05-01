@@ -54,7 +54,7 @@
 }
 
 + (UIColor*)sliderOffColor {
-    return [UIColor colorWithWhite:0.25f alpha:1.0f];
+    return [UIColor colorWithWhite:0.18f alpha:1.0f];
 }
 
 
@@ -142,6 +142,10 @@
 
 + (UIColor*)pasteButtonColor {
     return [UIColor colorWithWhite:0.12f alpha:1.0f];
+}
+
++ (UIColor*)textFieldEditingColor {
+    return [UIColor colorWithRed:0.1f green:0.2f blue:0.3f alpha:0.5f];
 }
 
 @end

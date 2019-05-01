@@ -586,34 +586,37 @@ static const CGFloat kProgressBarUpdateInterval     = 0.1f;  // 50ms
 
 #pragma mark - TWKeypad
 
-
-- (void)keypadDoneButtonTapped:(UIButton *)responder withValue:(NSString *)inValue {
+- (void)keypadDoneButtonTapped:(id)senderKeypad forComponent:(UIView *)responder withValue:(NSString *)inValue {
+    
+    UIButton* fieldButton = (UIButton*)responder;
     
     if (responder == _durationField) {
         float duration_ms = [inValue floatValue];
         [[TWAudioController sharedController] setSeqParameter:TWSeqParamID_Duration_ms withValue:duration_ms atSourceIdx:-1];
-        [responder setTitle:[NSString stringWithFormat:@"%.2f", duration_ms] forState:UIControlStateNormal];
+        [fieldButton setTitle:[NSString stringWithFormat:@"%.2f", duration_ms] forState:UIControlStateNormal];
     }
     
     else if (responder == _beatsPerBarField) {
         float beatsPerBar = [inValue floatValue];
         [[TWMasterController sharedController] setBeatsPerBar:beatsPerBar];
-        [responder setTitle:[NSString stringWithFormat:@"%.2f", beatsPerBar] forState:UIControlStateNormal];
+        [fieldButton setTitle:[NSString stringWithFormat:@"%.2f", beatsPerBar] forState:UIControlStateNormal];
         [self updateSeqDurationFieldWithValue:[[TWAudioController sharedController] getSeqParameter:TWSeqParamID_Duration_ms atSourceIdx:-1]];
     }
+    
 }
 
-
-- (void)keypadCancelButtonTapped:(UIButton*)responder {
+- (void)keypadCancelButtonTapped:(id)senderKeypad forComponent:(UIView *)responder {
+    
+    UIButton* fieldButton = (UIButton*)responder;
     
     if (responder == _durationField) {
         float duration_ms = [[TWAudioController sharedController] getSeqParameter:TWSeqParamID_Duration_ms atSourceIdx:-1];
-        [responder setTitle:[NSString stringWithFormat:@"%.2f", duration_ms] forState:UIControlStateNormal];
+        [fieldButton setTitle:[NSString stringWithFormat:@"%.2f", duration_ms] forState:UIControlStateNormal];
     }
     
     else if (responder == _beatsPerBarField) {
         float beatsPerBar = [[TWMasterController sharedController] beatsPerBar];
-        [responder setTitle:[NSString stringWithFormat:@"%.2f", beatsPerBar] forState:UIControlStateNormal];
+        [fieldButton setTitle:[NSString stringWithFormat:@"%.2f", beatsPerBar] forState:UIControlStateNormal];
     }
 }
 

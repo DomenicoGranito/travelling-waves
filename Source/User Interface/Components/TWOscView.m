@@ -1148,7 +1148,7 @@
     TWKeypad* keypad = [TWKeypad sharedKeypad];
     float value = [[TWAudioController sharedController] getOscParameter:paramID atSourceIdx:_sourceIdx];
     NSString* fieldTitle = (NSString*)[_paramLongTitles objectForKey:@(paramID)];
-    [keypad setTitle:[fieldTitle stringByAppendingString:[NSString stringWithFormat:@" [%d] : ", _sourceIdx]]];
+    [keypad setTitle:[fieldTitle stringByAppendingString:[NSString stringWithFormat:@" [%d] : ", _sourceIdx+1]]];
     [keypad setValue:[NSString stringWithFormat:@"%.2f", value]];
     [keypad setCurrentDelegate:self];
     [keypad setCurrentResponder:sender];
@@ -1623,7 +1623,7 @@
 
 #pragma mark - TWKeypad
 
-- (void)keypadDoneButtonTapped:(UIButton *)responder withValue:(NSString *)inValue {
+- (void)keypadDoneButtonTapped:(id)senderKeypad forComponent:(UIView *)responder withValue:(NSString *)inValue {
     
     TWOscParamID paramID = (TWOscParamID)responder.tag;
     float value = [inValue floatValue];
@@ -1749,7 +1749,7 @@
 }
 
 
-- (void)keypadCancelButtonTapped:(UIButton *)responder {
+- (void)keypadCancelButtonTapped:(id)senderKeypad forComponent:(UIView *)responder {
     
     TWOscParamID paramID = (TWOscParamID)responder.tag;
     float value = [[TWAudioController sharedController] getOscParameter:paramID atSourceIdx:_sourceIdx];

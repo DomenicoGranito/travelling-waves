@@ -8,6 +8,7 @@
 
 #import "TWKeypad.h"
 #import <QuartzCore/QuartzCore.h>
+#import "UIColor+Additions.h"
 
 static const CGFloat    kKeyPaddingAmount                   = 0.1; // Percent of width
 static const float      kKeypadAnimationTime_s              = 0.15f;
@@ -29,7 +30,8 @@ static const float      kKeypadAnimationTime_s              = 0.15f;
     
     UIColor*                                _downColor;
     UIColor*                                _upColor;
-    UIColor*                                _editingColor;
+    
+    UIColor*                                _currentResponderBackgroundColor;
     
     BOOL                                    _isFirstNumeral;
     BOOL                                    _decimalPointAlreadyTyped;
@@ -48,8 +50,6 @@ static const float      kKeypadAnimationTime_s              = 0.15f;
         
         _downColor = [[UIColor alloc] initWithWhite:0.265 alpha:1.0f];
         _upColor = [[UIColor alloc] initWithWhite:0.375 alpha:1.0f];
-        
-        _editingColor = [[UIColor alloc] initWithRed:0.1f green:0.2f blue:0.3f alpha:0.5f];
         
         
         NSMutableArray* keyButtons = [[NSMutableArray alloc] init];
@@ -142,6 +142,8 @@ static const float      kKeypadAnimationTime_s              = 0.15f;
         
         _currentResponder = nil;
         _currentDelegate = nil;
+        
+        _currentResponderBackgroundColor = [[UIColor alloc] init];
         
         [self setBackgroundColor:[UIColor colorWithWhite:0.117 alpha:1.0f]];
     }
@@ -360,6 +362,18 @@ static const float      kKeypadAnimationTime_s              = 0.15f;
 
 
 
+
+- (void)setCurrentResponder:(UIView *)currentResponder {
+    [_currentResponder setBackgroundColor:_currentResponderBackgroundColor];
+    [_currentResponder setUserInteractionEnabled:YES];
+    _currentResponder = currentResponder;
+    _currentResponderBackgroundColor = currentResponder.backgroundColor;
+    [_currentResponder setBackgroundColor:[UIColor textFieldEditingColor]];
+    [_currentResponder setUserInteractionEnabled:NO];
+    [self showKeypad];
+}
+
+
 - (void)doneButtonDown:(UIButton*)sender {
     
 }
@@ -371,10 +385,12 @@ static const float      kKeypadAnimationTime_s              = 0.15f;
 //            [delegate keypadDoneButtonTapped:_currentResponder withValue:_value];
 //        }
 //    }
-    if ((_currentDelegate != nil) && ([_currentDelegate respondsToSelector:@selector(keypadDoneButtonTapped:withValue:)])) {
-        [_currentDelegate keypadDoneButtonTapped:_currentResponder withValue:_value];
+    if ((_currentDelegate != nil) && ([_currentDelegate respondsToSelector:@selector(keypadDoneButtonTapped:forComponent:withValue:)])) {
+        [_currentDelegate keypadDoneButtonTapped:self forComponent:_currentResponder withValue:_value];
     }
-    [_currentResponder setBackgroundColor:[UIColor clearColor]];
+    
+    [_currentResponder setBackgroundColor:_currentResponderBackgroundColor];
+    [_currentResponder setUserInteractionEnabled:YES];
     [self hideKeypad];
 }
 
@@ -390,10 +406,11 @@ static const float      kKeypadAnimationTime_s              = 0.15f;
 //            [delegate keypadCancelButtonTapped:_currentResponder];
 //        }
 //    }
-    if ((_currentDelegate != nil) && ([_currentDelegate respondsToSelector:@selector(keypadCancelButtonTapped:)])) {
-        [_currentDelegate keypadCancelButtonTapped:_currentResponder];
+    if ((_currentDelegate != nil) && ([_currentDelegate respondsToSelector:@selector(keypadCancelButtonTapped:forComponent:)])) {
+        [_currentDelegate keypadCancelButtonTapped:self forComponent:_currentResponder];
     }
-    [_currentResponder setBackgroundColor:[UIColor clearColor]];
+    [_currentResponder setBackgroundColor:_currentResponderBackgroundColor];
+    [_currentResponder setUserInteractionEnabled:YES];
     [self hideKeypad];
 }
 
@@ -409,16 +426,6 @@ static const float      kKeypadAnimationTime_s              = 0.15f;
     [_currentValue setString:_value];
     [_valueLabel setText:_value];
 }
-
-- (void)setCurrentResponder:(UIButton *)currentResponder {
-    [_currentResponder setBackgroundColor:[UIColor clearColor]];
-    _currentResponder = currentResponder;
-    [_currentResponder setBackgroundColor:_editingColor];
-    if (!_keypadIsShowing) {
-        [self showKeypad];
-    }
-}
-
 
 - (void)updateValueLabel {
     [_valueLabel setText:_currentValue];

@@ -28,7 +28,6 @@
 		FC356C512223D0F500B93F5C /* TWTremolo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C4B2223D0F500B93F5C /* TWTremolo.cpp */; };
 		FC356C632223D10400B93F5C /* TWMasterController.mm in Sources */ = {isa = PBXBuildFile; fileRef = FC356C522223D10300B93F5C /* TWMasterController.mm */; };
 		FC356C642223D10400B93F5C /* TWSequencer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C532223D10300B93F5C /* TWSequencer.cpp */; };
-		FC356C652223D10400B93F5C /* TWMixer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C582223D10300B93F5C /* TWMixer.cpp */; };
 		FC356C662223D10400B93F5C /* TWAudioEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C5A2223D10400B93F5C /* TWAudioEngine.cpp */; };
 		FC356C672223D10400B93F5C /* TWLevelMeter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C5B2223D10400B93F5C /* TWLevelMeter.cpp */; };
 		FC356C682223D10400B93F5C /* TWRingBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC356C5E2223D10400B93F5C /* TWRingBuffer.cpp */; };
@@ -146,8 +145,6 @@
 		FC356C552223D10300B93F5C /* TWParameter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWParameter.h; sourceTree = "<group>"; };
 		FC356C562223D10300B93F5C /* TWSequencer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWSequencer.h; sourceTree = "<group>"; };
 		FC356C572223D10300B93F5C /* TWAudioEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWAudioEngine.h; sourceTree = "<group>"; };
-		FC356C582223D10300B93F5C /* TWMixer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TWMixer.cpp; sourceTree = "<group>"; };
-		FC356C592223D10300B93F5C /* TWMixer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWMixer.h; sourceTree = "<group>"; };
 		FC356C5A2223D10400B93F5C /* TWAudioEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TWAudioEngine.cpp; sourceTree = "<group>"; };
 		FC356C5B2223D10400B93F5C /* TWLevelMeter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TWLevelMeter.cpp; sourceTree = "<group>"; };
 		FC356C5C2223D10400B93F5C /* TWMasterController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWMasterController.h; sourceTree = "<group>"; };
@@ -519,8 +516,6 @@
 				FC356C5F2223D10400B93F5C /* TWEnvelope.cpp */,
 				FC356C5D2223D10400B93F5C /* TWLevelMeter.h */,
 				FC356C5B2223D10400B93F5C /* TWLevelMeter.cpp */,
-				FC356C592223D10300B93F5C /* TWMixer.h */,
-				FC356C582223D10300B93F5C /* TWMixer.cpp */,
 				FC356C552223D10300B93F5C /* TWParameter.h */,
 				FC356C602223D10400B93F5C /* TWParameter.cpp */,
 				FC356C542223D10300B93F5C /* TWRingBuffer.h */,
@@ -751,7 +746,6 @@
 				FC0D2E692254945A00A68D58 /* TWFillSlider.m in Sources */,
 				FC356C632223D10400B93F5C /* TWMasterController.mm in Sources */,
 				FC0D2E6B2254945A00A68D58 /* TWCycleStateButton.m in Sources */,
-				FC356C652223D10400B93F5C /* TWMixer.cpp in Sources */,
 				FC356C692223D10400B93F5C /* TWEnvelope.cpp in Sources */,
 				FC0D2E722254945A00A68D58 /* TWMixerView.m in Sources */,
 				FC0D2E6F2254945A00A68D58 /* TWEnvelopeView.m in Sources */,

@@ -492,6 +492,11 @@ void TWAudioEngine::setOscParameterAtSourceIdx(int sourceIdx, TWOscParamID param
             _synths[sourceIdx].setSoftClipp(value, rampTime_ms);
             break;
             
+        case TWOscParamID_OscPhaseOffset:
+            _synths[sourceIdx].setPhaseOffset(kLeftChannel, value, rampTime_ms);
+            _synths[sourceIdx].setPhaseOffset(kRightChannel, value, rampTime_ms);
+            break;
+            
             
             
         case TWOscParamID_TremoloWaveform:
@@ -506,6 +511,10 @@ void TWAudioEngine::setOscParameterAtSourceIdx(int sourceIdx, TWOscParamID param
             _tremolos[sourceIdx].setDepth(value, rampTime_ms);
             break;
             
+        case TWOscParamID_TremoloPhaseOffset:
+            _tremolos[sourceIdx].setPhaseOffset(value, rampTime_ms);
+            break;
+            
             
             
         case TWOscParamID_ShapeTremoloFrequency:
@@ -518,6 +527,10 @@ void TWAudioEngine::setOscParameterAtSourceIdx(int sourceIdx, TWOscParamID param
             
         case TWOscParamID_ShapeTremoloSoftClipp:
             _shapeTremolos[sourceIdx].setSoftClipp(value, rampTime_ms);
+            break;
+            
+        case TWOscParamID_ShapeTremoloPhaseOffset:
+            _shapeTremolos[sourceIdx].setPhaseOffset(value, rampTime_ms);
             break;
             
             

@@ -644,7 +644,8 @@
 
 #pragma mark - TWKeypadDelegate
 
-- (void)keypadDoneButtonTapped:(UIButton *)responder withValue:(NSString *)inValue {
+- (void)keypadDoneButtonTapped:(id)senderKeypad forComponent:(UIView *)responder withValue:(NSString *)inValue {
+//- (void)keypadDoneButtonTapped:(UIButton *)responder withValue:(NSString *)inValue {
     
     if (responder == _rootFreqField) {
         float frequency = [inValue floatValue];
@@ -694,7 +695,8 @@
     }
 }
 
-- (void)keypadCancelButtonTapped:(UIButton *)responder {
+- (void)keypadCancelButtonTapped:(id)senderKeypad forComponent:(UIView *)responder {
+//- (void)keypadCancelButtonTapped:(UIButton *)responder {
     
     if (responder == _rootFreqField) {
         float frequency = [[TWMasterController sharedController] rootFrequency];

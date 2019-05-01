@@ -94,6 +94,11 @@ void TWTremolo::setSoftClipp(float newSoftClipp, float rampTime_ms)
     _lfo->setSoftClipp(newSoftClipp, rampTime_ms);
 }
 
+void TWTremolo::setPhaseOffset(float newPhaseOffset, float rampTime_ms)
+{
+    _lfo->setPhaseOfst(newPhaseOffset, rampTime_ms);
+}
+
 
 
 TWOscillator::TWWaveform TWTremolo::getWaveform()
@@ -116,6 +121,10 @@ float TWTremolo::getSoftClipp()
     return _lfo->getSoftClipp();
 }
 
+float TWTremolo::getPhaseOffset()
+{
+    return _lfo->getPhaseOfst();
+}
 
 
 

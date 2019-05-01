@@ -103,28 +103,31 @@ typedef enum : int {
     TWOscParamID_OscDutyCycle                                   = 6,
     TWOscParamID_OscMononess                                    = 7,
     TWOscParamID_OscSoftClipp                                   = 8,
-    TWOscParamID_TremoloWaveform                                = 9,
-    TWOscParamID_TremoloFrequency                               = 10,
-    TWOscParamID_TremoloDepth                                   = 11,
-    TWOscParamID_ShapeTremoloFrequency                          = 12,
-    TWOscParamID_ShapeTremoloDepth                              = 13,
-    TWOscParamID_ShapeTremoloSoftClipp                          = 14,
-    TWOscParamID_FilterEnable                                   = 15,
-    TWOscParamID_FilterType                                     = 16,
-    TWOscParamID_FilterCutoff                                   = 17,
-    TWOscParamID_FilterResonance                                = 18,
-    TWOscParamID_FilterGain                                     = 19,
-    TWOscParamID_FilterLFOEnable                                = 20,
-    TWOscParamID_FilterLFOWaveform                              = 21,
-    TWOscParamID_FilterLFOFrequency                             = 22,
-    TWOscParamID_FilterLFORange                                 = 23,
-    TWOscParamID_FilterLFOOffset                                = 24,
-    TWOscParamID_OscFMWaveform                                  = 25,
-    TWOscParamID_OscFMAmount                                    = 26,
-    TWOscParamID_OscFMFrequency                                 = 27
+    TWOscParamID_OscPhaseOffset                                 = 9,
+    TWOscParamID_TremoloWaveform                                = 10,
+    TWOscParamID_TremoloFrequency                               = 11,
+    TWOscParamID_TremoloDepth                                   = 12,
+    TWOscParamID_TremoloPhaseOffset                             = 13,
+    TWOscParamID_ShapeTremoloFrequency                          = 14,
+    TWOscParamID_ShapeTremoloDepth                              = 15,
+    TWOscParamID_ShapeTremoloSoftClipp                          = 16,
+    TWOscParamID_ShapeTremoloPhaseOffset                        = 17,
+    TWOscParamID_FilterEnable                                   = 18,
+    TWOscParamID_FilterType                                     = 19,
+    TWOscParamID_FilterCutoff                                   = 20,
+    TWOscParamID_FilterResonance                                = 21,
+    TWOscParamID_FilterGain                                     = 22,
+    TWOscParamID_FilterLFOEnable                                = 23,
+    TWOscParamID_FilterLFOWaveform                              = 24,
+    TWOscParamID_FilterLFOFrequency                             = 25,
+    TWOscParamID_FilterLFORange                                 = 26,
+    TWOscParamID_FilterLFOOffset                                = 27,
+    TWOscParamID_OscFMWaveform                                  = 28,
+    TWOscParamID_OscFMAmount                                    = 29,
+    TWOscParamID_OscFMFrequency                                 = 30
 } TWOscParamID;
 
-#define kOscNumParams                                           27
+#define kOscNumParams                                           30
 
 
 typedef enum : int {

@@ -656,7 +656,8 @@
 
 #pragma mark - TWKeypad
 
-- (void)keypadDoneButtonTapped:(UIButton *)responder withValue:(NSString *)inValue {
+- (void)keypadDoneButtonTapped:(id)senderKeypad forComponent:(UIView*)responder withValue:(NSString *)inValue {
+    
     TWSeqParamID paramID = (TWSeqParamID)responder.tag;
     
     float value = [inValue floatValue];
@@ -667,14 +668,25 @@
     
     UIButton* field = (UIButton*)[_paramFields objectForKey:@(paramID)];
     [field setTitle:[NSString stringWithFormat:@"%.2f", value] forState:UIControlStateNormal];
+    
+//    [responder setBackgroundColor:[UIColor clearColor]];
+    
+//    TWKeypad* keypad = (TWKeypad*)senderKeypad;
+//    [keypad hideKeypad];
 }
 
-- (void)keypadCancelButtonTapped:(UIButton *)responder {
+- (void)keypadCancelButtonTapped:(id)senderKeypad forComponent:(UIView*)responder {
+    
     int paramID = (int)responder.tag;
     float value = [[TWAudioController sharedController] getSeqParameter:paramID atSourceIdx:_sourceIdx];
     
     UIButton* field = (UIButton*)[_paramFields objectForKey:@(paramID)];
     [field setTitle:[NSString stringWithFormat:@"%.2f", value] forState:UIControlStateNormal];
+    
+//    [responder setBackgroundColor:[UIColor clearColor]];
+    
+//    TWKeypad* keypad = (TWKeypad*)senderKeypad;
+//    [keypad hideKeypad];
 }
 
 - (void)paramFieldTapped:(UIButton*)sender {
@@ -684,6 +696,8 @@
     [keypad setValue:[NSString stringWithFormat:@"%.2f", [[TWAudioController sharedController] getSeqParameter:paramID atSourceIdx:_sourceIdx]]];
     [keypad setCurrentDelegate:self];
     [keypad setCurrentResponder:sender];
+//    [sender setBackgroundColor:[UIColor textFieldEditingColor]];
+//    [keypad showKeypad];
 }
 
 

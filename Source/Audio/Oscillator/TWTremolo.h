@@ -28,11 +28,13 @@ public:
     void setFrequency(float newFrequency, float rampTime_ms);
     void setDepth(float newDepth, float rampTime_ms);
     void setSoftClipp(float newSoftClipp, float rampTime_ms);
+    void setPhaseOffset(float newPhaseOffset, float rampTime_ms);
     
     TWOscillator::TWWaveform getWaveform();
     float getFrequency();
     float getDepth();
     float getSoftClipp();
+    float getPhaseOffset();
     
     void resetPhase(float rampTimeInSamples);
     
