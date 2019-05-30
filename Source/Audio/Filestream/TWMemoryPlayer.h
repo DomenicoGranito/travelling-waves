@@ -104,12 +104,6 @@ private:
     AudioBufferList*        _readABL;
     ExtAudioFileRef         _audioFile;
     
-    void _printASBD(AudioStreamBasicDescription* asbd, std::string context);
-    void _printABL(AudioBufferList *abl, std::string context);
-    AudioBufferList* _allocateABL(UInt32 channelsPerFrame, UInt32 bytesPerFrame, bool interleaved, UInt32 capacityFrames);
-    void _deallocateABL(AudioBufferList* abl);
-    
-    
     OSStatus _readHelper(uint32_t * framesToRead);
     void _reset();
     

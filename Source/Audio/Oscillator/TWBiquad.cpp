@@ -8,6 +8,7 @@
 //  http://shepazu.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html
 
 #include "TWBiquad.h"
+#include "TWLog.h"
 #include <math.h>
 
 #define DEBUG_PRINT     0
@@ -23,22 +24,59 @@ TWBiquad::TWBiquad()
 {
     _sampleRate = 48000.0f;
     
-    _filterType = Lowpass;
+    TWParameter* filterType = new TWParameter();
+    filterType->setMaxValue(TWBiquad::NumFilters);
+    filterType->setMinValue(TWBiquad::Lowpass);
+    filterType->updateDefaultValue(TWBiquad::Lowpass);
+    filterType->setTargetValue(TWBiquad::Lowpass, 0.0f);
+    filterType->setParameterID(ParameterID::FilterType);
+    _parameters.insert(std::make_pair(ParameterID::FilterType, filterType));
+    
+    TWParameter* enabledLevel = new TWParameter();
+    enabledLevel->setMaxValue(1.0f);
+    enabledLevel->setMinValue(0.0f);
+    enabledLevel->updateDefaultValue(0.0f);
+    enabledLevel->setTargetValue(0.0f, 0.0f);
+    enabledLevel->setParameterID(ParameterID::FilterEnable);
+    _parameters.insert(std::make_pair(ParameterID::FilterEnable, enabledLevel));
+    
+    TWParameter* filterCutoff = new TWParameter();
+    filterCutoff->setMaxValue(kMaxFrequency);
+    filterCutoff->setMinValue(kMinFrequency);
+    filterCutoff->updateDefaultValue(240.0f);
+    filterCutoff->setTargetValue(240.0f, 0.0f);
+    filterCutoff->setParameterID(ParameterID::FilterCutoffFrequency);
+    _parameters.insert(std::make_pair(ParameterID::FilterEnable, filterCutoff));
+    
+    TWParameter* gain = new TWParameter();
+    gain->setMaxValue(6.0f);
+    gain->setMinValue(0.0f);
+    gain->updateDefaultValue(1.0f);
+    gain->setTargetValue(1.0f, 0.0f);
+    gain->setParameterID(ParameterID::FilterGain);
+    _parameters.insert(std::make_pair(ParameterID::FilterGain, gain));
+    
+    TWParameter* resonance = new TWParameter();
+    resonance->setMaxValue(64.0f);
+    resonance->setMinValue(0.01f);
+    resonance->updateDefaultValue(M_SQRT1_2);
+    resonance->setTargetValue(M_SQRT1_2, 0.0f);
+    resonance->setParameterID(ParameterID::FilterResonance);
+    _parameters.insert(std::make_pair(ParameterID::FilterResonance, resonance));
+    
     _newCutoff = 240.0f;
-    _cutoff.setParameterID(55);
-    _resonance.setTargetValue(M_SQRT1_2, 0.0f);
-    _gain.setTargetValue(1.0f, 0.0f);
+
     
     _lfo = new TWOscillator();
-    _lfo->setWaveform(TWOscillator::Sine);
-    _lfo->setAmplitude(1.0f, 0.0f);
-    _lfo->setFrequency(1.0f, 0.0f);
+    _lfo->setParameterValue(TWOscillator::ParameterID::WaveformType, TWOscillator::Sine, 0.0f);
+    _lfo->setParameterValue(TWOscillator::ParameterID::AmplitudeDB, 1.0f, 0.0f);
+    _lfo->setParameterValue(TWOscillator::ParameterID::Frequency, 1.0f, 0.0f);
     _lfoEnabled = false;
     _newRange = 100.0f;
     
     _setCutoffParameters(0.0f);
     
-    _enabled = false;
+//    _enabled = false;
     _setIsRunning(false);
     _computeFilterParameters();
     _debug = 0;
@@ -49,6 +87,7 @@ TWBiquad::TWBiquad()
 TWBiquad::~TWBiquad()
 {
     delete _lfo;
+    _parameters.clear();
 }
 
 
@@ -63,13 +102,13 @@ void TWBiquad::prepare(float sampleRate)
 
 void TWBiquad::process(float& sample)
 {
-    if (!_enabled) {
-        float yn = _x[n_2];
-        _x[n_2] = _x[n_1];
-        _x[n_1] = sample;
-        sample = yn;
-        return;
-    }
+//    if (!_enabled) {
+//        float yn = _x[n_2];
+//        _x[n_2] = _x[n_1];
+//        _x[n_1] = sample;
+//        sample = yn;
+//        return;
+//    }
     
     float xn = sample;
     float yn = 0.0f;
@@ -87,7 +126,11 @@ void TWBiquad::process(float& sample)
     _y[n_2] = _y[n_1];
     _y[n_1] = yn;
     
-    sample = yn * _gain.getCurrentValue();
+    yn *= _parameterForID(TWBiquad::ParameterID::FilterGain)->getCurrentValue();
+    
+    float enableLevel = _parameterForID(TWBiquad::ParameterID::FilterEnable)->getCurrentValue();
+    
+    sample = (yn * enableLevel) + (xn * (1.0f - enableLevel));
 }
 
 void TWBiquad::release()
@@ -101,17 +144,86 @@ void TWBiquad::release()
 
 #pragma mark - Parameters
 
-void TWBiquad::setEnabled(bool enabled)
+void TWBiquad::setParameterValue(int parameterID, float value, float rampTime_ms)
 {
-    _enabled = enabled;
+    TWParameter* parameter = _parameterForID(parameterID);
+    if (parameter == nullptr) {
+        TWLog::Log(TWLog::LOG_ERROR, "TWBiquad::setParameterValue: Error! No parameter of ID(%d) found\n", parameterID);
+        return;
+    }
+    
+    switch (parameterID) {
+        case FilterCutoffFrequency:
+            _setCutoffFrequency(value, rampTime_ms);
+            break;
+            
+        case FilterResonance:
+            _setResonance(value, rampTime_ms);
+            break;
+            
+        default:
+            parameter->setTargetValue(value, (rampTime_ms / 1000.0f) * _sampleRate);
+            break;
+    }
 }
 
-void TWBiquad::setFilterType(TWFilterType type)
+
+float TWBiquad::getParameterValue(int parameterID)
 {
-    _filterType = type;
+    TWParameter* parameter = _parameterForID(parameterID);
+    if (parameter == nullptr) {
+        TWLog::Log(TWLog::LOG_ERROR, "TWBiquad::getParameterValue: Error! No parameter of ID(%d) found\n", parameterID);
+        return 0.0f;
+    }
+    return parameter->getTargetValue();
 }
 
-void TWBiquad::setCutoffFrequency(float newFc, float rampTime_ms)
+float TWBiquad::getParameterMinValue(int parameterID)
+{
+    TWParameter* parameter = _parameterForID(parameterID);
+    if (parameter == nullptr) {
+        TWLog::Log(TWLog::LOG_ERROR, "TWBiquad::getParameterMinValue: Error! No parameter of ID(%d) found\n", parameterID);
+        return 0.0f;
+    }
+    return parameter->getMinValue();
+}
+
+float TWBiquad::getParameterMaxValue(int parameterID)
+{
+    TWParameter* parameter = _parameterForID(parameterID);
+    if (parameter == nullptr) {
+        TWLog::Log(TWLog::LOG_ERROR, "TWBiquad::getParameterMaxValue: Error! No parameter of ID(%d) found\n", parameterID);
+        return 0.0f;
+    }
+    return parameter->getMaxValue();
+}
+
+void TWBiquad::setParameterDefaultValue(int parameterID, float rampTime_ms)
+{
+    TWParameter* parameter = _parameterForID(parameterID);
+    if (parameter == nullptr) {
+        TWLog::Log(TWLog::LOG_ERROR, "TWBiquad::getParameterMaxValue: Error! No parameter of ID(%d) found\n", parameterID);
+        return;
+    }
+    parameter->setDefaultValue((rampTime_ms / 1000.0f) * _sampleRate);
+}
+
+float TWBiquad::getParameterDefaultValue(int parameterID)
+{
+    TWParameter* parameter = _parameterForID(parameterID);
+    if (parameter == nullptr) {
+        TWLog::Log(TWLog::LOG_ERROR, "TWBiquad::getParameterMaxValue: Error! No parameter of ID(%d) found\n", parameterID);
+        return 0.0f;
+    }
+    return parameter->getDefaultValue();
+}
+
+
+
+
+
+
+void TWBiquad::_setCutoffFrequency(float newFc, float rampTime_ms)
 {
     if (newFc <= kMinFrequency) {
         _newCutoff = kMinFrequency;
@@ -122,6 +234,8 @@ void TWBiquad::setCutoffFrequency(float newFc, float rampTime_ms)
     }
     _setCutoffParameters(rampTime_ms);
 }
+
+
 
 void TWBiquad::setCutoffFrequencyInSamples(float newFc, float rampTimeSamples)
 {
@@ -240,10 +354,10 @@ float TWBiquad::getLFOOffset()
 
 void TWBiquad::_setIsRunning(bool isRunning)
 {
-    _cutoff.setIsRunning(isRunning);
-    _gain.setIsRunning(isRunning);
-    _resonance.setIsRunning(isRunning);
-    _lfoRange.setIsRunning(isRunning);
+    _cutoff.setIsIORunning(isRunning);
+    _gain.setIsIORunning(isRunning);
+    _resonance.setIsIORunning(isRunning);
+    _lfoRange.setIsIORunning(isRunning);
 }
 
 void TWBiquad::_computeFilterParameters()
@@ -350,3 +464,17 @@ void TWBiquad::_setCutoffParametersInSamples(float rampTimeSamples)
     _lfoRange.setTargetValue(_newRange, rampTimeSamples);
     _cutoff.setTargetValue(_newCutoff, rampTimeSamples);
 }
+
+
+TWParameter* TWBiquad::_parameterForID(int parameterID)
+{
+    TWParameter* parameter = nullptr;
+    
+    std::map<int, TWParameter*>::iterator it = _parameters.find(parameterID);
+    if (it != _parameters.end()) {
+        parameter = it->second;
+    }
+    
+    return parameter;
+}
+

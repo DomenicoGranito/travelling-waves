@@ -30,9 +30,6 @@
         [TWAudioController sharedController];
         [self initializeDefaults];
         
-        // Initialize Clock
-        [TWClock sharedClock];
-        
         
         // Setup Project Directory
         NSError* error;

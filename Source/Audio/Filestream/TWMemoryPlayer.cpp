@@ -7,6 +7,7 @@
 //
 
 #include "TWMemoryPlayer.h"
+#include "TWAudioUtilities.h"
 
 #define kAudioFileReadBufferNumFrames           32768
 
@@ -34,7 +35,7 @@ TWMemoryPlayer::TWMemoryPlayer()
     //--- ABL Settings ---//
     float byteDepth         = 4;
     bool isInterleaved      = true;
-    _readABL                = _allocateABL(kNumChannels, kNumChannels * byteDepth, isInterleaved, kAudioFileReadBufferNumFrames);
+    _readABL                = TWAudioUtilities::AllocateABL(kNumChannels, kNumChannels * byteDepth, isInterleaved, kAudioFileReadBufferNumFrames);
     
     _buffer                 = nullptr;
     _audioFile              = NULL;
@@ -47,7 +48,7 @@ TWMemoryPlayer::TWMemoryPlayer()
 TWMemoryPlayer::~TWMemoryPlayer()
 {
     _reset();
-    _deallocateABL(_readABL);
+    TWAudioUtilities::DeallocateABL(_readABL);
 }
 
 
@@ -140,7 +141,7 @@ int TWMemoryPlayer::loadAudioFile(std::string filepath)
         _reset();
         return -2;
     }
-//    _printASBD(&inASBD, "TWFileStream: inFileASBD");
+//    TWAudioUtilities::PrintASBD(&inASBD, "TWFileStream: inFileASBD");
     if (inASBD.mSampleRate <= 0) {
         printf("\nTWMemoryPlayer::loadAudioFile [%d] : Error in kExtAudioFileProperty_FileDataFormat, invalid file sample rate : %f\n", _sourceIdx, inASBD.mSampleRate);
         _reset();
@@ -202,7 +203,7 @@ int TWMemoryPlayer::loadAudioFile(std::string filepath)
     
     
     
-//    _printABL(_readABL, "TWMemoryPlayer::loadAudioFile ReadABL\n");
+//    TWAudioUtilities::PrintABL(_readABL, "TWMemoryPlayer::loadAudioFile ReadABL\n");
     UInt32 framesRead = kAudioFileReadBufferNumFrames;
     while (framesRead > 0) {
         status = _readHelper(&framesRead);
@@ -367,69 +368,6 @@ int TWMemoryPlayer::getSourceIdx()
 //============================================================================================================
 
 
-//----- ASBD Utils -----//
-
-void TWMemoryPlayer::_printASBD(AudioStreamBasicDescription* asbd, std::string context)
-{
-    printf("\nASBD (%s): ", context.c_str());
-    printf("\nmSampleRate: %f",  asbd->mSampleRate);
-    printf("\nmFormatID: %u",  (unsigned int)asbd->mFormatID);
-    printf("\nmFormatFlags: %u",  (unsigned int)asbd->mFormatFlags);
-    printf("\nmBitsPerChannel: %d",  asbd->mBitsPerChannel);
-    printf("\nmChannelsPerFrame: %d",  asbd->mChannelsPerFrame);
-    printf("\nmBytesPerFrame: %d",  asbd->mBytesPerFrame);
-    printf("\nmFramesPerPacket: %d",  asbd->mFramesPerPacket);
-    printf("\nmBytesPerPacket: %d",  asbd->mBytesPerPacket);
-    printf("\n");
-}
-
-void TWMemoryPlayer::_printABL(AudioBufferList *abl, std::string context)
-{
-    printf("\nABL (%s):", context.c_str());
-    printf("\nmNumBuffers: %d", abl->mNumberBuffers);
-    for (int buffer=0; buffer < abl->mNumberBuffers; buffer++) {
-        printf("\nBuffer[%d]. mNumChannels: %d, mDataByteSize: %d", buffer, abl->mBuffers[buffer].mNumberChannels, abl->mBuffers[buffer].mDataByteSize);
-    }
-    printf("\n");
-}
-
-AudioBufferList* TWMemoryPlayer::_allocateABL(UInt32 channelsPerFrame, UInt32 bytesPerFrame, bool interleaved, UInt32 capacityFrames)
-{
-    AudioBufferList *bufferList = NULL;
-    
-    UInt32 numBuffers = interleaved ? 1 : channelsPerFrame;
-    UInt32 channelsPerBuffer = interleaved ? channelsPerFrame : 1;
-    
-    bufferList = static_cast<AudioBufferList*>(calloc(1, offsetof(AudioBufferList, mBuffers) + (sizeof(AudioBuffer) * numBuffers)));
-    
-    bufferList->mNumberBuffers = numBuffers;
-    
-    for(UInt32 bufferIndex = 0; bufferIndex < bufferList->mNumberBuffers; ++bufferIndex) {
-        bufferList->mBuffers[bufferIndex].mData = static_cast<void *>(calloc(capacityFrames, bytesPerFrame));
-        bufferList->mBuffers[bufferIndex].mDataByteSize = capacityFrames * bytesPerFrame;
-        bufferList->mBuffers[bufferIndex].mNumberChannels = channelsPerBuffer;
-    }
-    
-    return bufferList;
-}
-
-void TWMemoryPlayer::_deallocateABL(AudioBufferList* abl)
-{
-    if (abl == nullptr) {
-        return;
-    }
-    
-    for (UInt32 bufferIdx=0; bufferIdx < abl->mNumberBuffers; bufferIdx++) {
-        if (abl->mBuffers[bufferIdx].mData != nullptr) {
-            free(abl->mBuffers[bufferIdx].mData);
-        }
-    }
-    free(abl);
-    abl = nullptr;
-}
-
-
-
 //----- File Read and Reset -----//
 
 OSStatus TWMemoryPlayer::_readHelper(uint32_t * framesToRead)
@@ -564,9 +502,9 @@ std::string TWMemoryPlayer::_playbackStatusToString(TWPlaybackStatus status)
 
 void TWMemoryPlayer::_setIsIORunning(bool isIORunning)
 {
-    _currentVelocity.setIsRunning(isIORunning);
-    _maxVolume.setIsRunning(isIORunning);
-    _fadeOutGain.setIsRunning(isIORunning);
+    _currentVelocity.setIsIORunning(isIORunning);
+    _maxVolume.setIsIORunning(isIORunning);
+    _fadeOutGain.setIsIORunning(isIORunning);
     _isIORunning = isIORunning;
 }
 

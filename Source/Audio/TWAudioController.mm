@@ -13,21 +13,45 @@
 #import <MediaPlayer/MediaPlayer.h>
 
 #include "TWAudioEngine.h"
-#include "TWUtils.h"
+#include "TWAudioUtilities.h"
 
 #include <functional>
 
 
-static TWAudioEngine* _engine;
+
+static TWAudioEngine*               _engine;
+static AudioComponentInstance       _audioUnit;
+static AudioBufferList*             _inputABL;
+
+
 static OSStatus playbackCallback(void *inRefCon,
                                  AudioUnitRenderActionFlags *ioActionFlags,
                                  const AudioTimeStamp *inTimeStamp,
                                  UInt32 inBusNumber,
                                  UInt32 inNumberFrames,
                                  AudioBufferList *ioData) {
+    
+//    int numChannels = ioData->mNumberBuffers;
+//
+//    float** outputBuffer = new float* [numChannels];
+//    float** inputBuffer = new float* [numChannels];
+//
+//    for (int channel = 0; channel < numChannels; channel++) {
+//        outputBuffer[channel] = (float*)ioData->mBuffers[channel].mData;
+//        inputBuffer[channel] = (float*)_inputABL->mBuffers[channel].mData;
+//        for (int sample = 0; sample < inNumberFrames; sample++) {
+//            outputBuffer[channel][sample] = 0.0f;
+//        }
+//    }
+//    _engine->process(inputBuffer, outputBuffer, numChannels, inNumberFrames);
+    
+    
+    
     float* leftBuffer = (float*)ioData->mBuffers[0].mData;
     float* rightBuffer = (float*)ioData->mBuffers[1].mData;
     _engine->process(leftBuffer, rightBuffer, inNumberFrames);
+    
+    
     return noErr;
 }
 
@@ -40,11 +64,67 @@ static void enginePlaybackFinishedProc(int sourceIdx, int status) {
 }
 
 
+
+
+static OSStatus recordingCallback(void *inRefCon,
+                                  AudioUnitRenderActionFlags *ioActionFlags,
+                                  const AudioTimeStamp *inTimeStamp,
+                                  UInt32 inBusNumber,
+                                  UInt32 inNumberFrames,
+                                  AudioBufferList *ioData) {
+    
+//    TWAudioCallbackStruct* callbackStruct = (TWAudioCallbackStruct*)inRefCon;
+//    AudioComponentInstance audioUnit = callbackStruct->audioUnit;
+//    AudioBufferList* bufferList = callbackStruct->inputBufferList;
+    
+    // TODO: Use inRefCon to access our interface object to do stuff
+    // Then, use inNumberFrames to figure out how much data is available, and make
+    // that much space available in buffers in an AudioBufferList.
+    
+//    AudioBufferList *bufferList; // <- Fill this up with buffers (you will want to malloc it, as it's a dynamic-length list)
+    
+    // Then:
+    // Obtain recorded samples
+    
+    OSStatus status;
+    
+    status = AudioUnitRender(_audioUnit,
+                             ioActionFlags,
+                             inTimeStamp,
+                             inBusNumber,
+                             inNumberFrames,
+                             _inputABL);
+    TWAudioUtilities::CheckOSStatus(status, "recordingCallback::AudioUnitRender");
+    
+    float* leftBuffer = (float*)ioData->mBuffers[0].mData;
+    float* rightBuffer = (float*)ioData->mBuffers[1].mData;
+    
+    for (int frame = 0; frame < inNumberFrames; frame++) {
+        printf("[%d / %d] : %f\t%f\n", frame, inNumberFrames, leftBuffer[frame], rightBuffer[frame]);
+    }
+    
+    // Now, we have the samples we just read sitting in buffers in bufferList
+//    DoStuffWithTheRecordedAudio(bufferList);
+    return noErr;
+}
+
+
+
+
+
+//====================================================================================================
+
+
+
 @interface TWAudioController()
 {
+//    TWAudioEngine*              _engine;
+//    AudioComponentInstance      _audioUnit;
+//    AudioBufferList*            _inputABL;
+    
     AVAudioFormat*              _currentFormat;
-    AudioComponentInstance      _audioUnit;
     NSMutableArray*             _delegates;
+    
     BOOL                        _userInitiatedAudioRunningStatus;
 }
 @end
@@ -57,8 +137,8 @@ static void enginePlaybackFinishedProc(int sourceIdx, int status) {
 - (id)init {
     
     if (self = [super init]) {
-        [self _initializeAudioServices];
         [self _setupAudioEngine];
+        [self _initializeAudioServices];
         _delegates = [[NSMutableArray alloc] init];
         _playbackFinishedBlock = nil;
     }
@@ -93,7 +173,8 @@ static void enginePlaybackFinishedProc(int sourceIdx, int status) {
     NSError* error;
     
     // Set Category Mode and Options
-    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:&error];
+//    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord mode:AVAudioSessionModeMeasurement options:0 error:&error];
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback mode:AVAudioSessionModeDefault options:0 error:&error];
     if (error) {
         NSLog(@"Error setting audio session category, mode and options: %@", error.description);
     }
@@ -104,11 +185,23 @@ static void enginePlaybackFinishedProc(int sourceIdx, int status) {
         NSLog(@"Error setting audio session preferred sample rate: %@", error.description);
     }
     
+    // Set Preferred Block Size
+    [[AVAudioSession sharedInstance] setPreferredIOBufferDuration:(kDefaultBufferDuration_ms / 1000.0f) error:&error];
+    if (error) {
+        NSLog(@"Error setting audio session preferred block size: %@", error.description);
+    }
+    
     // Set Preferred Number of Channels
     [[AVAudioSession sharedInstance] setPreferredOutputNumberOfChannels:kNumChannels error:&error];
     if (error) {
         NSLog(@"Error setting audio session preferred number of output channels: %@", error.description);
     }
+    
+//    [[AVAudioSession sharedInstance] setPreferredInputNumberOfChannels:1 error:&error];
+//    if (error) {
+//        NSLog(@"Error setting audio session preferred number of input channels: %@", error.description);
+//    }
+    
     
     // Listen for Interruptions
     [[NSNotificationCenter defaultCenter] addObserver: self
@@ -264,7 +357,9 @@ static void enginePlaybackFinishedProc(int sourceIdx, int status) {
     
     // Get RemoteI/O Audio Unit
     status = AudioComponentInstanceNew(outputComponent, &_audioUnit);
-    [TWUtils checkOSStatus:status inContext:@"AudioComponentInstanceNew"];
+    TWAudioUtilities::CheckOSStatus(status, "AudioComponentInstanceNew");
+    
+    
     
     // Enable IO for playback
     UInt32 flag = 1;
@@ -274,7 +369,18 @@ static void enginePlaybackFinishedProc(int sourceIdx, int status) {
                                   kOutputBus,
                                   &flag,
                                   sizeof(flag));
-    [TWUtils checkOSStatus:status inContext:@"AudioUnitSetProperty Output EnableIO"];
+    TWAudioUtilities::CheckOSStatus(status, "AudioUnitSetProperty Output EnableIO");
+    
+    // Enable IO for recording
+    status = AudioUnitSetProperty(_audioUnit,
+                                  kAudioOutputUnitProperty_EnableIO,
+                                  kAudioUnitScope_Input,
+                                  kInputBus,
+                                  &flag,
+                                  sizeof(flag));
+    TWAudioUtilities::CheckOSStatus(status, "AudioUnitSetProperty Input EnableIO");
+    
+    
     
     // Create AudioFormat
     _currentFormat = nil;
@@ -284,6 +390,8 @@ static void enginePlaybackFinishedProc(int sourceIdx, int status) {
                                                      interleaved:NO];
     AudioStreamBasicDescription outASBD = *(_currentFormat.streamDescription);
     
+    
+    
     // Apply AudioFormat on Output Audio Unit
     status = AudioUnitSetProperty(_audioUnit,
                                   kAudioUnitProperty_StreamFormat,
@@ -291,23 +399,66 @@ static void enginePlaybackFinishedProc(int sourceIdx, int status) {
                                   kOutputBus,
                                   &outASBD,
                                   sizeof(outASBD));
-    [TWUtils checkOSStatus:status inContext:@"Set Output ASBD"];
+    TWAudioUtilities::CheckOSStatus(status, "Set Output ASBD");
+    
+    
+    // Apply AudioFormat on Input Audio Unit
+    status = AudioUnitSetProperty(_audioUnit,
+                                  kAudioUnitProperty_StreamFormat,
+                                  kAudioUnitScope_Output,
+                                  kInputBus,
+                                  &outASBD,
+                                  sizeof(outASBD));
+    TWAudioUtilities::CheckOSStatus(status, "Set Input ASBD");
+    
+    
+    
+    
+    // Allocate Input ABL
+    int numSamplesPerCallback = int(kDefaultBufferDuration_ms / 1000.0f * kDefaultSampleRate);
+    _inputABL = TWAudioUtilities::AllocateABL(kNumChannels, kNumChannels * 4.0f, false, kNumChannels * numSamplesPerCallback);
+    
+    
     
     // Setup Output Audio Callback
     AURenderCallbackStruct callbackStruct;
     callbackStruct.inputProc = playbackCallback;
-    callbackStruct.inputProcRefCon = (__bridge void*)self;
+    callbackStruct.inputProcRefCon = nullptr;
     status = AudioUnitSetProperty(_audioUnit,
                                   kAudioUnitProperty_SetRenderCallback,
                                   kAudioUnitScope_Global,
                                   kOutputBus,
                                   &callbackStruct,
                                   sizeof(callbackStruct));
-    [TWUtils checkOSStatus:status inContext:@"Setup Output Audio Callback"];
+    TWAudioUtilities::CheckOSStatus(status, "Setup Output Audio Callback");
+    
+    
+    // Setup Input Audio Callback
+    callbackStruct.inputProc = recordingCallback;
+    callbackStruct.inputProcRefCon = nullptr;
+    status = AudioUnitSetProperty(_audioUnit,
+                                  kAudioUnitProperty_SetRenderCallback,
+                                  kAudioUnitScope_Global,
+                                  kInputBus,
+                                  &callbackStruct,
+                                  sizeof(callbackStruct));
+    TWAudioUtilities::CheckOSStatus(status, "Setup Input Audio Callback");
+    
+    
+    // Disable buffer allocation for recording - to pass on our own
+    flag = 0;
+    status = AudioUnitSetProperty(_audioUnit,
+                                  kAudioUnitProperty_ShouldAllocateBuffer,
+                                  kAudioUnitScope_Output,
+                                  kInputBus,
+                                  &flag,
+                                  sizeof(flag));
+    TWAudioUtilities::CheckOSStatus(status, "Should Allocate Input Buffer");
+    
     
     // Initialize
     status = AudioUnitInitialize(_audioUnit);
-    [TWUtils checkOSStatus:status inContext:@"AudioUnitInitialize"];
+    TWAudioUtilities::CheckOSStatus(status, "AudioUnitInitialize");
 }
 
 
@@ -334,7 +485,7 @@ static void enginePlaybackFinishedProc(int sourceIdx, int status) {
     _engine->prepare(_currentFormat.sampleRate);
     _engine->resetPhase(0.0);
     OSStatus status = AudioOutputUnitStart(_audioUnit);
-    if([TWUtils checkOSStatus:status inContext:@"AudioOutputUnitStart"]) {
+    if(TWAudioUtilities::CheckOSStatus(status, "AudioOutputUnitStart")) {
         _isRunning = YES;
         for (id<TWAudioControllerDelegate> delegate in _delegates) {
             if ([delegate respondsToSelector:@selector(audioControllerDidStart)]) {
@@ -356,7 +507,7 @@ static void enginePlaybackFinishedProc(int sourceIdx, int status) {
     __block AudioComponentInstance au = _audioUnit;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)((kDefaultRampTime_ms + 200.0f) * NSEC_PER_MSEC)), dispatch_get_main_queue(), ^{
         OSStatus status = AudioOutputUnitStop(au);
-        if([TWUtils checkOSStatus:status inContext:@"AudioUnitStop"]) {
+        if(TWAudioUtilities::CheckOSStatus(status, "AudioOutputUnitStop")) {
             self->_isRunning = NO;
             for (id<TWAudioControllerDelegate> delegate in self->_delegates) {
                 if ([delegate respondsToSelector:@selector(audioControllerDidStop)]) {
@@ -379,6 +530,7 @@ static void enginePlaybackFinishedProc(int sourceIdx, int status) {
 
 - (void)dealloc {
     delete _engine;
+    TWAudioUtilities::DeallocateABL(_inputABL);
     AudioComponentInstanceDispose(_audioUnit);
 }
 

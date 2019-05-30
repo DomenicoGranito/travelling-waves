@@ -85,7 +85,7 @@ void TWDelay::setDryWetRatio(float dryWetRatio, float rampTime_ms)
 
 void TWDelay::_setIsRunning(bool isRunning)
 {
-    _delayTimeSamples.setIsRunning(isRunning);
-    _feedback.setIsRunning(isRunning);
-    _dryWetRatio.setIsRunning(isRunning);
+    _delayTimeSamples.setIsIORunning(isRunning);
+    _feedback.setIsIORunning(isRunning);
+    _dryWetRatio.setIsIORunning(isRunning);
 }

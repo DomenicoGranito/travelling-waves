@@ -17,6 +17,7 @@
 
 static const float  kDefaultSampleRate                          = 48000.0f;
 static const int    kNumChannels                                = 2;
+static const float  kDefaultBufferDuration_ms                   = 10.667f;
 
 static const int    kOutputBus                                  = 0;
 static const int    kInputBus                                   = 1;
@@ -215,15 +216,16 @@ typedef enum : int {
 #define kNumTimeRatioControls                                   5
 
 
-typedef enum : int {
-    TWParamSliderScale_Linear                                   = 0,
-    TWParamSliderScale_Log                                      = 1
-} TWParamSliderScale;
+//typedef enum : int {
+//    TWParamSliderScale_Linear                                   = 0,
+//    TWParamSliderScale_Log                                      = 1
+//} TWParamSliderScale;
 
 
 typedef enum : int {
     TWParamRange_Min                                            = 0,
-    TWParamRange_Max                                            = 1
+    TWParamRange_Max                                            = 1,
+    TWParamRange_Curve                                          = 2
 } TWParamRange;
 
 #endif /* TWHeader_h */

@@ -10,6 +10,7 @@
 #define TWOscillator_h
 
 #include <stdio.h>
+#include <map>
 #include "TWParameter.h"
 
 class TWOscillator {
@@ -19,34 +20,54 @@ public:
     TWOscillator();
     ~TWOscillator();
     
-    enum TWWaveform {
-        Sine        = 0,
-        Sawtooth    = 1,
-        Square      = 2,
-        Noise       = 3,
-        Random      = 4
+    typedef enum {
+        Sine            = 0,
+        Sawtooth        = 1,
+        Square          = 2,
+        Noise           = 3,
+        Random          = 4,
+        NumWaveforms    = 5
+    } TWWaveform;
+    
+    enum ParameterID {
+        WaveformType    = 1,
+        Frequency       = 2,
+        AmplitudeDB     = 3,
+        DutyCycle       = 4,
+        SoftClipp       = 5,
+        PhaseOffset     = 6
     };
+    
     
     void prepare(float sampleRate);
     float getSample();
     void release();
     
-    void setWaveform(TWWaveform type);
-    void setFrequency(float newFrequency, float rampTime_ms);
-    void setAmplitude(float newAmplitude, float rampTime_ms);
-    void setDutyCycle(float newDutyCycle, float rampTime_ms);
-    void setSoftClipp(float newSoftClipp, float rampTime_ms);
-    void setPhaseOfst(float newPhaseOfst, float rampTime_ms);
+    void setParameterValue(int parameterID, float value, float rampTime_ms);
+    void setParameterDefaultValue(int parameterID, float rampTime_ms);
+    float getParameterValue(int parameterID);
+    float getParameterMinValue(int parameterID);
+    float getParameterMaxValue(int parameterID);
+    float getParameterDefaultValue(int parameterID);
+    
+//    void setWaveform(WaveformType type);
+//    void setFrequency(float newFrequency, float rampTime_ms);
+//    void setAmplitude(float newAmplitude, float rampTime_ms);
+//    void setDutyCycle(float newDutyCycle, float rampTime_ms);
+//    void setSoftClipp(float newSoftClipp, float rampTime_ms);
+//    void setPhaseOfst(float newPhaseOfst, float rampTime_ms);
+    
     void resetPhase(float rampTimeInSamples);
+    
     
 //    void shouldApplyShape(bool applyShape);
     
-    TWWaveform getWaveform();
-    float getFrequency();
-    float getAmplitude();
-    float getDutyCycle();
-    float getSoftClipp();
-    float getPhaseOfst();
+//    WaveformType getWaveform();
+//    float getFrequency();
+//    float getAmplitude();
+//    float getDutyCycle();
+//    float getSoftClipp();
+//    float getPhaseOfst();
     
 //    bool willApplyShape();
     
@@ -54,33 +75,36 @@ public:
     
 private:
     
-    float           _sampleRate;
+    float                           _sampleRate;
     
-    TWParameter     _frequency;
-    TWParameter     _amplitude;
-    TWParameter     _dutyCycle;
-    TWParameter     _softClipp;
-    TWParameter     _phaseOffset;
-    TWWaveform      _waveform;
+    std::map<int, TWParameter*>     _parameters;
     
-    float           _getPhase();
-    float           _phase;
-    float           _phaseIncrement;
+//    TWParameter     _frequency;
+//    TWParameter     _amplitude;
+//    TWParameter     _dutyCycle;
+//    TWParameter     _softClipp;
+//    TWParameter     _phaseOffset;
+//    WaveformType    _waveform;
     
-    bool            _isResettingPhase;
-    float           _phaseResetIncrement;
+    float                           _getPhase();
+    float                           _phase;
+    float                           _phaseIncrement;
     
-    float           _currentRandomSample;
-    bool            _didCyclePhase;
-    long long       _debugSampleCount;
+    bool                            _isResettingPhase;
+    float                           _phaseResetIncrement;
     
-//    bool            _shouldApplyShape;
+    float                           _currentRandomSample;
+    bool                            _didCyclePhase;
+    long long                       _debugSampleCount;
     
-    void            _setIsRunning(bool isRunning);
-    void            _log(const char * format, ...);
+//    bool                          _shouldApplyShape;
     
-    long            _debugCount;
-    int             _debugID;
+    TWParameter*                    _parameterForID(int parameterID);
+    
+    void                            _setIsRunning(bool isRunning);
+    
+    long                            _debugCount;
+    int                             _debugID;
 };
 
 #endif /* TWOscillator_h */

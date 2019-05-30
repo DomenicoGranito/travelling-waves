@@ -37,7 +37,7 @@ TWFileStream::TWFileStream()
     _fileReadError                  = false;
     _endOfFileReached               = false;
     
-    _readABL                        = _allocateABL(kNumChannels, kNumChannels * 4, true, kAudioFileReadBufferNumFrames * kNumChannels);
+    _readABL                        = TWAudioUtilities::AllocateABL(kNumChannels, kNumChannels * 4, true, kAudioFileReadBufferNumFrames * kNumChannels);
     
     _velocity.setTargetValue(1.0f, 0.0f);
     _maxVolume.setTargetValue(1.0f, 0.0f);
@@ -52,7 +52,7 @@ TWFileStream::~TWFileStream()
     _leftBuffer = nullptr;
     _rightBuffer = nullptr;
     
-    _deallocateABL(_readABL);
+    TWAudioUtilities::DeallocateABL(_readABL);
     
     _finishedPlaybackProc = nullptr;
 }
@@ -361,68 +361,6 @@ int TWFileStream::getSourceIdx()
 void TWFileStream::setFinishedPlaybackProc(std::function<void(int,bool)> finishedPlaybackProc)
 {
     _finishedPlaybackProc = finishedPlaybackProc;
-}
-
-
-
-
-void TWFileStream::_printASBD(AudioStreamBasicDescription* asbd, std::string context) {
-    printf("\nASBD (%s): ", context.c_str());
-    printf("\nmSampleRate: %f",  asbd->mSampleRate);
-    printf("\nmFormatID: %u",  (unsigned int)asbd->mFormatID);
-    printf("\nmFormatFlags: %u",  (unsigned int)asbd->mFormatFlags);
-    printf("\nmBitsPerChannel: %d",  asbd->mBitsPerChannel);
-    printf("\nmChannelsPerFrame: %d",  asbd->mChannelsPerFrame);
-    printf("\nmBytesPerFrame: %d",  asbd->mBytesPerFrame);
-    printf("\nmFramesPerPacket: %d",  asbd->mFramesPerPacket);
-    printf("\nmBytesPerPacket: %d",  asbd->mBytesPerPacket);
-    printf("\n");
-}
-
-void TWFileStream::_printABL(AudioBufferList *abl, std::string context)
-{
-    printf("\nABL (%s):", context.c_str());
-    printf("\nmNumBuffers: %d", abl->mNumberBuffers);
-    for (int buffer=0; buffer < abl->mNumberBuffers; buffer++) {
-        printf("\nBuffer[%d]. mNumChannels: %d, mDataByteSize: %d", buffer, abl->mBuffers[buffer].mNumberChannels, abl->mBuffers[buffer].mDataByteSize);
-    }
-    printf("\n");
-}
-
-
-AudioBufferList* TWFileStream::_allocateABL(UInt32 channelsPerFrame, UInt32 bytesPerFrame, bool interleaved, UInt32 capacityFrames)
-{
-    AudioBufferList *bufferList = NULL;
-    
-    UInt32 numBuffers = interleaved ? 1 : channelsPerFrame;
-    UInt32 channelsPerBuffer = interleaved ? channelsPerFrame : 1;
-    
-    bufferList = static_cast<AudioBufferList*>(calloc(1, offsetof(AudioBufferList, mBuffers) + (sizeof(AudioBuffer) * numBuffers)));
-    
-    bufferList->mNumberBuffers = numBuffers;
-    
-    for(UInt32 bufferIndex = 0; bufferIndex < bufferList->mNumberBuffers; ++bufferIndex) {
-        bufferList->mBuffers[bufferIndex].mData = static_cast<void *>(calloc(capacityFrames, bytesPerFrame));
-        bufferList->mBuffers[bufferIndex].mDataByteSize = capacityFrames * bytesPerFrame;
-        bufferList->mBuffers[bufferIndex].mNumberChannels = channelsPerBuffer;
-    }
-    
-    return bufferList;
-}
-
-void TWFileStream::_deallocateABL(AudioBufferList* abl)
-{
-    if (abl == nullptr) {
-        return;
-    }
-    
-    for (UInt32 bufferIdx=0; bufferIdx < abl->mNumberBuffers; bufferIdx++) {
-        if (abl->mBuffers[bufferIdx].mData != nullptr) {
-            free(abl->mBuffers[bufferIdx].mData);
-        }
-    }
-    free(abl);
-    abl = nullptr;
 }
 
 

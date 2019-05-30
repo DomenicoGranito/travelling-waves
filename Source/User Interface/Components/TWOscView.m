@@ -11,7 +11,7 @@
 #import "TWAudioController.h"
 #import "TWMasterController.h"
 #import "TWKeypad.h"
-#import "TWUtils.h"
+#import "TWUIUtilities.h"
 #import "TWMixerView.h"
 #import "UIColor+Additions.h"
 
@@ -134,7 +134,7 @@
     NSDictionary*               _paramSliders;
     NSDictionary*               _paramFields;
     NSDictionary*               _paramLongTitles;
-    NSDictionary*               _paramSliderScales;
+//    NSDictionary*               _paramSliderScales;
     NSDictionary*               _paramRanges;
 }
 @end
@@ -214,7 +214,7 @@
     NSMutableDictionary* paramSliders = [[NSMutableDictionary alloc] init];
     NSMutableDictionary* paramFields = [[NSMutableDictionary alloc] init];
     NSMutableDictionary* paramLongTitles = [[NSMutableDictionary alloc] init];
-    NSMutableDictionary* paramSliderScales = [[NSMutableDictionary alloc] init];
+//    NSMutableDictionary* paramSliderScales = [[NSMutableDictionary alloc] init];
     NSMutableDictionary* paramRanges = [[NSMutableDictionary alloc] init];
     
     
@@ -235,16 +235,11 @@
     
     
     _baseFreqSlider = [[UISlider alloc] init];
-    [_baseFreqSlider setMinimumValue:0.0f];
-    [_baseFreqSlider setMaximumValue:1.0f];
-    [_baseFreqSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
-    [_baseFreqSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
-    [_baseFreqSlider setThumbTintColor:[UIColor sliderOnColor]];
+    [self setupSliderProperties:_baseFreqSlider];
     [_baseFreqSlider setTag:TWOscParamID_OscBaseFrequency];
     [_baseFreqSlider addTarget:self action:@selector(paramSliderChanged:) forControlEvents:UIControlEventValueChanged];
     [paramSliders setObject:_baseFreqSlider forKey:@(TWOscParamID_OscBaseFrequency)];
-    [paramSliderScales setObject:@(TWParamSliderScale_Log) forKey:@(TWOscParamID_OscBaseFrequency)];
-    [paramRanges setObject:@[@(kFrequencyMin), @(kFrequencyMax)] forKey:@(TWOscParamID_OscBaseFrequency)];
+    [paramRanges setObject:@[@(kFrequencyMin), @(kFrequencyMax), @(4.0f)] forKey:@(TWOscParamID_OscBaseFrequency)];
     [self addSubview:_baseFreqSlider];
     
     _baseFreqField = [[UIButton alloc] init];
@@ -256,15 +251,12 @@
     
     
     _beatFreqSlider = [[UISlider alloc] init];
-    [_beatFreqSlider setMinimumValue:0.0f];
-    [_beatFreqSlider setMaximumValue:32.0f];
-    [_beatFreqSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
-    [_beatFreqSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
-    [_beatFreqSlider setThumbTintColor:[UIColor sliderOnColor]];
+    [self setupSliderProperties:_beatFreqSlider];
     [_beatFreqSlider setTag:TWOscParamID_OscBeatFrequency];
     [_beatFreqSlider addTarget:self action:@selector(paramSliderChanged:) forControlEvents:UIControlEventValueChanged];
     [paramSliders setObject:_beatFreqSlider forKey:@(TWOscParamID_OscBeatFrequency)];
-    [paramSliderScales setObject:@(TWParamSliderScale_Linear) forKey:@(TWOscParamID_OscBeatFrequency)];
+    [paramRanges setObject:@[@(0.0f), @(32.0f), @(1.0f)] forKey:@(TWOscParamID_OscBeatFrequency)];
+//    [paramSliderScales setObject:@(TWParamSliderScale_Linear) forKey:@(TWOscParamID_OscBeatFrequency)];
     [self addSubview:_beatFreqSlider];
     
     [paramLongTitles setObject:@"Beat Freq (Hz)" forKey:@(TWOscParamID_OscBeatFrequency)];
@@ -286,15 +278,11 @@
     [paramLongTitles setObject:@"Mononess" forKey:@(TWOscParamID_OscMononess)];
     
     _mononessSlider = [[UISlider alloc] init];
-    [_mononessSlider setMinimumValue:0.0f];
-    [_mononessSlider setMaximumValue:1.0f];
-    [_mononessSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
-    [_mononessSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
-    [_mononessSlider setThumbTintColor:[UIColor sliderOnColor]];
+    [self setupSliderProperties:_mononessSlider];
     [_mononessSlider setTag:TWOscParamID_OscMononess];
     [_mononessSlider addTarget:self action:@selector(paramSliderChanged:) forControlEvents:UIControlEventValueChanged];
     [paramSliders setObject:_mononessSlider forKey:@(TWOscParamID_OscMononess)];
-    [paramSliderScales setObject:@(TWParamSliderScale_Linear) forKey:@(TWOscParamID_OscMononess)];
+    [paramRanges setObject:@[@(0.0f), @(1.0f), @(1.0f)] forKey:@(TWOscParamID_OscMononess)];
     [self addSubview:_mononessSlider];
     
     _mononessField = [[UIButton alloc] init];
@@ -315,15 +303,11 @@
     [paramLongTitles setObject:@"Soft Clip" forKey:@(TWOscParamID_OscSoftClipp)];
     
     _softClipSlider = [[UISlider alloc] init];
-    [_softClipSlider setMinimumValue:0.0f];
-    [_softClipSlider setMaximumValue:1.0f];
-    [_softClipSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
-    [_softClipSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
-    [_softClipSlider setThumbTintColor:[UIColor sliderOnColor]];
+    [self setupSliderProperties:_softClipSlider];
     [_softClipSlider setTag:TWOscParamID_OscSoftClipp];
     [_softClipSlider addTarget:self action:@selector(paramSliderChanged:) forControlEvents:UIControlEventValueChanged];
     [paramSliders setObject:_softClipSlider forKey:@(TWOscParamID_OscSoftClipp)];
-    [paramSliderScales setObject:@(TWParamSliderScale_Linear) forKey:@(TWOscParamID_OscSoftClipp)];
+    [paramRanges setObject:@[@(0.0f), @(1.0f), @(1.0f)] forKey:@(TWOscParamID_OscSoftClipp)];
     [self addSubview:_softClipSlider];
     
     _softClipField = [[UIButton alloc] init];
@@ -372,15 +356,11 @@
     [paramLongTitles setObject:@"Trem Rate (Hz)" forKey:@(TWOscParamID_TremoloFrequency)];
     
     _tremoloRateSlider = [[UISlider alloc] init];
-    [_tremoloRateSlider setMinimumValue:kLFORateMin];
-    [_tremoloRateSlider setMaximumValue:kLFORateMax];
-    [_tremoloRateSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
-    [_tremoloRateSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
-    [_tremoloRateSlider setThumbTintColor:[UIColor sliderOnColor]];
+    [self setupSliderProperties:_tremoloRateSlider];
     [_tremoloRateSlider setTag:TWOscParamID_TremoloFrequency];
     [_tremoloRateSlider addTarget:self action:@selector(paramSliderChanged:) forControlEvents:UIControlEventValueChanged];
     [paramSliders setObject:_tremoloRateSlider forKey:@(TWOscParamID_TremoloFrequency)];
-    [paramSliderScales setObject:@(TWParamSliderScale_Linear) forKey:@(TWOscParamID_TremoloFrequency)];
+    [paramRanges setObject:@[@(kLFORateMin), @(kLFORateMax), @(1.0f)] forKey:@(TWOscParamID_TremoloFrequency)];
     [self addSubview:_tremoloRateSlider];
     
     _tremoloRateField = [[UIButton alloc] init];
@@ -399,15 +379,11 @@
     [paramLongTitles setObject:@"Trem Depth" forKey:@(TWOscParamID_TremoloDepth)];
     
     _tremoloDepthSlider = [[UISlider alloc] init];
-    [_tremoloDepthSlider setMinimumValue:0.0f];
-    [_tremoloDepthSlider setMaximumValue:1.0f];
-    [_tremoloDepthSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
-    [_tremoloDepthSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
-    [_tremoloDepthSlider setThumbTintColor:[UIColor sliderOnColor]];
+    [self setupSliderProperties:_tremoloDepthSlider];
     [_tremoloDepthSlider setTag:TWOscParamID_TremoloDepth];
     [_tremoloDepthSlider addTarget:self action:@selector(paramSliderChanged:) forControlEvents:UIControlEventValueChanged];
     [paramSliders setObject:_tremoloDepthSlider forKey:@(TWOscParamID_TremoloDepth)];
-    [paramSliderScales setObject:@(TWParamSliderScale_Linear) forKey:@(TWOscParamID_TremoloDepth)];
+    [paramRanges setObject:@[@(0.0f), @(1.0f), @(1.0f)] forKey:@(TWOscParamID_TremoloDepth)];
     [self addSubview:_tremoloDepthSlider];
     
     _tremoloDepthField = [[UIButton alloc] init];
@@ -429,15 +405,11 @@
     [paramLongTitles setObject:@"Shape Trem Rate (Hz)" forKey:@(TWOscParamID_ShapeTremoloFrequency)];
     
     _shapeTremoloRateSlider = [[UISlider alloc] init];
-    [_shapeTremoloRateSlider setMinimumValue:kLFORateMin];
-    [_shapeTremoloRateSlider setMaximumValue:kLFORateMax];
-    [_shapeTremoloRateSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
-    [_shapeTremoloRateSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
-    [_shapeTremoloRateSlider setThumbTintColor:[UIColor sliderOnColor]];
+    [self setupSliderProperties:_shapeTremoloRateSlider];
     [_shapeTremoloRateSlider setTag:TWOscParamID_ShapeTremoloFrequency];
     [_shapeTremoloRateSlider addTarget:self action:@selector(paramSliderChanged:) forControlEvents:UIControlEventValueChanged];
     [paramSliders setObject:_shapeTremoloRateSlider forKey:@(TWOscParamID_ShapeTremoloFrequency)];
-    [paramSliderScales setObject:@(TWParamSliderScale_Linear) forKey:@(TWOscParamID_ShapeTremoloFrequency)];
+    [paramRanges setObject:@[@(kLFORateMin), @(kLFORateMax), @(1.0f)] forKey:@(TWOscParamID_ShapeTremoloFrequency)];
     [self addSubview:_shapeTremoloRateSlider];
     
     _shapeTremoloRateField = [[UIButton alloc] init];
@@ -456,15 +428,11 @@
     [paramLongTitles setObject:@"Shape Trem Depth" forKey:@(TWOscParamID_ShapeTremoloDepth)];
     
     _shapeTremoloDepthSlider = [[UISlider alloc] init];
-    [_shapeTremoloDepthSlider setMinimumValue:0.0f];
-    [_shapeTremoloDepthSlider setMaximumValue:1.0f];
-    [_shapeTremoloDepthSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
-    [_shapeTremoloDepthSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
-    [_shapeTremoloDepthSlider setThumbTintColor:[UIColor sliderOnColor]];
+    [self setupSliderProperties:_shapeTremoloDepthSlider];
     [_shapeTremoloDepthSlider setTag:TWOscParamID_ShapeTremoloDepth];
     [_shapeTremoloDepthSlider addTarget:self action:@selector(paramSliderChanged:) forControlEvents:UIControlEventValueChanged];
     [paramSliders setObject:_shapeTremoloDepthSlider forKey:@(TWOscParamID_ShapeTremoloDepth)];
-    [paramSliderScales setObject:@(TWParamSliderScale_Linear) forKey:@(TWOscParamID_ShapeTremoloDepth)];
+    [paramRanges setObject:@[@(0.0f), @(1.0f), @(1.0f)] forKey:@(TWOscParamID_ShapeTremoloDepth)];
     [self addSubview:_shapeTremoloDepthSlider];
     
     _shapeTremoloDepthField = [[UIButton alloc] init];
@@ -483,15 +451,11 @@
     [paramLongTitles setObject:@"Shape Trem Shape" forKey:@(TWOscParamID_ShapeTremoloSoftClipp)];
     
     _shapeTremoloShapeSlider = [[UISlider alloc] init];
-    [_shapeTremoloShapeSlider setMinimumValue:0.0f];
-    [_shapeTremoloShapeSlider setMaximumValue:1.0f];
-    [_shapeTremoloShapeSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
-    [_shapeTremoloShapeSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
-    [_shapeTremoloShapeSlider setThumbTintColor:[UIColor sliderOnColor]];
+    [self setupSliderProperties:_shapeTremoloShapeSlider];
     [_shapeTremoloShapeSlider setTag:TWOscParamID_ShapeTremoloSoftClipp];
     [_shapeTremoloShapeSlider addTarget:self action:@selector(paramSliderChanged:) forControlEvents:UIControlEventValueChanged];
     [paramSliders setObject:_shapeTremoloShapeSlider forKey:@(TWOscParamID_ShapeTremoloSoftClipp)];
-    [paramSliderScales setObject:@(TWParamSliderScale_Linear) forKey:@(TWOscParamID_ShapeTremoloSoftClipp)];
+    [paramRanges setObject:@[@(0.0f), @(1.0f), @(1.0f)] forKey:@(TWOscParamID_ShapeTremoloSoftClipp)];
     [self addSubview:_shapeTremoloShapeSlider];
     
     _shapeTremoloShapeField = [[UIButton alloc] init];
@@ -519,16 +483,11 @@
     [paramLongTitles setObject:@"Filter Fc (Hz)" forKey:@(TWOscParamID_FilterCutoff)];
     
     _filterCutoffFreqSlider = [[UISlider alloc] init];
-    [_filterCutoffFreqSlider setMinimumValue:0.0f];
-    [_filterCutoffFreqSlider setMaximumValue:1.0f];
-    [_filterCutoffFreqSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
-    [_filterCutoffFreqSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
-    [_filterCutoffFreqSlider setThumbTintColor:[UIColor sliderOnColor]];
+    [self setupSliderProperties:_filterCutoffFreqSlider];
     [_filterCutoffFreqSlider setTag:TWOscParamID_FilterCutoff];
     [_filterCutoffFreqSlider addTarget:self action:@selector(paramSliderChanged:) forControlEvents:UIControlEventValueChanged];
     [paramSliders setObject:_filterCutoffFreqSlider forKey:@(TWOscParamID_FilterCutoff)];
-    [paramSliderScales setObject:@(TWParamSliderScale_Log) forKey:@(TWOscParamID_FilterCutoff)];
-    [paramRanges setObject:@[@(kFrequencyMin), @(kFrequencyMax)] forKey:@(TWOscParamID_FilterCutoff)];
+    [paramRanges setObject:@[@(kFrequencyMin), @(kFrequencyMax), @(4.0f)] forKey:@(TWOscParamID_FilterCutoff)];
     [self addSubview:_filterCutoffFreqSlider];
     
     _filterCutoffFreqField = [[UIButton alloc] init];
@@ -572,16 +531,11 @@
     [paramLongTitles setObject:@"Resonance (Q)" forKey:@(TWOscParamID_FilterResonance)];
     
     _filterResonanceSlider = [[UISlider alloc] init];
-    [_filterResonanceSlider setMinimumValue:0.0f];
-    [_filterResonanceSlider setMaximumValue:1.0f];
-    [_filterResonanceSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
-    [_filterResonanceSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
-    [_filterResonanceSlider setThumbTintColor:[UIColor sliderOnColor]];
+    [self setupSliderProperties:_filterResonanceSlider];
     [_filterResonanceSlider setTag:TWOscParamID_FilterResonance];
     [_filterResonanceSlider addTarget:self action:@selector(paramSliderChanged:) forControlEvents:UIControlEventValueChanged];
     [paramSliders setObject:_filterResonanceSlider forKey:@(TWOscParamID_FilterResonance)];
-    [paramSliderScales setObject:@(TWParamSliderScale_Log) forKey:@(TWOscParamID_FilterResonance)];
-    [paramRanges setObject:@[@(kResonanceMin), @(kResonanceMax)] forKey:@(TWOscParamID_FilterResonance)];
+    [paramRanges setObject:@[@(kResonanceMin), @(kResonanceMax), @(4.0f)] forKey:@(TWOscParamID_FilterResonance)];
     [self addSubview:_filterResonanceSlider];
     
     _filterResonanceField = [[UIButton alloc] init];
@@ -600,15 +554,11 @@
     [paramLongTitles setObject:@"Filter Gain" forKey:@(TWOscParamID_FilterGain)];
     
     _filterGainSlider = [[UISlider alloc] init];
-    [_filterGainSlider setMinimumValue:1.0f];
-    [_filterGainSlider setMaximumValue:6.0f];
-    [_filterGainSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
-    [_filterGainSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
-    [_filterGainSlider setThumbTintColor:[UIColor sliderOnColor]];
+    [self setupSliderProperties:_filterGainSlider];
     [_filterGainSlider setTag:TWOscParamID_FilterGain];
     [_filterGainSlider addTarget:self action:@selector(paramSliderChanged:) forControlEvents:UIControlEventValueChanged];
     [paramSliders setObject:_filterGainSlider forKey:@(TWOscParamID_FilterGain)];
-    [paramSliderScales setObject:@(TWParamSliderScale_Linear) forKey:@(TWOscParamID_FilterGain)];
+    [paramRanges setObject:@[@(1.0f), @(6.0f), @(1.0f)] forKey:@(TWOscParamID_FilterGain)];
     [self addSubview:_filterGainSlider];
     
     _filterGainField = [[UIButton alloc] init];
@@ -628,15 +578,11 @@
     [paramLongTitles setObject:@"Filter LFO Freq (Hz)" forKey:@(TWOscParamID_FilterLFOFrequency)];
     
     _filterLFORateSlider = [[UISlider alloc] init];
-    [_filterLFORateSlider setMinimumValue:kLFORateMin];
-    [_filterLFORateSlider setMaximumValue:kLFORateMax];
-    [_filterLFORateSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
-    [_filterLFORateSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
-    [_filterLFORateSlider setThumbTintColor:[UIColor sliderOnColor]];
+    [self setupSliderProperties:_filterLFORateSlider];
     [_filterLFORateSlider setTag:TWOscParamID_FilterLFOFrequency];
     [_filterLFORateSlider addTarget:self action:@selector(paramSliderChanged:) forControlEvents:UIControlEventValueChanged];
     [paramSliders setObject:_filterLFORateSlider forKey:@(TWOscParamID_FilterLFOFrequency)];
-    [paramSliderScales setObject:@(TWParamSliderScale_Linear) forKey:@(TWOscParamID_FilterLFOFrequency)];
+    [paramRanges setObject:@[@(kLFORateMin), @(kLFORateMax), @(1.0f)] forKey:@(TWOscParamID_FilterLFOFrequency)];
     [self addSubview:_filterLFORateSlider];
     
     _filterLFORateField = [[UIButton alloc] init];
@@ -655,16 +601,11 @@
     [paramLongTitles setObject:@"Filter LFO Range (Hz)" forKey:@(TWOscParamID_FilterLFORange)];
     
     _filterLFORangeSlider = [[UISlider alloc] init];
-    [_filterLFORangeSlider setMinimumValue:0.0f];
-    [_filterLFORangeSlider setMaximumValue:1.0f];
-    [_filterLFORangeSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
-    [_filterLFORangeSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
-    [_filterLFORangeSlider setThumbTintColor:[UIColor sliderOnColor]];
+    [self setupSliderProperties:_filterLFORangeSlider];
     [_filterLFORangeSlider setTag:TWOscParamID_FilterLFORange];
     [_filterLFORangeSlider addTarget:self action:@selector(paramSliderChanged:) forControlEvents:UIControlEventValueChanged];
     [paramSliders setObject:_filterLFORangeSlider forKey:@(TWOscParamID_FilterLFORange)];
-    [paramSliderScales setObject:@(TWParamSliderScale_Log) forKey:@(TWOscParamID_FilterLFORange)];
-    [paramRanges setObject:@[@(kFrequencyMin), @(kFrequencyMax)] forKey:@(TWOscParamID_FilterLFORange)];
+    [paramRanges setObject:@[@(kFrequencyMin), @(kFrequencyMax), @(4.0f)] forKey:@(TWOscParamID_FilterLFORange)];
     [self addSubview:_filterLFORangeSlider];
     
     _filterLFORangeField = [[UIButton alloc] init];
@@ -683,15 +624,11 @@
     [paramLongTitles setObject:@"Filter LFO Offset" forKey:@(TWOscParamID_FilterLFOOffset)];
     
     _filterLFOOffsetSlider = [[UISlider alloc] init];
-    [_filterLFOOffsetSlider setMinimumValue:0.0f];
-    [_filterLFOOffsetSlider setMaximumValue:2.0f * M_PI];
-    [_filterLFOOffsetSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
-    [_filterLFOOffsetSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
-    [_filterLFOOffsetSlider setThumbTintColor:[UIColor sliderOnColor]];
+    [self setupSliderProperties:_filterLFOOffsetSlider];
     [_filterLFOOffsetSlider setTag:TWOscParamID_FilterLFOOffset];
     [_filterLFOOffsetSlider addTarget:self action:@selector(paramSliderChanged:) forControlEvents:UIControlEventValueChanged];
     [paramSliders setObject:_filterLFOOffsetSlider forKey:@(TWOscParamID_FilterLFOOffset)];
-    [paramSliderScales setObject:@(TWParamSliderScale_Linear) forKey:@(TWOscParamID_FilterLFOOffset)];
+    [paramRanges setObject:@[@(0.0f), @(2.0f * M_PI), @(1.0f)] forKey:@(TWOscParamID_FilterLFOOffset)];
     [self addSubview:_filterLFOOffsetSlider];
     
     _filterLFOOffsetField = [[UIButton alloc] init];
@@ -713,15 +650,11 @@
     [paramLongTitles setObject:@"Ramp Time (ms)" forKey:@(TWOscParamID_RampTime_ms)];
     
     _rampTimeSlider = [[UISlider alloc] init];
-    [_rampTimeSlider setMinimumValue:0.0f];
-    [_rampTimeSlider setMaximumValue:8000.0f];
-    [_rampTimeSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
-    [_rampTimeSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
-    [_rampTimeSlider setThumbTintColor:[UIColor sliderOnColor]];
+    [self setupSliderProperties:_rampTimeSlider];
     [_rampTimeSlider setTag:TWOscParamID_RampTime_ms];
     [_rampTimeSlider addTarget:self action:@selector(paramSliderChanged:) forControlEvents:UIControlEventValueChanged];
     [paramSliders setObject:_rampTimeSlider forKey:@(TWOscParamID_RampTime_ms)];
-    [paramSliderScales setObject:@(TWParamSliderScale_Linear) forKey:@(TWOscParamID_RampTime_ms)];
+    [paramRanges setObject:@[@(0.0f), @(8000.0f), @(1.0f)] forKey:@(TWOscParamID_RampTime_ms)];
     [self addSubview:_rampTimeSlider];
     
     _rampTimeField = [[UIButton alloc] init];
@@ -749,15 +682,11 @@
     [paramLongTitles setObject:@"FM Amount" forKey:@(TWOscParamID_OscFMAmount)];
     
     _oscFMAmountSlider = [[UISlider alloc] init];
-    [_oscFMAmountSlider setMinimumValue:0.0f];
-    [_oscFMAmountSlider setMaximumValue:1.0f];
-    [_oscFMAmountSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
-    [_oscFMAmountSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
-    [_oscFMAmountSlider setThumbTintColor:[UIColor sliderOnColor]];
+    [self setupSliderProperties:_oscFMAmountSlider];
     [_oscFMAmountSlider setTag:TWOscParamID_OscFMAmount];
     [_oscFMAmountSlider addTarget:self action:@selector(paramSliderChanged:) forControlEvents:UIControlEventValueChanged];
     [paramSliders setObject:_oscFMAmountSlider forKey:@(TWOscParamID_OscFMAmount)];
-    [paramSliderScales setObject:@(TWParamSliderScale_Linear) forKey:@(TWOscParamID_OscFMAmount)];
+    [paramRanges setObject:@[@(0.0f), @(1.0f), @(1.0f)] forKey:@(TWOscParamID_OscFMAmount)];
     [self addSubview:_oscFMAmountSlider];
     
     _oscFMAmountField = [[UIButton alloc] init];
@@ -776,15 +705,11 @@
     [paramLongTitles setObject:@"FM Freq" forKey:@(TWOscParamID_OscFMFrequency)];
     
     _oscFMFreqSlider = [[UISlider alloc] init];
-    [_oscFMFreqSlider setMinimumValue:0.001f];
-    [_oscFMFreqSlider setMaximumValue:200.0f];
-    [_oscFMFreqSlider setMinimumTrackTintColor:[UIColor sliderOnColor]];
-    [_oscFMFreqSlider setMaximumTrackTintColor:[UIColor sliderOffColor]];
-    [_oscFMFreqSlider setThumbTintColor:[UIColor sliderOnColor]];
+    [self setupSliderProperties:_oscFMFreqSlider];
     [_oscFMFreqSlider setTag:TWOscParamID_OscFMFrequency];
     [_oscFMFreqSlider addTarget:self action:@selector(paramSliderChanged:) forControlEvents:UIControlEventValueChanged];
     [paramSliders setObject:_oscFMFreqSlider forKey:@(TWOscParamID_OscFMFrequency)];
-    [paramSliderScales setObject:@(TWParamSliderScale_Linear) forKey:@(TWOscParamID_OscFMFrequency)];
+    [paramRanges setObject:@[@(0.0f), @(200.0f), @(1.0f)] forKey:@(TWOscParamID_OscFMFrequency)];
     [self addSubview:_oscFMFreqSlider];
     
     _oscFMFreqField = [[UIButton alloc] init];
@@ -798,7 +723,6 @@
     _paramSliders = [[NSDictionary alloc] initWithDictionary:paramSliders];
     _paramFields = [[NSDictionary alloc] initWithDictionary:paramFields];
     _paramLongTitles = [[NSDictionary alloc] initWithDictionary:paramLongTitles];
-    _paramSliderScales = [[NSDictionary alloc] initWithDictionary:paramSliderScales];
     _paramRanges = [[NSDictionary alloc] initWithDictionary:paramRanges];
     
     
@@ -1117,30 +1041,16 @@
 - (void)paramSliderChanged:(UISlider*)sender {
     
     TWOscParamID paramID = (TWOscParamID)sender.tag;
-    TWParamSliderScale scale = (TWParamSliderScale)[[_paramSliderScales objectForKey:@(paramID)] intValue];
-    float value = 0.0f;
     
-    switch (scale) {
-        case TWParamSliderScale_Linear:
-            value = sender.value;
-            break;
-            
-        case TWParamSliderScale_Log:
-        {
-            float min = [[_paramRanges objectForKey:@(paramID)][TWParamRange_Min] floatValue];
-            float max = [[_paramRanges objectForKey:@(paramID)][TWParamRange_Max] floatValue];
-            value = [TWUtils logScaleFromLinear:sender.value outMin:min outMax:max];
-        }
-            break;
-            
-        default:
-            break;
-    }
+    float minValue = [[_paramRanges objectForKey:@(paramID)][TWParamRange_Min] floatValue];
+    float maxValue = [[_paramRanges objectForKey:@(paramID)][TWParamRange_Max] floatValue];
+    float curve = [[_paramRanges objectForKey:@(paramID)][TWParamRange_Curve] floatValue];
     
-    [[TWAudioController sharedController] setOscParameter:paramID withValue:value atSourceIdx:_sourceIdx inTime:_rampTimeSlider.value];
+    float outValue = [TWUIUtilities scale:sender.value inMin:0.0f inMax:1.0f outMin:minValue outMax:maxValue exponent:curve];
+    [[TWAudioController sharedController] setOscParameter:paramID withValue:outValue atSourceIdx:_sourceIdx inTime:_rampTimeSlider.value];
     
     UIButton* paramField = (UIButton*)[_paramFields objectForKey:@(paramID)];
-    [self updateParamField:paramField withValue:value];
+    [self updateParamField:paramField withValue:outValue];
 }
 
 - (void)paramFieldTapped:(UIButton*)sender {
@@ -1162,25 +1072,14 @@
 - (void)updateSlider:(UISlider*)slider withValue:(float)value {
     
     TWOscParamID paramID = (TWOscParamID)slider.tag;
-    TWParamSliderScale scale = (TWParamSliderScale)[[_paramSliderScales objectForKey:@(paramID)] intValue];
     
-    switch (scale) {
-        case TWParamSliderScale_Linear:
-            [slider setValue:value animated:YES];
-            break;
-            
-        case TWParamSliderScale_Log:
-        {
-            float min = [[_paramRanges objectForKey:@(paramID)][TWParamRange_Min] floatValue];
-            float max = [[_paramRanges objectForKey:@(paramID)][TWParamRange_Max] floatValue];
-            [slider setValue:[TWUtils linearScaleFromLog:value inMin:min inMax:max] animated:YES];
-        }
-            break;
-            
-        default:
-            break;
-    }
+    float minValue = [[_paramRanges objectForKey:@(paramID)][TWParamRange_Min] floatValue];
+    float maxValue = [[_paramRanges objectForKey:@(paramID)][TWParamRange_Max] floatValue];
+    float curve = [[_paramRanges objectForKey:@(paramID)][TWParamRange_Curve] floatValue];
     
+    float outValue = [TWUIUtilities scale:value inMin:minValue inMax:maxValue outMin:0.0f outMax:1.0f exponent:(1.0f/curve)];
+    
+    [slider setValue:outValue animated:YES];
 }
 
 
@@ -1598,6 +1497,14 @@
     [label setTextAlignment:NSTextAlignmentCenter];
 //    [label setBackgroundColor:[UIColor yellowColor]];
     [label setBackgroundColor:[UIColor clearColor]];
+}
+
+- (void)setupSliderProperties:(UISlider*)slider {
+    [slider setMinimumValue:0.0f];
+    [slider setMaximumValue:1.0f];
+    [slider setMinimumTrackTintColor:[UIColor sliderOnColor]];
+    [slider setMaximumTrackTintColor:[UIColor sliderOffColor]];
+    [slider setThumbTintColor:[UIColor sliderOnColor]];
 }
 
 

@@ -38,6 +38,7 @@ public:
     
     
     void prepare(float sampleRate);
+    void process(float** inputBuffer, float** outputBuffer, int numChannels, int numFrames);
     void process(float* leftBuffer, float* rightBuffer, int frameCount);
     void release();
     

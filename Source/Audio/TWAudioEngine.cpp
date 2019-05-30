@@ -55,7 +55,7 @@ TWAudioEngine::TWAudioEngine()
     _soloCount = 0;
     
     _setupGain.setTargetValue(1.0f, 0.0f);
-    _setupGain.setIsRunning(true);
+    _setupGain.setIsIORunning(true);
     
     _synths[0].setDebugID(1);
     _tremolos[0].setDebugID(1);
@@ -101,15 +101,26 @@ void TWAudioEngine::prepare(float sampleRate)
         
         _memoryPlayers[sourceIdx].prepare(sampleRate);
         
-        _soloGains[sourceIdx].setIsRunning(true);
+        _soloGains[sourceIdx].setIsIORunning(true);
     }
     
     for (int channel=0; channel < kNumChannels; channel++) {
-        _masterGains[channel].setIsRunning(true);
+        _masterGains[channel].setIsIORunning(true);
         _levelMeters[channel].prepare(sampleRate);
     }
     
     _setupGain.setTargetValue(1.0f, kDefaultRampTime_ms * _sampleRate / 1000.0f);
+}
+
+
+void TWAudioEngine::process(float **inputBuffer, float **outputBuffer, int numChannels, int numFrames)
+{
+//    for (int frame = 0; frame < numFrames; frame++) {
+//        for (int channel = 0; channel < numChannels; channel++) {
+//            printf("%f\t", inputBuffer[channel][frame]);
+//        }
+//        printf("\n");
+//    }
 }
 
 
@@ -172,12 +183,12 @@ void TWAudioEngine::release()
         _biquads[sourceIdx].release();
         _tremolos[sourceIdx].release();
         _shapeTremolos[sourceIdx].release();
-        _soloGains[sourceIdx].setIsRunning(false);
+        _soloGains[sourceIdx].setIsIORunning(false);
         _memoryPlayers[sourceIdx].release();
     }
     
     for (int channel=0; channel < kNumChannels; channel++) {
-        _masterGains[channel].setIsRunning(false);
+        _masterGains[channel].setIsIORunning(false);
         _levelMeters[channel].release();
     }
 }

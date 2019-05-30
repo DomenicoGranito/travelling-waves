@@ -17,13 +17,16 @@
 
 TWParameter::TWParameter()
 {
+    _minValue           = 0.0f;
+    _maxValue           = 1.0f;
+    _defaultValue       = 0.0f;
     _targetValue        = 0.0f;
     _currentValue       = 0.0f;
     _rampTimeInSamples  = 0.0f;
-    _isRunning          = false;
-    _paramID            = 0;
+    _isIORunning        = false;
+    _parameterID        = 0;
     
-    _debugPrintCount   = 0;
+    _debugPrintCount    = 0;
 }
 
 TWParameter::~TWParameter()
@@ -34,12 +37,18 @@ TWParameter::~TWParameter()
 
 
 
-void TWParameter::setTargetValue(float targetValue, double rampTimeInSamples)
+void TWParameter::setTargetValue(float targetValue, float rampTimeInSamples)
 {
+//    if (targetValue >= _maxValue) {
+//        targetValue = _maxValue;
+//    } else if (targetValue <= _minValue) {
+//        targetValue = _minValue;
+//    }
+    
     _rampTimeInSamples = rampTimeInSamples;
     _targetValue = targetValue;
     
-    if (!_isRunning) {
+    if (!_isIORunning) {
         _currentValue = targetValue;
     }
     
@@ -58,7 +67,7 @@ float TWParameter::getTargetValue()
 
 float TWParameter::getCurrentValue()
 {
-    if (fabs(_targetValue - _currentValue)  >= fabs(_increment)) {
+    if (fabs(_targetValue - _currentValue) >= fabs(_increment)) {
         _currentValue += _increment;
     } else {
         _currentValue = _targetValue;
@@ -85,24 +94,70 @@ float TWParameter::getCurrentValue()
     return _currentValue;
 }
 
-void TWParameter::setIsRunning(bool isRunning)
+
+
+
+void TWParameter::setIsIORunning(bool isIORunning)
 {
-    _isRunning = isRunning;
+    _isIORunning = isIORunning;
 }
 
-bool TWParameter::getIsRunning()
+
+bool TWParameter::getIsIORunning()
 {
-    return _isRunning;
+    return _isIORunning;
 }
 
-void TWParameter::setParameterID(int paramID)
+
+
+
+void TWParameter::setParameterID(int parameterID)
 {
-    _paramID = paramID;
+    _parameterID = parameterID;
 }
 
 int TWParameter::getParameterID()
 {
-    return _paramID;
+    return _parameterID;
+}
+
+
+
+void TWParameter::setMaxValue(float maxValue)
+{
+    _maxValue = maxValue;
+}
+
+float TWParameter::getMaxValue()
+{
+    return _maxValue;
+}
+
+
+void TWParameter::setMinValue(float minValue)
+{
+    _minValue = minValue;
+}
+
+float TWParameter::getMinValue()
+{
+    return _minValue;
+}
+
+
+void TWParameter::updateDefaultValue(float defaultValue)
+{
+    _defaultValue = defaultValue;
+}
+
+void TWParameter::setDefaultValue(float rampTimeInSamples)
+{
+    setTargetValue(_defaultValue, rampTimeInSamples);
+}
+
+float TWParameter::getDefaultValue()
+{
+    return _defaultValue;
 }
 
 
@@ -117,10 +172,11 @@ int TWParameter::getParameterID()
 //}
 
 
+
 void TWParameter::_debugPrint()
 {
     if (_debugPrintCount == kDebugPrintSamples) {
-        printf("CV: %f. TV: %f. Inc: %f. Rn: %d. Prm: %d\n", _currentValue, _targetValue, _increment, _isRunning, _paramID);
+        printf("CV: %f. TV: %f. Inc: %f. Rn: %d. Prm: %d\n", _currentValue, _targetValue, _increment, _isIORunning, _parameterID);
         _debugPrintCount = 0;
     }
     _debugPrintCount++;

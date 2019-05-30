@@ -19,11 +19,11 @@ TWTremolo::TWTremolo()
     _depth.setTargetValue(0.0f, 0.0f);
     
     _lfo = new TWOscillator();
-    _lfo->setFrequency(1.0f, 0.0f);
-    _lfo->setWaveform(TWOscillator::Sine);
-    _lfo->setAmplitude(1.0f, 0.0f);
-    _lfo->setDutyCycle(0.5, 0.0f);
-    _lfo->setPhaseOfst(0.0f, 0.0f);
+    _lfo->setParameterValue(TWOscillator::ParameterID::Frequency, 1.0f, 0.0f);
+    _lfo->setParameterValue(TWOscillator::ParameterID::WaveformType, TWOscillator::Sine, 0.0f);
+    _lfo->setParameterValue(TWOscillator::ParameterID::AmplitudeDB, 0.0f, 0.0f);
+    _lfo->setParameterValue(TWOscillator::ParameterID::DutyCycle, 0.5f, 0.0f);
+    _lfo->setParameterValue(TWOscillator::ParameterID::PhaseOffset, 0.0f, 0.0f);
     
     _debugCount = kDebugCountdown;
     _debugID = 0;
@@ -40,7 +40,7 @@ TWTremolo::~TWTremolo()
 void TWTremolo::prepare(float sampleRate)
 {
     _lfo->prepare(sampleRate);
-    _depth.setIsRunning(true);
+    _depth.setIsIORunning(true);
 }
 
 void TWTremolo::process(float &leftSample, float &rightSample)
@@ -68,7 +68,7 @@ void TWTremolo::process(float &leftSample, float &rightSample)
 void TWTremolo::release()
 {
     _lfo->release();
-    _depth.setIsRunning(false);
+    _depth.setIsIORunning(false);
 }
 
 

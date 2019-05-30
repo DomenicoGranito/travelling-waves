@@ -51,8 +51,8 @@ void TWEnvelope::prepare(float sampleRate)
     _sampleCount = 0;
     _envelopeRunning = false;
     _ampEnvelopeGain.setTargetValue(0.0f, 0.0f);
-    _ampEnvelopeGain.setIsRunning(true);
-    _enableCrossfade.setIsRunning(true);
+    _ampEnvelopeGain.setIsIORunning(true);
+    _enableCrossfade.setIsIORunning(true);
     _updateAmpParams();
     _updateFltParams();
     _audioIORunning = true;

@@ -10,7 +10,7 @@
 #import "TWMasterController.h"
 #import "TWHeader.h"
 #import "TWClock.h"
-#import "TWUtils.h"
+#import "TWUIUtilities.h"
 #import "TWKeypad.h"
 #import "UIColor+Additions.h"
 
@@ -23,14 +23,17 @@
     UILabel*                    _rootFreqLabel;
     UISlider*                   _rootFreqSlider;
     UIButton*                   _rootFreqField;
+    NSArray*                    _rootFreqRanges;
     
     UILabel*                    _rampTimeLabel;
     UISlider*                   _rampTimeSlider;
     UIButton*                   _rampTimeField;
+    NSArray*                    _rampTimeRanges;
     
     UILabel*                    _tempoLabel;
     UISlider*                   _tempoSlider;
     UIButton*                   _tempoField;
+    NSArray*                    _tempoRanges;
     
     UIButton*                   _tapTempoButton;
     int                         _tapTempoCount;
@@ -52,6 +55,9 @@
     NSArray*                    _denIncButtons;
     NSArray*                    _denDecButtons;
     NSArray*                    _denBorders;
+    
+    
+    TWClock                     _clock;
 }
 @end
 
@@ -71,6 +77,7 @@
 
 //    [[TWKeypad sharedKeypad] addToDelegates:self];
     
+    _rootFreqRanges = [[NSArray alloc] initWithObjects:@(0.0f), @(1.0f), @(4.0f), nil];
     
     _rootFreqLabel = [[UILabel alloc] init];
     [_rootFreqLabel setTextColor:[UIColor colorWithWhite:0.8f alpha:1.0f]];
@@ -97,6 +104,9 @@
     
     
     
+    
+    _rampTimeRanges = [[NSArray alloc] initWithObjects:@(0), @(16000), @(4.0f), nil];
+    
     _rampTimeLabel = [[UILabel alloc] init];
     [_rampTimeLabel setTextColor:[UIColor colorWithWhite:0.8f alpha:1.0f]];
     [_rampTimeLabel setText:@"Ramp:"];
@@ -121,6 +131,8 @@
     [self addSubview:_rampTimeField];
     
     
+    
+    _tempoRanges = [[NSArray alloc] initWithObjects:@(20.0f), @(400.0f), @(1.0f), nil];
     
     _tempoLabel = [[UILabel alloc] init];
     [_tempoLabel setTextColor:[UIColor colorWithWhite:0.8f alpha:1.0f]];
@@ -296,15 +308,15 @@
 
 - (void)refreshParametersWithAnimation:(BOOL)animated {
     float frequency = [[TWMasterController sharedController] rootFrequency];
-    [self setRootFrequencySlider:frequency];
+    [self updateRootFrequencySlider:frequency];
     [_rootFreqField setTitle:[NSString stringWithFormat:@"%.2f", frequency] forState:UIControlStateNormal];
     
     int rampTime_ms = [[TWMasterController sharedController] rampTime_ms];
-    [_rampTimeSlider setValue:rampTime_ms animated:animated];
+    [self updateRampTimeSlider:rampTime_ms];
     [_rampTimeField setTitle:[NSString stringWithFormat:@"%d", rampTime_ms] forState:UIControlStateNormal];
     
     float tempo = [[TWMasterController sharedController] tempo];
-    [_tempoSlider setValue:tempo animated:animated];
+    [self updateTempoSlider:tempo];
     [_tempoField setTitle:[NSString stringWithFormat:@"%.2f", tempo] forState:UIControlStateNormal];
     
     [_segmentedControl setSelectedSegmentIndex:0];
@@ -509,23 +521,38 @@
 */
 
 - (void)rootFreqSliderChanged {
-    float value = [TWUtils logScaleFromLinear:_rootFreqSlider.value outMin:kFrequencyMin outMax:kFrequencyMax];
-    [[TWMasterController sharedController] setRootFrequency:value];
-    [_rootFreqField setTitle:[NSString stringWithFormat:@"%.2f", value] forState:UIControlStateNormal];
+    
+    float minValue = [_rootFreqRanges[TWParamRange_Min] floatValue];
+    float maxValue = [_rootFreqRanges[TWParamRange_Max] floatValue];
+    float curve = [_rootFreqRanges[TWParamRange_Curve] floatValue];
+    
+    float outValue = [TWUIUtilities scale:_rootFreqSlider.value inMin:0.0f inMax:1.0f outMin:minValue outMax:maxValue exponent:curve];
+    [[TWMasterController sharedController] setRootFrequency:outValue];
+    [_rootFreqField setTitle:[NSString stringWithFormat:@"%.2f", outValue] forState:UIControlStateNormal];
     [_oscView refreshParametersWithAnimation:YES];
 }
 
 - (void)rampTimeSliderChanged {
-    int rampTime_ms = _rampTimeSlider.value;
-    [[TWMasterController sharedController] setRampTime_ms:rampTime_ms];
-    [_rampTimeField setTitle:[NSString stringWithFormat:@"%d", rampTime_ms] forState:UIControlStateNormal];
+    
+    float minValue = [_rampTimeRanges[TWParamRange_Min] floatValue];
+    float maxValue = [_rampTimeRanges[TWParamRange_Max] floatValue];
+    float curve = [_rampTimeRanges[TWParamRange_Curve] floatValue];
+    
+    int outValue = (int)[TWUIUtilities scale:_rampTimeSlider.value inMin:0.0f inMax:1.0f outMin:minValue outMax:maxValue exponent:curve];
+    [[TWMasterController sharedController] setRampTime_ms:outValue];
+    [_rampTimeField setTitle:[NSString stringWithFormat:@"%d", outValue] forState:UIControlStateNormal];
     [_oscView refreshParametersWithAnimation:YES];
 }
 
 - (void)tempoSliderChanged {
-    float tempo = _tempoSlider.value;
-    [[TWMasterController sharedController] setTempo:tempo];
-    [_tempoField setTitle:[NSString stringWithFormat:@"%.2f", tempo] forState:UIControlStateNormal];
+    
+    float minValue = [_tempoRanges[TWParamRange_Min] floatValue];
+    float maxValue = [_tempoRanges[TWParamRange_Max] floatValue];
+    float curve = [_tempoRanges[TWParamRange_Curve] floatValue];
+    
+    float outValue = [TWUIUtilities scale:_tempoSlider.value inMin:0.0f inMax:1.0f outMin:minValue outMax:maxValue exponent:curve];
+    [[TWMasterController sharedController] setTempo:outValue];
+    [_tempoField setTitle:[NSString stringWithFormat:@"%.2f", outValue] forState:UIControlStateNormal];
     [_oscView refreshParametersWithAnimation:YES];
 }
 
@@ -612,7 +639,7 @@
 }
 
 - (void)tapTempo {
-    NSTimeInterval currentTime = [[TWClock sharedClock] getCurrentTime];
+    NSTimeInterval currentTime = _clock.getCurrentAbsoluteTimeInSeconds();
     NSTimeInterval elapsedTime = currentTime - _tapTempoCurrentTime;
 //    NSLog(@"CurrentTime: %f. ElapsedTime: %f", currentTime, elapsedTime);
     
@@ -637,8 +664,34 @@
 }
 
 
-- (void)setRootFrequencySlider:(float)value {
-    [_rootFreqSlider setValue:[TWUtils linearScaleFromLog:value inMin:kFrequencyMin inMax:kFrequencyMax] animated:YES];
+- (void)updateRootFrequencySlider:(float)inValue {
+    float minValue = [_rootFreqRanges[TWParamRange_Min] floatValue];
+    float maxValue = [_rootFreqRanges[TWParamRange_Max] floatValue];
+    float curve = [_rootFreqRanges[TWParamRange_Curve] floatValue];
+    
+    float outValue = [TWUIUtilities scale:inValue inMin:minValue inMax:maxValue outMin:0.0f outMax:1.0f exponent:(1.0f/curve)];
+    
+    [_rootFreqSlider setValue:outValue animated:YES];
+}
+
+- (void)updateRampTimeSlider:(float)inValue {
+    float minValue = [_rampTimeRanges[TWParamRange_Min] floatValue];
+    float maxValue = [_rampTimeRanges[TWParamRange_Max] floatValue];
+    float curve = [_rampTimeRanges[TWParamRange_Curve] floatValue];
+    
+    float outValue = [TWUIUtilities scale:inValue inMin:minValue inMax:maxValue outMin:0.0f outMax:1.0f exponent:(1.0f/curve)];
+    
+    [_rampTimeSlider setValue:outValue animated:YES];
+}
+
+- (void)updateTempoSlider:(float)inValue {
+    float minValue = [_tempoRanges[TWParamRange_Min] floatValue];
+    float maxValue = [_tempoRanges[TWParamRange_Max] floatValue];
+    float curve = [_tempoRanges[TWParamRange_Curve] floatValue];
+    
+    float outValue = [TWUIUtilities scale:inValue inMin:minValue inMax:maxValue outMin:0.0f outMax:1.0f exponent:(1.0f/curve)];
+    
+    [_tempoSlider setValue:outValue animated:YES];
 }
 
 
@@ -651,7 +704,7 @@
         float frequency = [inValue floatValue];
         [[TWMasterController sharedController] setRootFrequency:frequency];
         [_rootFreqField setTitle:[NSString stringWithFormat:@"%.2f", frequency] forState:UIControlStateNormal];
-        [self setRootFrequencySlider:frequency];
+        [self updateRootFrequencySlider:frequency];
         [_oscView refreshParametersWithAnimation:YES];
     }
     
@@ -659,7 +712,7 @@
         int rampTime_ms = [inValue intValue];
         [[TWMasterController sharedController] setRampTime_ms:rampTime_ms];
         [_rampTimeField setTitle:[NSString stringWithFormat:@"%d", rampTime_ms] forState:UIControlStateNormal];
-        [_rampTimeSlider setValue:rampTime_ms animated:YES];
+        [self updateRampTimeSlider:rampTime_ms];
         [_oscView refreshParametersWithAnimation:YES];
     }
     
@@ -667,7 +720,7 @@
         float tempo = [inValue floatValue];
         [[TWMasterController sharedController] setTempo:tempo];
         [_tempoField setTitle:[NSString stringWithFormat:@"%.2f", tempo] forState:UIControlStateNormal];
-        [_tempoSlider setValue:tempo animated:YES];
+        [self updateTempoSlider:tempo];
         [_oscView refreshParametersWithAnimation:YES];
     }
     
