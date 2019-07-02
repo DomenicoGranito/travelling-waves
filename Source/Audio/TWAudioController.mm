@@ -104,6 +104,12 @@ static void enginePlaybackFinishedProc(int sourceIdx, int status) {
         NSLog(@"Error setting audio session preferred sample rate: %@", error.description);
     }
     
+    // Set Preferred Block Size
+    [[AVAudioSession sharedInstance] setPreferredIOBufferDuration:(kDefaultBufferDuration_ms / 1000.0f) error:&error];
+    if (error) {
+        NSLog(@"Error setting audio session preferred sample rate: %@", error.description);
+    }
+    
     // Set Preferred Number of Channels
     [[AVAudioSession sharedInstance] setPreferredOutputNumberOfChannels:kNumChannels error:&error];
     if (error) {

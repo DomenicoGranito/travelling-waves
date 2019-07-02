@@ -16,6 +16,8 @@
 #endif
 
 static const float  kDefaultSampleRate                          = 48000.0f;
+static const float  kDefaultBufferDuration_ms                   = 10.667;
+
 static const int    kNumChannels                                = 2;
 
 static const int    kOutputBus                                  = 0;
