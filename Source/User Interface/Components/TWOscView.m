@@ -1064,7 +1064,7 @@
     
     
     
-    CGFloat editActionViewWidth = sliderWidth;
+    CGFloat editActionViewWidth = sliderWidth * 2.0f;
     CGFloat editActionViewHeight = componentHeight;
 //    _editActionRect = CGRectMake((frame.size.width - editActionViewWidth) / 2.0f, componentHeight, editActionViewWidth, editActionViewHeight);
     [_editActionView setFrame:CGRectMake((frame.size.width - editActionViewWidth) / 2.0f, componentHeight, editActionViewWidth, editActionViewHeight)];
@@ -1199,7 +1199,7 @@
 
 
 - (void)cancelButtonDown:(UIButton*)sender {
-    [sender setBackgroundColor:[UIColor colorFromUIColor:[UIColor cancelButtonColor] withBrightnessOffset:0.01f]];
+    [sender setBackgroundColor:[UIColor colorFromUIColor:[UIColor cancelButtonColor] withBrightnessOffset:0.1f]];
 }
 
 - (void)cancelButtonUp:(UIButton*)sender {
@@ -1208,7 +1208,7 @@
 }
 
 - (void)copyButtonDown:(UIButton*)sender {
-    [sender setBackgroundColor:[UIColor colorFromUIColor:[UIColor copyButtonColor] withBrightnessOffset:0.01f]];
+    [sender setBackgroundColor:[UIColor colorFromUIColor:[UIColor copyButtonColor] withBrightnessOffset:0.1f]];
 }
 - (void)copyButtonUp:(UIButton*)sender {
     [[TWMasterController sharedController] copyOscParamsAtSourceIdx:_editActionSourceIdx];
@@ -1219,7 +1219,7 @@
 }
 
 - (void)pasteButtonDown:(UIButton*)sender {
-    [sender setBackgroundColor:[UIColor colorFromUIColor:[UIColor pasteButtonColor] withBrightnessOffset:0.01f]];
+    [sender setBackgroundColor:[UIColor colorFromUIColor:[UIColor pasteButtonColor] withBrightnessOffset:0.1f]];
 }
 - (void)pasteButtonUp:(UIButton*)sender {
     [[TWMasterController sharedController] pasteOscParamsAtSourceIdx:_editActionSourceIdx];
