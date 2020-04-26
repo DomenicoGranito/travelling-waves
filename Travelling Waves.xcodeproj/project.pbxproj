@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		36E67B8D57D93EA1E0819B06 /* Pods_Travelling_Waves_Travelling_Waves_UI_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CA0A958FBB5D57DBD032C8D /* Pods_Travelling_Waves_Travelling_Waves_UI_Tests.framework */; };
+		45D7ED41E6E1A3A3F08FF2C0 /* Pods_Travelling_Waves.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2D2D3584E334E257178C2E1 /* Pods_Travelling_Waves.framework */; };
+		A467EC3C8E51B38D15D3595A /* Pods_Travelling_Waves_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60FA587DB02E40A657D95959 /* Pods_Travelling_Waves_Tests.framework */; };
 		FC0D2E692254945A00A68D58 /* TWFillSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = FC0D2E522254945A00A68D58 /* TWFillSlider.m */; };
 		FC0D2E6A2254945A00A68D58 /* TWSeqNoteButton.m in Sources */ = {isa = PBXBuildFile; fileRef = FC0D2E542254945A00A68D58 /* TWSeqNoteButton.m */; };
 		FC0D2E6B2254945A00A68D58 /* TWCycleStateButton.m in Sources */ = {isa = PBXBuildFile; fileRef = FC0D2E582254945A00A68D58 /* TWCycleStateButton.m */; };
@@ -103,6 +106,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		044E797B95CE3809C625594F /* Pods-Travelling Waves-Travelling Waves UI Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Travelling Waves-Travelling Waves UI Tests.debug.xcconfig"; path = "Target Support Files/Pods-Travelling Waves-Travelling Waves UI Tests/Pods-Travelling Waves-Travelling Waves UI Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		1AB2F4D7205CE7F564E864EE /* Pods-Travelling Waves-Travelling Waves UI Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Travelling Waves-Travelling Waves UI Tests.release.xcconfig"; path = "Target Support Files/Pods-Travelling Waves-Travelling Waves UI Tests/Pods-Travelling Waves-Travelling Waves UI Tests.release.xcconfig"; sourceTree = "<group>"; };
+		3CA0A958FBB5D57DBD032C8D /* Pods_Travelling_Waves_Travelling_Waves_UI_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Travelling_Waves_Travelling_Waves_UI_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5AC376C146B2B0DE6068A4FC /* Pods-Travelling Waves Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Travelling Waves Tests.release.xcconfig"; path = "Target Support Files/Pods-Travelling Waves Tests/Pods-Travelling Waves Tests.release.xcconfig"; sourceTree = "<group>"; };
+		60FA587DB02E40A657D95959 /* Pods_Travelling_Waves_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Travelling_Waves_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		639FDAC3B8B879EFFDE2903C /* Pods-Travelling Waves.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Travelling Waves.debug.xcconfig"; path = "Target Support Files/Pods-Travelling Waves/Pods-Travelling Waves.debug.xcconfig"; sourceTree = "<group>"; };
+		A7794AAA2CD3F75ED1CBDF11 /* Pods-Travelling Waves Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Travelling Waves Tests.debug.xcconfig"; path = "Target Support Files/Pods-Travelling Waves Tests/Pods-Travelling Waves Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		B097E591CD39F677513A9F28 /* Pods-Travelling Waves.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Travelling Waves.release.xcconfig"; path = "Target Support Files/Pods-Travelling Waves/Pods-Travelling Waves.release.xcconfig"; sourceTree = "<group>"; };
+		D2D2D3584E334E257178C2E1 /* Pods_Travelling_Waves.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Travelling_Waves.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FC0D2E512254945A00A68D58 /* TWFrequencyRatioControlView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWFrequencyRatioControlView.h; sourceTree = "<group>"; };
 		FC0D2E522254945A00A68D58 /* TWFillSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWFillSlider.m; sourceTree = "<group>"; };
 		FC0D2E532254945A00A68D58 /* TWEnvelopeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWEnvelopeView.h; sourceTree = "<group>"; };
@@ -244,6 +256,7 @@
 				FC356C6E2223D7C500B93F5C /* AVFoundation.framework in Frameworks */,
 				FC356C6C2223D7BE00B93F5C /* MediaPlayer.framework in Frameworks */,
 				FCBDC336218462CA00E7695C /* AudioToolbox.framework in Frameworks */,
+				45D7ED41E6E1A3A3F08FF2C0 /* Pods_Travelling_Waves.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -251,6 +264,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A467EC3C8E51B38D15D3595A /* Pods_Travelling_Waves_Tests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -258,12 +272,27 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				36E67B8D57D93EA1E0819B06 /* Pods_Travelling_Waves_Travelling_Waves_UI_Tests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F78A56D38BF25D3341BA0E6C /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				639FDAC3B8B879EFFDE2903C /* Pods-Travelling Waves.debug.xcconfig */,
+				B097E591CD39F677513A9F28 /* Pods-Travelling Waves.release.xcconfig */,
+				A7794AAA2CD3F75ED1CBDF11 /* Pods-Travelling Waves Tests.debug.xcconfig */,
+				5AC376C146B2B0DE6068A4FC /* Pods-Travelling Waves Tests.release.xcconfig */,
+				044E797B95CE3809C625594F /* Pods-Travelling Waves-Travelling Waves UI Tests.debug.xcconfig */,
+				1AB2F4D7205CE7F564E864EE /* Pods-Travelling Waves-Travelling Waves UI Tests.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		FC0D2E4F2254945A00A68D58 /* Components */ = {
 			isa = PBXGroup;
 			children = (
@@ -429,6 +458,7 @@
 				FCBDC34B21846C5000E7695C /* Tests */,
 				FCBDC2FF2184626F00E7695C /* Products */,
 				FCBDC334218462CA00E7695C /* Frameworks */,
+				F78A56D38BF25D3341BA0E6C /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -450,6 +480,9 @@
 				FC356C6D2223D7C500B93F5C /* AVFoundation.framework */,
 				FC356C6B2223D7BE00B93F5C /* MediaPlayer.framework */,
 				FCBDC335218462CA00E7695C /* AudioToolbox.framework */,
+				D2D2D3584E334E257178C2E1 /* Pods_Travelling_Waves.framework */,
+				60FA587DB02E40A657D95959 /* Pods_Travelling_Waves_Tests.framework */,
+				3CA0A958FBB5D57DBD032C8D /* Pods_Travelling_Waves_Travelling_Waves_UI_Tests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -574,6 +607,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = FCBDC32A2184627000E7695C /* Build configuration list for PBXNativeTarget "Travelling Waves" */;
 			buildPhases = (
+				D7C1CE83C28A7A9E803D276E /* [CP] Check Pods Manifest.lock */,
 				FCBDC2FA2184626F00E7695C /* Sources */,
 				FCBDC2FB2184626F00E7695C /* Frameworks */,
 				FCBDC2FC2184626F00E7695C /* Resources */,
@@ -591,6 +625,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = FCBDC32D2184627000E7695C /* Build configuration list for PBXNativeTarget "Travelling Waves Tests" */;
 			buildPhases = (
+				11201185256F5E0AD280F676 /* [CP] Check Pods Manifest.lock */,
 				FCBDC3122184627000E7695C /* Sources */,
 				FCBDC3132184627000E7695C /* Frameworks */,
 				FCBDC3142184627000E7695C /* Resources */,
@@ -609,6 +644,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = FCBDC3302184627000E7695C /* Build configuration list for PBXNativeTarget "Travelling Waves UI Tests" */;
 			buildPhases = (
+				38F3844BB631551ECA127AD0 /* [CP] Check Pods Manifest.lock */,
 				FCBDC31D2184627000E7695C /* Sources */,
 				FCBDC31E2184627000E7695C /* Frameworks */,
 				FCBDC31F2184627000E7695C /* Resources */,
@@ -724,6 +760,75 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		11201185256F5E0AD280F676 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Travelling Waves Tests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		38F3844BB631551ECA127AD0 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Travelling Waves-Travelling Waves UI Tests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D7C1CE83C28A7A9E803D276E /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Travelling Waves-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		FCBDC2FA2184626F00E7695C /* Sources */ = {
@@ -939,6 +1044,7 @@
 		};
 		FCBDC32B2184627000E7695C /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 639FDAC3B8B879EFFDE2903C /* Pods-Travelling Waves.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "Supporting Files/Travelling Waves.entitlements";
@@ -958,6 +1064,7 @@
 		};
 		FCBDC32C2184627000E7695C /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B097E591CD39F677513A9F28 /* Pods-Travelling Waves.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "Supporting Files/Travelling Waves.entitlements";
@@ -977,6 +1084,7 @@
 		};
 		FCBDC32E2184627000E7695C /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A7794AAA2CD3F75ED1CBDF11 /* Pods-Travelling Waves Tests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -996,6 +1104,7 @@
 		};
 		FCBDC32F2184627000E7695C /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5AC376C146B2B0DE6068A4FC /* Pods-Travelling Waves Tests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -1015,6 +1124,7 @@
 		};
 		FCBDC3312184627000E7695C /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 044E797B95CE3809C625594F /* Pods-Travelling Waves-Travelling Waves UI Tests.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 47DTSY372W;
@@ -1033,6 +1143,7 @@
 		};
 		FCBDC3322184627000E7695C /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1AB2F4D7205CE7F564E864EE /* Pods-Travelling Waves-Travelling Waves UI Tests.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 47DTSY372W;

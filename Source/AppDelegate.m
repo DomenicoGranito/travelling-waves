@@ -11,6 +11,11 @@
 #import "TWMasterController.h"
 #import "TWTestViewController.h"
 
+@import AppCenter;
+@import AppCenterAnalytics;
+@import AppCenterCrashes;
+
+
 #define RUN_TEST                0
 
 @interface AppDelegate ()
@@ -24,7 +29,12 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    
+    // Setup MS AppCenter for crash tracing and usage analytics
+    [MSAppCenter start:@"6a220c93-c01f-43c1-8353-eeb0097dbc0e" withServices:@[
+      [MSAnalytics class],
+      [MSCrashes class]
+    ]];
     
     // Create and setup MasterController, which creates the AudioController
     [TWMasterController sharedController];
