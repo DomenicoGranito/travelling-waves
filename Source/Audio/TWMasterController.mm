@@ -221,6 +221,10 @@
 - (int)loadProjectFromFilename:(NSString *)filename {
     NSString* filepath = [_projectsDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.json", filename]];
     NSLog(@"Filepath: %@", filepath);
+    return [self loadProjectFromFilepath:filepath];
+}
+
+- (int)loadProjectFromFilepath:(NSString *)filepath {
     if ([[NSFileManager defaultManager] fileExistsAtPath:filepath]) {
         NSData* data = [NSData dataWithContentsOfFile:filepath];
         NSDictionary* dictionary = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];

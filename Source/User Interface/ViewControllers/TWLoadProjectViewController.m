@@ -17,7 +17,7 @@ typedef enum : NSUInteger {
 } TWProjectsLibrary;
 
 
-@interface TWLoadProjectViewController () <UITableViewDataSource, UITableViewDelegate>
+@interface TWLoadProjectViewController () <UITableViewDataSource, UITableViewDelegate, UIDocumentPickerDelegate>
 {
     UITableView*                _tableView;
     NSArray<NSString*>*         _currentLocalList;
@@ -29,6 +29,9 @@ typedef enum : NSUInteger {
     UIView*                         _busyBackgroundView;
     UILabel*                        _busyLabel;
     UIActivityIndicatorView*        _activityView;
+    
+    UIView*                     _successView;
+    UILabel*                    _successLabel;
     
     TWProjectsLibrary               _currentLibrary;
 }
@@ -51,7 +54,7 @@ typedef enum : NSUInteger {
     
     
     NSDictionary* attribute = [NSDictionary dictionaryWithObject:[UIFont systemFontOfSize:11.0f] forKey:NSFontAttributeName];
-    _segmentedControl = [[UISegmentedControl alloc] initWithItems:@[@"Local", @"Remote"]];
+    _segmentedControl = [[UISegmentedControl alloc] initWithItems:@[@"Local", @"iCloud Drive"]];
     [_segmentedControl setTitleTextAttributes:attribute forState:UIControlStateNormal];
     [_segmentedControl setTintColor:[UIColor segmentedControlTintColor]];
     [_segmentedControl setBackgroundColor:[UIColor segmentedControlBackgroundColor]];
@@ -84,6 +87,20 @@ typedef enum : NSUInteger {
     [_activityView setHidesWhenStopped:YES];
     [_busyBackgroundView addSubview:_activityView];
     
+    _successView = [[UIView alloc] init];
+    [_successView setBackgroundColor:[UIColor colorWithWhite:0.5f alpha:0.2f]];
+    [_successView setAlpha:0.0f];
+    [_successView.layer setCornerRadius:3.0f];
+    [_successView setClipsToBounds:YES];
+    [self.view addSubview:_successView];
+    
+    _successLabel = [[UILabel alloc] init];
+    [_successLabel setBackgroundColor:[UIColor clearColor]];
+    [_successLabel setTextColor:[UIColor colorWithWhite:0.7f alpha:1.0f]];
+    [_successLabel setFont:[UIFont systemFontOfSize:15.0f]];
+    [_successLabel setTextAlignment:NSTextAlignmentCenter];
+    [_successView addSubview:_successLabel];
+    
     
     [self.view setBackgroundColor:[UIColor colorWithWhite:0.12f alpha:1.0f]];
 }
@@ -103,6 +120,7 @@ typedef enum : NSUInteger {
     CGFloat xMargin         = self.view.safeAreaInsets.left;
     CGFloat yPos            = self.view.safeAreaInsets.top;
     CGFloat xPos            = xMargin;
+    CGFloat yMargin         = 20.0f;
     
     CGFloat screenWidth     = self.view.frame.size.width - self.view.safeAreaInsets.right - self.view.safeAreaInsets.left;
     CGFloat screenHeight    = self.view.frame.size.height - self.view.safeAreaInsets.bottom;
@@ -120,15 +138,21 @@ typedef enum : NSUInteger {
     yPos += componentHeight;
     [_segmentedControl setFrame:CGRectMake(xPos, yPos, screenWidth, componentHeight)];
     
-    yPos += componentHeight;
+    yPos += componentHeight + yMargin;
     [_tableView setFrame:CGRectMake(xPos, yPos, screenWidth, screenHeight - yPos)];
     [_tableView setRowHeight:componentHeight];
     
-    yPos = self.view.safeAreaInsets.top;
+    yPos = 0.0f;
     [_busyBackgroundView setFrame:CGRectMake(xPos, yPos, screenWidth, screenHeight)];
     [_activityView setCenter:CGPointMake(_busyBackgroundView.center.x, _busyBackgroundView.center.y - (2.0 * busyLabelHeight))];
     yPos = _busyBackgroundView.center.y - (4.0 * busyLabelHeight);
     [_busyLabel setFrame:CGRectMake(xPos, yPos, screenWidth, busyLabelHeight)];
+    
+    
+    CGFloat successViewWidth = screenWidth * 0.7f;
+    CGFloat successViewHeight = 60.0f;
+    [_successView setFrame:CGRectMake((screenWidth - successViewWidth) / 2.0f, (screenHeight - successViewHeight) / 2.0f, successViewWidth, successViewHeight)];
+    [_successLabel setFrame:CGRectMake(5.0f, 5.0f, successViewWidth - 10.0f, successViewHeight - 10.0f)];
 }
 
 /*
@@ -156,17 +180,16 @@ typedef enum : NSUInteger {
     _currentLibrary = (TWProjectsLibrary)_segmentedControl.selectedSegmentIndex;
     
     if (_currentLibrary == LocalLibrary) {
-        
+        [_tableView reloadData];
     }
     
     else if (_currentLibrary == RemoteLibrary) {
-        [self startLoadingAnimation];
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [self stopLoadingAnimation];
-        });
+        [self launchDocumentPicker];
+//        [self startLoadingAnimation];
+//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//            [self stopLoadingAnimation];
+//        });
     }
-    
-    [_tableView reloadData];
 }
 
 
@@ -222,6 +245,8 @@ typedef enum : NSUInteger {
         [self launchError:[NSString stringWithFormat:@"Selected project file (\"%@\") does not exist or is corrupted.", filename]];
     } else if (error == -2) {
         [self launchError:[NSString stringWithFormat:@"Selected project file (\"%@\") is of an incorrect format or is an older unsupported version.", filename]];
+    } else if (error == 0) {
+        [self launchSuccess:filename];
     }
 }
 
@@ -297,6 +322,22 @@ typedef enum : NSUInteger {
     [self presentViewController:activityController animated:YES completion:nil];
 }
 
+
+- (void)launchSuccess:(NSString*)filename {
+    [_successLabel setText:[NSString stringWithFormat:@"Success! Loading \"%@\"", filename]];
+    __weak UIView* successView = _successView;
+    [UIView animateWithDuration:0.1f delay:0.0f options:0 animations:^{
+        [successView setAlpha:1.0f];
+    } completion:^(BOOL finished) {
+        [UIView animateWithDuration:0.8f delay:0.3f options:0 animations:^{
+            [successView setAlpha:0.0f];
+        } completion:^(BOOL finished) {
+            
+        }];
+    }];
+}
+
+
 - (void)updateLocalProjectsList {
     _currentLocalList = [[TWMasterController sharedController] getListOfSavedFilenames];
 }
@@ -326,6 +367,44 @@ typedef enum : NSUInteger {
     } completion:^(BOOL finished) {
         [activityView stopAnimating];
     }];
+}
+
+
+#pragma mark - UIDocumentPicker
+
+- (void)launchDocumentPicker {
+    
+    UIDocumentPickerViewController* vc = [[UIDocumentPickerViewController alloc]
+                                          initWithDocumentTypes:@[@"public.json"]
+                                          inMode:UIDocumentPickerModeImport];
+    [vc setDelegate:self];
+    [vc setAllowsMultipleSelection:NO];
+    if (@available(iOS 13.0, *)) { [vc setShouldShowFileExtensions:YES]; }
+    
+    __weak UISegmentedControl* sc = _segmentedControl;
+    [self presentViewController:vc animated:YES completion:^{
+        [sc setSelectedSegmentIndex:0];
+    }];
+}
+
+- (void)documentPickerWasCancelled:(UIDocumentPickerViewController *)controller {
+    
+}
+
+- (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls {
+    
+    NSString* filepath = [urls[0] path];
+    NSString* filename = [urls[0] lastPathComponent];
+    
+    int error = [[TWMasterController sharedController] loadProjectFromFilepath:filepath];
+    
+    if (error == -1) {
+        [self launchError:[NSString stringWithFormat:@"Selected project file (\"%@\") does not exist or is corrupted.", filename]];
+    } else if (error == -2) {
+        [self launchError:[NSString stringWithFormat:@"Selected project file (\"%@\") is of an incorrect format or is an older unsupported version.", filename]];
+    } else {
+        [self launchSuccess:filename];
+    }
 }
 
 @end

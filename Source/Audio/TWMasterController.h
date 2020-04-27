@@ -49,6 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)saveProjectWithFilename:(NSString*)filename;
 - (int)loadProjectFromFilename:(NSString*)filename;
 - (BOOL)deleteProjectWithFilename:(NSString*)filename;
+- (int)loadProjectFromFilepath:(NSString*)filepath;
 - (NSArray<NSString*>*)getListOfSavedFilenames;
 @property (nonatomic, readonly)NSString* projectsDirectory;
 @property (nonatomic, strong)NSString* projectName;
