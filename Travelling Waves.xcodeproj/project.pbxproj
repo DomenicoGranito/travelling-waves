@@ -78,12 +78,6 @@
 		FCBDC364218532D400E7695C /* TWAudioController.mm in Sources */ = {isa = PBXBuildFile; fileRef = FCBDC363218532D400E7695C /* TWAudioController.mm */; };
 		FCD6045D2223E0D5004164AC /* EqualTemperament.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604542223E0D5004164AC /* EqualTemperament.json */; };
 		FCD6045E2223E0D5004164AC /* OsterCurve.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604552223E0D5004164AC /* OsterCurve.json */; };
-		FCD604672223E4F2004164AC /* Organ-like.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604612223E4F2004164AC /* Organ-like.json */; };
-		FCD604682223E4F2004164AC /* Dorianish.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604622223E4F2004164AC /* Dorianish.json */; };
-		FCD604692223E4F2004164AC /* Dorianish Movement.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604632223E4F2004164AC /* Dorianish Movement.json */; };
-		FCD6046A2223E4F2004164AC /* Some Moving Fifths.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604642223E4F2004164AC /* Some Moving Fifths.json */; };
-		FCD6046B2223E4F2004164AC /* Triplet Fifths.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604652223E4F2004164AC /* Triplet Fifths.json */; };
-		FCD6046C2223E4F2004164AC /* Test Movement.json in Resources */ = {isa = PBXBuildFile; fileRef = FCD604662223E4F2004164AC /* Test Movement.json */; };
 		FCD9DB06225D3F200062F1ED /* TWClock.m in Sources */ = {isa = PBXBuildFile; fileRef = FCD9DB05225D3F200062F1ED /* TWClock.m */; };
 		FCDE36E92244D0790066DA95 /* TWDrumPadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FCDE36E82244D0790066DA95 /* TWDrumPadViewController.m */; };
 		FCFB52CF22538CEB007C3BB5 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCFB52CE22538CEB007C3BB5 /* QuartzCore.framework */; };
@@ -232,12 +226,6 @@
 		FCBDC363218532D400E7695C /* TWAudioController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TWAudioController.mm; sourceTree = "<group>"; };
 		FCD604542223E0D5004164AC /* EqualTemperament.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = EqualTemperament.json; sourceTree = "<group>"; };
 		FCD604552223E0D5004164AC /* OsterCurve.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = OsterCurve.json; sourceTree = "<group>"; };
-		FCD604612223E4F2004164AC /* Organ-like.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "Organ-like.json"; sourceTree = "<group>"; };
-		FCD604622223E4F2004164AC /* Dorianish.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Dorianish.json; sourceTree = "<group>"; };
-		FCD604632223E4F2004164AC /* Dorianish Movement.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "Dorianish Movement.json"; sourceTree = "<group>"; };
-		FCD604642223E4F2004164AC /* Some Moving Fifths.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "Some Moving Fifths.json"; sourceTree = "<group>"; };
-		FCD604652223E4F2004164AC /* Triplet Fifths.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "Triplet Fifths.json"; sourceTree = "<group>"; };
-		FCD604662223E4F2004164AC /* Test Movement.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "Test Movement.json"; sourceTree = "<group>"; };
 		FCD9DB04225D3F200062F1ED /* TWClock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TWClock.h; sourceTree = "<group>"; };
 		FCD9DB05225D3F200062F1ED /* TWClock.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TWClock.m; sourceTree = "<group>"; };
 		FCDE36E72244D0790066DA95 /* TWDrumPadViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TWDrumPadViewController.h; sourceTree = "<group>"; };
@@ -514,7 +502,6 @@
 			isa = PBXGroup;
 			children = (
 				FC42C726224A187F003253EF /* Samples */,
-				FCD604602223E4F2004164AC /* Projects */,
 				FCD604542223E0D5004164AC /* EqualTemperament.json */,
 				FCD604552223E0D5004164AC /* OsterCurve.json */,
 				FCBDC3492184666C00E7695C /* Assets.xcassets */,
@@ -574,19 +561,6 @@
 				FC356C532223D10300B93F5C /* TWSequencer.cpp */,
 			);
 			path = Audio;
-			sourceTree = "<group>";
-		};
-		FCD604602223E4F2004164AC /* Projects */ = {
-			isa = PBXGroup;
-			children = (
-				FCD604612223E4F2004164AC /* Organ-like.json */,
-				FCD604622223E4F2004164AC /* Dorianish.json */,
-				FCD604632223E4F2004164AC /* Dorianish Movement.json */,
-				FCD604642223E4F2004164AC /* Some Moving Fifths.json */,
-				FCD604652223E4F2004164AC /* Triplet Fifths.json */,
-				FCD604662223E4F2004164AC /* Test Movement.json */,
-			);
-			path = Projects;
 			sourceTree = "<group>";
 		};
 		FCE3BA9122498F1300D28B60 /* Filestream */ = {
@@ -714,32 +688,26 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FCD6046B2223E4F2004164AC /* Triplet Fifths.json in Resources */,
 				FC3A29D3224CC9A100767E1B /* TestKick.wav in Resources */,
 				FC42C72B224A34AB003253EF /* Embryo Synth.wav in Resources */,
 				FC5C9BEA226412FA006B535D /* MP 04 High Kick.wav in Resources */,
-				FCD604692223E4F2004164AC /* Dorianish Movement.json in Resources */,
 				FC5C9BE7226412FA006B535D /* MP 10 Closed Hat Heavy.wav in Resources */,
 				FC5C9BE5226412FA006B535D /* MP 05 Snare Light.wav in Resources */,
 				FC5C9BCF226408B2006B535D /* Minimal Percs.plist in Resources */,
 				FCD6045E2223E0D5004164AC /* OsterCurve.json in Resources */,
 				FCD6045D2223E0D5004164AC /* EqualTemperament.json in Resources */,
-				FCD6046A2223E4F2004164AC /* Some Moving Fifths.json in Resources */,
 				FC5C9BE6226412FA006B535D /* MP 07 E-Snare Airy Light.wav in Resources */,
 				FC5C9BE3226412FA006B535D /* MP 16 E-Clav.wav in Resources */,
 				FC5C9BEB226412FA006B535D /* MP 01 Kick Heavy.wav in Resources */,
 				FC5C9BE0226412FA006B535D /* MP 14 Mid Tom Light.wav in Resources */,
 				FC5C9BE4226412FA006B535D /* MP 12 High Perc Light.wav in Resources */,
-				FCD6046C2223E4F2004164AC /* Test Movement.json in Resources */,
 				FC5C9BEE226412FA006B535D /* MP 15 Clav Light.wav in Resources */,
 				FC5C9BE2226412FA006B535D /* MP 03 Low Kick.wav in Resources */,
 				FC5C9BE9226412FA006B535D /* MP 11 Open Hat Light.wav in Resources */,
 				FC5C9BED226412FA006B535D /* MP 08 E-Clap Airy Light.wav in Resources */,
-				FCD604672223E4F2004164AC /* Organ-like.json in Resources */,
 				FC5C9BE8226412FA006B535D /* MP 02 Light Airy Kick.wav in Resources */,
 				FC5C9BE1226412FA006B535D /* MP 06 Clap Light.wav in Resources */,
 				FC42C72D224A39FF003253EF /* LRTest.wav in Resources */,
-				FCD604682223E4F2004164AC /* Dorianish.json in Resources */,
 				FC5C9BEC226412FA006B535D /* MP 13 E-Clav Light.wav in Resources */,
 				FC5C9BEF226412FA006B535D /* MP 09 Closed Hat Light.wav in Resources */,
 				FC6701A924573AF000F507A9 /* Assets.xcassets in Resources */,
