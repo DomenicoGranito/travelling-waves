@@ -173,7 +173,6 @@ static const CGFloat kProgressBarUpdateInterval     = 0.1f;  // 50ms
     
     
     _seqNoteButtons = [[NSMutableArray alloc] init];
-    [self updateAllSeqNoteButtons];
     
     _progressBarView = [[UIView alloc] init];
     [_progressBarView setBackgroundColor:[UIColor colorWithWhite:0.4f alpha:0.4f]];
@@ -211,6 +210,8 @@ static const CGFloat kProgressBarUpdateInterval     = 0.1f;  // 50ms
     if ([[TWAudioController sharedController] isRunning]) {
         [self startProgressAnimation];
     }
+    
+    [self updateAllSeqNoteButtons];
     
     [self.view addSubview:[TWKeypad sharedKeypad]];
 }

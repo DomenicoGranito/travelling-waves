@@ -55,6 +55,8 @@ typedef void (^TWAudioControllerPlaybackFinishedBlock)(int sourceIdx, int status
 
 - (float)getSeqNormalizedProgress;
 
+- (void)clearSeqEvents;
+
 
 //===== Oscillator and Effect Methods =====//
 - (void)setOscSoloEnabled:(BOOL)enabled atSourceIdx:(int)sourceIdx;

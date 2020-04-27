@@ -455,6 +455,11 @@ static void enginePlaybackFinishedProc(int sourceIdx, int status) {
     return _engine->getSeqNormalizedProgress();
 }
 
+- (void)clearSeqEvents {
+    _engine->clearSeqEvents();
+}
+
+
 
 //===== Oscillator and Effect Methods =====//
 - (void)setOscSoloEnabled:(BOOL)enabled atSourceIdx:(int)sourceIdx {

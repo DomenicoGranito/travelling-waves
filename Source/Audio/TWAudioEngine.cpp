@@ -425,7 +425,10 @@ float TWAudioEngine::getSeqParameterAtSourceIdx(int sourceIdx, TWSeqParamID para
     return value;
 }
 
-
+void TWAudioEngine::clearSeqEvents()
+{
+    _seqEvents.clear();
+}
 
 
 //============================================================

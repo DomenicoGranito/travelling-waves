@@ -80,6 +80,9 @@ public:
     void setSeqParameterAtSourceIdx(int sourceIdx, TWSeqParamID paramID, float value);
     float getSeqParameterAtSourceIdx(int sourceIdx, TWSeqParamID paramID);
     
+    void clearSeqEvents();
+    void clearSeqIntervals();
+    
     
     
     //============================================================

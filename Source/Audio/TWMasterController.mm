@@ -218,20 +218,22 @@
     return [jsonData writeToFile:filepath atomically:NO];
 }
 
-- (BOOL)loadProjectFromFilename:(NSString *)filename {
+- (int)loadProjectFromFilename:(NSString *)filename {
     NSString* filepath = [_projectsDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.json", filename]];
     NSLog(@"Filepath: %@", filepath);
     if ([[NSFileManager defaultManager] fileExistsAtPath:filepath]) {
         NSData* data = [NSData dataWithContentsOfFile:filepath];
         NSDictionary* dictionary = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
         if (dictionary == nil) {
-            return NO;
+            return -2;
         }
-        [self loadParametersFromDictionary:dictionary];
+        if (![self loadParametersFromDictionary:dictionary]) {
+            return -2;
+        }
         [self resetFrequencyChartCaches];
-        return YES;
+        return 0;
     }
-    return NO;
+    return -1;
 }
 
 - (NSArray<NSString*>*)getListOfSavedFilenames {
@@ -270,13 +272,15 @@
     
     @synchronized(self) {
         
+        NSMutableDictionary* project = [[NSMutableDictionary alloc] init];
+        
         // Name
-        dictionary[@"Name"] = _projectName;
+        project[@"Name"] = _projectName;
         
         // Parameters
         NSMutableDictionary* parameters = [[NSMutableDictionary alloc] init];
         parameters[@"Root Frequency"] = @(_rootFrequency);
-        parameters[@"Base RampTime_ms"] = @(_rampTime_ms);
+        parameters[@"Base Ramp Time (ms)"] = @(_rampTime_ms);
         parameters[@"Num Sources"] = @(kNumSources);
         parameters[@"Tempo"] = @(_tempo);
         
@@ -295,15 +299,6 @@
             }
             
             [sourceParams addEntriesFromDictionary:[self getOscParamsAsDictionaryForSourceIdx:sourceIdx]];
-            
-//            for (int paramID = 1; paramID < kOscNumParams; paramID++) {
-//                NSString* key = [self keyForOscParamID:(TWOscParamID)paramID];
-//                if ((key != nil) && (![key isEqualToString:@""])) {
-//                    sourceParams[key] = @([[TWAudioController sharedController] getOscParameter:(TWOscParamID)paramID atSourceIdx:sourceIdx]);
-//                }
-//            }
-//
-//            sourceParams[@"RampTime_ms"] = @((int)[[TWAudioController sharedController] getOscParameter:TWOscParamID_RampTime_ms atSourceIdx:sourceIdx]);
             
             [sources addObject:sourceParams];
         }
@@ -335,7 +330,8 @@
         }
         sequencer[@"Envelopes"] = envelopes;
         sequencer[@"Events"] = events;
-        sequencer[@"Duration_ms"] = @([[TWAudioController sharedController] getSeqParameter:TWSeqParamID_Duration_ms atSourceIdx:-1]);
+        sequencer[@"Seq Duration (ms)"] = @([[TWAudioController sharedController] getSeqParameter:TWSeqParamID_Duration_ms
+                                                                                      atSourceIdx:-1]);
         
         parameters[@"Sequencer"] = sequencer;
         
@@ -363,32 +359,42 @@
         
         parameters[@"DrumPad"] = drumPad;
         
+        project[@"Parameters"] = parameters;
         
-        dictionary[@"Parameters"] = parameters;
+        
+        dictionary[@"Travelling Waves Project"] = project;
     }
     
     return dictionary;
 }
 
 
-- (void)loadParametersFromDictionary:(NSDictionary*)dictionary {
+- (BOOL)loadParametersFromDictionary:(NSDictionary*)dictionary {
+    
+    if ([dictionary objectForKey:@"Travelling Waves Project"] == nil) {
+        return NO;
+    }
+    
+    NSDictionary* project = [dictionary objectForKey:@"Travelling Waves Project"];
     
     // Name
-    if ([dictionary objectForKey:@"Name"] != nil) {
+    if ([project objectForKey:@"Name"] != nil) {
         _projectName = dictionary[@"Name"];
     }
     
     // Parameters
-    if ([dictionary objectForKey:@"Parameters"] != nil) {
+    if ([project objectForKey:@"Parameters"] != nil) {
         
-        NSDictionary* parameters = dictionary[@"Parameters"];
+        TWAudioController* controller = [TWAudioController sharedController];
+        
+        NSDictionary* parameters = project[@"Parameters"];
         
         if ([parameters objectForKey:@"Root Frequency"] != nil) {
             _rootFrequency = [parameters[@"Root Frequency"] floatValue];
         }
         
-        if ([parameters objectForKey:@"Base RampTime_ms"] != nil) {
-            _rampTime_ms = [parameters[@"Base RampTime_ms"] intValue];
+        if ([parameters objectForKey:@"Base Ramp Time (ms)"] != nil) {
+            _rampTime_ms = [parameters[@"Base Ramp Time (ms)"] intValue];
         }
         
         if ([parameters objectForKey:@"Tempo"] != nil) {
@@ -426,11 +432,11 @@
                 }
                 
                 
-                int rampTime_ms = (int)[[TWAudioController sharedController] getOscParameter:TWOscParamID_RampTime_ms atSourceIdx:sourceIdx];
-                if ([sourceParams objectForKey:@"RampTime_ms"]) {
-                    rampTime_ms = [sourceParams[@"RampTime_ms"] intValue];
+                int rampTime_ms = (int)[controller getOscParameter:TWOscParamID_RampTime_ms atSourceIdx:sourceIdx];
+                if ([sourceParams objectForKey:@"Ramp Time (ms)"]) {
+                    rampTime_ms = [sourceParams[@"Ramp Time (ms)"] intValue];
                 }
-                [[TWAudioController sharedController] setOscParameter:TWOscParamID_RampTime_ms withValue:rampTime_ms atSourceIdx:sourceIdx inTime:0.0f];
+                [controller setOscParameter:TWOscParamID_RampTime_ms withValue:rampTime_ms atSourceIdx:sourceIdx inTime:0.0f];
                 
                 
                 for (int control=0; control < kNumTimeRatioControls; control++) {
@@ -448,15 +454,10 @@
             
             NSDictionary* sequencer = parameters[@"Sequencer"];
             
-            if ([sequencer objectForKey:@"Duration_ms"]) {
-                [[TWAudioController sharedController] setSeqParameter:TWSeqParamID_Duration_ms withValue:[sequencer[@"Duration_ms"] floatValue] atSourceIdx:-1];
-            }
-            
-            if ([sequencer objectForKey:@"Events"] != nil) {
-                NSArray* events = sequencer[@"Events"];
-                for (NSDictionary* event in events) {
-                    [[TWAudioController sharedController] setSeqNote:1 atSourceIdx:[event[@"Src"] intValue] atBeat:[event[@"Beat"] intValue]];
-                }
+            if ([sequencer objectForKey:@"Seq Duration (ms)"]) {
+                [controller setSeqParameter:TWSeqParamID_Duration_ms
+                                  withValue:[sequencer[@"Seq Duration (ms)"] floatValue]
+                                atSourceIdx:-1];
             }
             
             if ([sequencer objectForKey:@"Envelopes"] != nil) {
@@ -470,14 +471,23 @@
                     }
                     
                     if ([envelope objectForKey:@"Interval"] != nil) {
-                        [[TWAudioController sharedController] setSeqInterval:[envelope[@"Interval"] intValue] atSourceIdx:sourceIdx];
+                        [controller setSeqInterval:[envelope[@"Interval"] intValue] atSourceIdx:sourceIdx];
                     }
+                    
                     if ([envelope objectForKey:@"Enable"]) {
-                        [[TWAudioController sharedController] setSeqEnabled:[envelope[@"Enable"] boolValue] atSourceIdx:sourceIdx];
+                        [controller setSeqEnabled:[envelope[@"Enable"] boolValue] atSourceIdx:sourceIdx];
                     }
                     for (int paramID = 1; paramID < kSeqNumParams; paramID++) {
                         [self setSeqParamValue:(TWSeqParamID)paramID fromDictionary:envelope atSourceIdx:sourceIdx];
                     }
+                }
+            }
+            
+            if ([sequencer objectForKey:@"Events"] != nil) {
+                [controller clearSeqEvents];
+                NSArray* events = sequencer[@"Events"];
+                for (NSDictionary* event in events) {
+                    [controller setSeqNote:1 atSourceIdx:[event[@"Src"] intValue] atBeat:[event[@"Beat"] intValue]];
                 }
             }
         }
@@ -502,12 +512,14 @@
                     if ((filename != nil) && (![filename isEqualToString:@""])) {
                         NSString* filepath = [[NSBundle mainBundle] pathForResource:filename ofType:@"wav"];
                         NSString* outfilepath = [filepath stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
-                        [[TWAudioController sharedController] loadAudioFile:outfilepath atSourceIdx:sourceIdx];
+                        [controller loadAudioFile:outfilepath atSourceIdx:sourceIdx];
                     }
                 }
             }
         }
     }
+    
+    return YES;
 }
 
 
@@ -605,7 +617,7 @@
             dictionary[key] = @([[TWAudioController sharedController] getOscParameter:(TWOscParamID)paramID atSourceIdx:sourceIdx]);
         }
     }
-    dictionary[@"RampTime_ms"] = @((int)[[TWAudioController sharedController] getOscParameter:TWOscParamID_RampTime_ms atSourceIdx:sourceIdx]);
+    dictionary[@"Ramp Time (ms)"] = @((int)[[TWAudioController sharedController] getOscParameter:TWOscParamID_RampTime_ms atSourceIdx:sourceIdx]);
     return dictionary;
 }
 
@@ -624,8 +636,8 @@
     }
     
     int rampTime_ms = (int)[[TWAudioController sharedController] getOscParameter:TWOscParamID_RampTime_ms atSourceIdx:sourceIdx];
-    if ([_copyOscDictionary objectForKey:@"RampTime_ms"]) {
-        rampTime_ms = [_copyOscDictionary[@"RampTime_ms"] intValue];
+    if ([_copyOscDictionary objectForKey:@"Ramp Time (ms)"]) {
+        rampTime_ms = [_copyOscDictionary[@"Ramp Time (ms)"] intValue];
     }
     [[TWAudioController sharedController] setOscParameter:TWOscParamID_RampTime_ms withValue:rampTime_ms atSourceIdx:sourceIdx inTime:0.0f];
     
@@ -795,47 +807,47 @@
     
     switch (paramID) {
         case TWSeqParamID_AmpAttackTime:
-            key = @"AmpAttackTime_ms";
+            key = @"Amp Env Attack Time (ms)";
             break;
             
         case TWSeqParamID_AmpSustainTime:
-            key = @"AmpSustainTime_ms";
+            key = @"Amp Env Sustain Time (ms)";
             break;
             
         case TWSeqParamID_AmpReleaseTime:
-            key = @"AmpReleaseTime_ms";
+            key = @"Amp Env Release Time (ms)";
             break;
             
         case TWSeqParamID_FilterEnable:
-            key = @"FltEnable";
+            key = @"Filter Env Enable";
             break;
             
         case TWSeqParamID_FilterType:
-            key = @"FltType";
+            key = @"Filter Env Type";
             break;
             
         case TWSeqParamID_FilterAttackTime:
-            key = @"FltAttackTime_ms";
+            key = @"Filter Env Attack Time (ms)";
             break;
             
         case TWSeqParamID_FilterSustainTime:
-            key = @"FltSustainTime_ms";
+            key = @"Filter Env Sustain Time (ms)";
             break;
             
         case TWSeqParamID_FilterReleaseTime:
-            key = @"FltReleaseTime_ms";
+            key = @"Filter Env Release Time (ms)";
             break;
             
         case TWSeqParamID_FilterFromCutoff:
-            key = @"FltFromCutoff";
+            key = @"Filter Env From Cutoff";
             break;
             
         case TWSeqParamID_FilterToCutoff:
-            key = @"FltToCutoff";
+            key = @"Filter Env To Cutoff";
             break;
             
         case TWSeqParamID_FilterResonance:
-            key = @"FltQ";
+            key = @"Filter Env Q";
             break;
             
         default:

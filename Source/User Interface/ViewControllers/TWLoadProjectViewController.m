@@ -217,8 +217,11 @@ typedef enum : NSUInteger {
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     NSString* filename = _currentLocalList[indexPath.row];
-    if (![[TWMasterController sharedController] loadProjectFromFilename:filename]) {
-        [self launchError:[NSString stringWithFormat:@"Could not load project: %@", filename]];
+    int error = [[TWMasterController sharedController] loadProjectFromFilename:filename];
+    if (error == -1) {
+        [self launchError:[NSString stringWithFormat:@"Selected project file (\"%@\") does not exist or is corrupted.", filename]];
+    } else if (error == -2) {
+        [self launchError:[NSString stringWithFormat:@"Selected project file (\"%@\") is of an incorrect format or is an older unsupported version.", filename]];
     }
 }
 
